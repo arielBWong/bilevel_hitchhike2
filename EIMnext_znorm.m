@@ -68,10 +68,13 @@ else
 end
 
 % compatibility with constraint problems
-if nargin>6
+% if nargin>6
+if ~isempty(train_c)
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
+
     [train_c_norm, c_mean, c_std] = zscore(train_c, 0, 1);
+    % version did not scale train_c
     train_c_norm = train_c;
     c_mean = NaN;
     c_std = NaN;
@@ -86,6 +89,7 @@ if nargin>6
     else
         feasible_trainy_norm = train_y_norm(index_c, :);
         % still needs nd front
+        % also works for single objective constraint problem
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end
@@ -108,7 +112,8 @@ info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
 
-if nargin>6
+%if nargin>6
+if ~isempty(train_c)
     info.train_cmean = c_mean;
     info.train_cstd = c_std;
 end
@@ -116,3 +121,88 @@ end
 end
 
 
+function [fit] = EIM_eval(x, f, kriging_obj, kriging_con)
+% function of using EIM as fitness evaluation
+% usage:
+%
+% input: x            - pop to evaluate
+%        f            - best f so far/feasible pareto front
+%                           in multi-objective probs
+%        kriging_obj  - kriging model for objectives
+%        kriging_con  - kriging model for constraints
+% output: fit         - pop fitness
+%--------------------------------------------------------------------------
+
+
+% number of input designs
+num_x = size(x,1);
+num_obj = size(f, 2);
+
+% the kriging prediction and varince
+u = zeros(num_x,num_obj);
+mse = zeros(num_x,num_obj);
+
+% pof init
+pof = 1;
+
+if length(f) == 0 && nargin > 3   % refer no feasible solution
+    % the number of constraints
+    num_con = length(kriging_con);
+    % the kriging prediction and varince
+    mu_g = zeros(size(x,1), num_con);
+    mse_g = zeros(size(x,1), num_con);
+    for ii = 1: num_con
+        [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
+        % [mu_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii}); %test
+    end
+    pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
+    fit = -pof;
+    return
+end
+
+for ii = 1:num_obj
+    [u(:, ii), mse(:, ii)] = dace_predict(x, kriging_obj{ii});
+    % [u(:, ii), mse(:, ii)] = predictor(x, kriging_obj{ii});
+end
+% mse = sqrt(max(0,mse));
+
+% calcualate eim for objective
+if num_obj == 1
+    f = repmat(f, num_x, 1);
+    imp = f - u;
+    z = imp./mse;
+    ei1 = imp .* Gaussian_CDF(z);
+    ei1(mse==0)=0;
+    ei2 = mse .* Gaussian_PDF(z);
+    EIM = (ei1 + ei2);
+else
+    % for multiple objective problems
+    % f - refers to pareto front
+    r = 1.1*ones(1, num_obj);  % reference point
+    num_pareto = size(f, 1);
+    r_matrix = repmat(r,num_pareto,1);
+    EIM = zeros(num_x,1);
+    for ii = 1 : num_x
+        u_matrix = repmat(u(ii,:),num_pareto,1);
+        s_matrix = repmat(mse(ii,:),num_pareto,1);
+        eim_single = (f - u_matrix).*Gaussian_CDF((f - u_matrix)./s_matrix) + s_matrix.*Gaussian_PDF((f - u_matrix)./s_matrix);
+        EIM(ii) =  min(prod(r_matrix - f + eim_single,2) - prod(r_matrix - f,2));
+    end
+end
+
+% calculate probability of feasibility for constraints
+if nargin>3
+    % the number of constraints
+    num_con = length(kriging_con);
+    % the kriging prediction and varince
+    mu_g = zeros(size(x,1), num_con);
+    mse_g = zeros(size(x,1), num_con);
+    for ii = 1: num_con
+        [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
+        % [mu_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii}); %test
+    end
+    mse_g = sqrt(max(0,mse_g));
+    pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
+end
+fit = -EIM .* pof;
+end

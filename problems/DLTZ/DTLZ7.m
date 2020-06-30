@@ -17,7 +17,7 @@ classdef DTLZ7
                 obj.xu = ones(1, n_var);
                 obj.n_con = 0;
                 obj.n_obj = m;
-                obj.ref = ones(1, n_var) * ref;
+                obj.ref = ones(1, n_obj) * ref;
                 obj.name = 'DTLZ7';
             else
                 obj.n_var = 6;
@@ -25,12 +25,12 @@ classdef DTLZ7
                 obj.xu = ones(1, obj.n_var);
                 obj.n_con = 0;
                 obj.n_obj = 3;
-                obj.ref = ones(1, obj.n_var) * 30;
+                obj.ref = ones(1, obj.n_obj) * 30;
                 obj.name = 'DTLZ7';
             end
         end
         
-        function [y, c] = evaluation(obj, x)
+        function [y, c] = evaluate(obj, x)
             m = obj.n_obj;
             n=size(x,2);     %number of design variable
             k=n-m+1;

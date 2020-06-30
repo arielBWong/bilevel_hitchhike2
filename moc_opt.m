@@ -5,19 +5,27 @@ function moc_opt(eim_process_name, prob)
 %   (2-2) combine new x into training data
 
 
+fprintf('%s', eim_process_name);
+fprintf('%s', prob);
 
 prob = eval(prob);
+% number of iteration setting
+if prob.n_obj>2
+    maxeval = 200;
+else
+    maxeval = 100;
+end
 
 hv_record = zeros(1, 30);
 eim_function = str2func(eim_process_name);
 
-for seed = 1:30
+for seed = 1:5
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;
     num_con = prob.n_con;
     rng(seed, 'twister');
-
+    
     % problem x range
     xu_bound = prob.xu;
     xl_bound = prob.xl;
@@ -28,18 +36,26 @@ for seed = 1:30
     train_x = repmat(xl_bound, num_samples, 1) + repmat((xu_bound - xl_bound), num_samples, 1) .* train_x;
     % [train_y, train_c] = feval(fun_name, train_x);
     [train_y, train_c] = prob.evaluate(train_x);
-    %figure(1)
-    for iter=1:29
-        
-        index_c = sum(train_c <= 0, 2) == num_con;
-        if sum(index_c) ~=0
-            feasible_y = train_y(index_c, :);
-            nd_index = Paretoset(feasible_y);
-            nd_front = feasible_y(nd_index, :);
+    % figure(1)
+    
+    maxiter = maxeval - num_samples;
+    for iter=1:maxiter
+        if ~isempty(train_c)
+            index_c = sum(train_c <= 0, 2) == num_con;
+            if sum(index_c) ~=0
+                feasible_y = train_y(index_c, :);
+                nd_index = Paretoset(feasible_y);
+                nd_front = feasible_y(nd_index, :);
+                % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+                h = Hypervolume(nd_front,ref_point);
+                fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
+            end
+        else
+            nd_index = Paretoset(train_y);
+            nd_front = train_y(nd_index, :);
             % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
             h = Hypervolume(nd_front,ref_point);
-            %fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
-            
+            fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
         end
         
         [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 20, 50, train_c);
@@ -57,6 +73,6 @@ end
 
 %record hv
 filename=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_hv.csv' );
-csvwrite(filename, hv_record');
+csvwrite(filename, hv_record'); % make sure column
 
 end

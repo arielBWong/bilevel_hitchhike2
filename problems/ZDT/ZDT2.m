@@ -18,7 +18,7 @@ classdef ZDT2
                 obj.xu = ones(1, n_var);
                 obj.n_con = 0;
                 obj.n_obj = m;
-                obj.ref = ones(1, n_var) * ref;
+                obj.ref = ones(1, n_obj) * ref;
                 obj.name = 'ZDT2';
             else
                 obj.n_var = 6;
@@ -26,12 +26,12 @@ classdef ZDT2
                 obj.xu = ones(1, obj.n_var);
                 obj.n_con = 0;
                 obj.n_obj = 2;
-                obj.ref = ones(1, obj.n_var) * 11;
+                obj.ref = ones(1, obj.n_obj) * 11;
                 obj.name = 'ZDT2';
             end
         end
         
-        function [y, c] = evaluation(obj, x)
+        function [y, c] = evaluate(obj, x)
             
             % function only for test, incomplete implementation
             y(:,1)=x(:,1);

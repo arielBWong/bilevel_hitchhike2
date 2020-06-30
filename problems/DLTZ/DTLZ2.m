@@ -17,7 +17,7 @@ classdef DTLZ2
                 obj.xu = ones(1, n_var);
                 obj.n_con = 0;
                 obj.n_obj = m;
-                obj.ref = ones(1, n_var) * ref;
+                obj.ref = ones(1, n_obj) * ref;
                 obj.name = 'DTLZ2';
             else
                 obj.n_var = 6;
@@ -25,12 +25,12 @@ classdef DTLZ2
                 obj.xu = ones(1, obj.n_var);
                 obj.n_con = 0;
                 obj.n_obj = 3;
-                obj.ref = ones(1, obj.n_var) * 2.5;
+                obj.ref = ones(1, obj.n_obj) * 2.5;
                 obj.name = 'DTLZ2';
             end
         end
         
-        function [y, c] = evaluation(obj, x)
+        function [y, c] = evaluate(obj, x)
             m = obj.n_obj;
             g=sum((x(:,m:end)-0.5).^2,2);
             
