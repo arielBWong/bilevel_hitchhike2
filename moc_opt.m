@@ -4,9 +4,7 @@ function moc_opt(eim_process_name, prob)
 %   (2-1) call EIMnext to generate next x  point
 %   (2-2) combine new x into training data
 
-workdir = pwd;
-problem_folder = strcat(pwd,'\problems\EGproblems');
-addpath(problem_folder);
+
 
 prob = eval(prob);
 
@@ -60,5 +58,5 @@ end
 %record hv
 filename=strcat(pwd, '\result_folder\', prob.name, '_cstill_hv.csv' );
 csvwrite(filename, hv_record');
-rmpath(problem_folder)
+
 end
