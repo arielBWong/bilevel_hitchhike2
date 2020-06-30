@@ -72,7 +72,9 @@ for seed = 1:5
 end
 
 %record hv
-filename=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_hv.csv' );
-csvwrite(filename, hv_record'); % make sure column
+filename1=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_hv.csv' );
+filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_trainy.csv' );
+csvwrite(filename1, hv_record'); % make sure column
+csvwrite(filename2, hv_record'); % for plot
 
 end
