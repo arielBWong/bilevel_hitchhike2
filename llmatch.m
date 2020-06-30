@@ -23,13 +23,13 @@ train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
 
 % evaluate training fl from xu_init and train_xl
 % compatible with non-constriant problem
-[train_fl, train_fc] = problem.evaluate_l(xu_init, train_xl);
+[train_fl, train_fc] = prob.evaluate_l(xu_init, train_xl);
 l_ncons= size(train_fc, 2);
 
 % call EIM next
 for iter = 1:iter_size
     % eim propose next
-    new_xl = EIMnext(train_xl, train_fl, upper_bound, lower_bound, ...
+    [new_xl, ~] = EIMnext(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc);
     % evaluate next
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);

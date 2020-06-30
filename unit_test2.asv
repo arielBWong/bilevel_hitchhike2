@@ -12,7 +12,8 @@ workdir = pwd;
 problem_folder = strcat(pwd,'\problems\EGproblems');
 addpath(problem_folder);
 prob = eval('TNK()');
-
+x = [];
+prob.evaluate(x)
 
 hv_record = zeros(1, 30);
 
@@ -50,9 +51,14 @@ for seed = 18:18
         else
             h = 0;          
         end 
+         
+        if iter==13
+            a = 0;
+        end
+        
         [newx, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, 20, 50,train_c);
         
-        % check whether newx 
+        % check new
         
         [newy, newc] =  prob.evaluate(newx);
         train_x = [train_x; newx];

@@ -1,6 +1,7 @@
-function[best_x, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, ...
-                                 num_pop, num_gen, train_c)
+function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
+    num_pop, num_gen, train_c)
 % method of using EIM to generate next point
+% normalization is zscore on all variables
 % usage:
 %
 % input: train_x    - design variables
@@ -8,7 +9,7 @@ function[best_x, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, ...
 %        train_y    - objective values
 %                       1/2d array: (num_samples, num_objectives)
 %        xu_bound   - upper bound of train_x
-%                       1d array 
+%                       1d array
 %        xl_bound   - lower bound of train_x
 %                       1d array
 %        num_pop    - EIM optimization parameter
@@ -16,9 +17,9 @@ function[best_x, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, ...
 %        train_c    - constraints values
 %                       1/2d array: (num_samples, num_constraints)
 % output: best_x    - proposed next x to be evaluated by EIM
-%         info      - returned information for functor caller to recreate 
+%         info      - returned information for functor caller to recreate
 %                   - or check information
-%                   - info.krg  
+%                   - info.krg
 %                   - info.krgc
 %                   - info.train_xmean
 %                   - info.train_ymean
@@ -38,35 +39,24 @@ num_x = size(train_x,1);
 num_vari = size(train_x, 2);
 
 % normalise train data
-% [train_x_norm, x_mean, x_std] = zscore(train_x, 0, 1);  % flag 0 sample zscore
+[train_x_norm, x_mean, x_std] = zscore(train_x, 0, 1);  % flag 0 sample zscore
 
 % adjust x bounds according to zscore normalization
-% ub = (xu_bound - x_mean)./ x_std;
-% lb = (xl_bound - x_mean)./ x_std;
-
-% test purpose---
-ub = xu_bound;
-lb = xl_bound;
-train_x_norm = train_x;
-x_mean = NaN;
-x_std = NaN;
-%-------------
+ub = (xu_bound - x_mean)./ x_std;
+lb = (xl_bound - x_mean)./ x_std;
 
 % train objective kriging model
 if num_obj > 1
-    train_y_norm = (train_y -repmat(min(train_y),num_x,1))./...
-         repmat(max(train_y)-min(train_y),num_x,1);
-    y_mean = NaN;
-    y_std = NaN;
-    % [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1); 
+    [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1);
+    % further normalization ??
+     train_y_norm = (train_y_norm -repmat(min(train_y_norm),num_x,1))./...
+         repmat(max(train_y_norm)-min(train_y_norm),num_x,1);
 else
-    [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1); 
+    [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1);
 end
 
 for ii = 1:num_obj
-    % kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
-    kriging_obj{ii} = dacefit(train_x_norm,train_y_norm(:,ii),...
-        'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
+    kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
 end
 
 % prepare f_best for EIM, first only consider non-constraint situation
@@ -81,15 +71,12 @@ end
 if nargin>6
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
-    % [train_c_norm, c_mean, c_std] = zscore(train_c, 0, 1);
+    [train_c_norm, c_mean, c_std] = zscore(train_c, 0, 1);
     train_c_norm = train_c;
     c_mean = NaN;
     c_std = NaN;
-    
     for ii = 1:num_con
-        % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
-        kriging_con{ii} = dacefit(train_x_norm,train_c_norm(:,ii),...
-             'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  %test
+        kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
     end
     % adjust f_best according to feasibility
     % feasibility needs to be valued in original range
@@ -101,7 +88,7 @@ if nargin>6
         % still needs nd front
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
-    end   
+    end
     fitness_val = @(x)EIM_eval(x,f_best, kriging_obj, kriging_con);
 else
     fitness_val = @(x)EIM_eval(x, f_best, kriging_obj);
@@ -111,7 +98,7 @@ end
 [best_x, eim_f] = DE(fitness_val, num_vari,lb, ub, num_pop, num_gen);
 
 % convert best_x to denormalized value
-% best_x = best_x .* x_std + x_mean;  % commit for test
+best_x = best_x .* x_std + x_mean;  % commit for test
 
 info = struct();
 info.eim_normf = eim_f;

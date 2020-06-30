@@ -61,21 +61,21 @@ classdef smd9
         end
         
         function[f, c] = evaluate_l(obj, xu, xl)
-            xu1 = xu(1:obj.p);
-            xu2 = xu(obj.p+1:obj.p+obj.r);
+            xu1 = xu(:, 1:obj.p);
+            xu2 = xu(:, obj.p+1:obj.p+obj.r);
          
-            xl1 = xl(1:obj.q);
-            xl2 = xl(obj.q+1:obj.q+obj.r);
+            xl1 = xl(:, 1:obj.q);
+            xl2 = xl(:, obj.q+1:obj.q+obj.r);
             
-            functionValue = sum((xu1).^2) ...
-                + sum((xl1).^2) ...
-                + sum((xu2 - log(1+xl2)).^2);
+            functionValue = sum((xu1).^2, 2) ...
+                + sum((xl1).^2, 2) ...
+                + sum((xu2 - log(1+xl2)).^2, 2);
             
             f = -functionValue;
             
             
             %Write the constraints here
-            inequalityConstrVals(1) = sum(xl1.^2)+sum(xl2.^2) - floor(sum(xl1.^2)+sum(xl2.^2)+0.5);
+            inequalityConstrVals = sum(xl1.^2, 2)+sum(xl2.^2, 2) - floor(sum(xl1.^2, 2)+sum(xl2.^2, 2)+0.5);
             c = - inequalityConstrVals;
             
         end

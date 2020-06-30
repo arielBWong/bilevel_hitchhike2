@@ -7,6 +7,11 @@ close all;
 % (2) start loop
 %   (2-1) call EIMnext to generate next x  point
 %   (2-2) combine new x into training data
+workdir = pwd;
+problem_folder = strcat(pwd,'\problems');
+addpath(problem_folder);
+
+
 num_samples = 3;
 num_vari = 1;
 train_x = lhsdesign(num_samples,num_vari); %,'criterion','maximin','iterations',1000);
@@ -19,7 +24,7 @@ test_y = testproblem1(test_x');
 figure(1);
 for iter=1:5
     
-    [newx, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, 20, 50);
+    [newx, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, 20, 50);
     newy = testproblem1(newx);
     train_x = [train_x; newx];
     train_y = [train_y; newy];
@@ -29,11 +34,12 @@ for iter=1:5
     prey = dace_predict(norm_x, krg{1});
     prey = prey * info.train_ystd + info.train_ymean;
     
-    predplot = plot(test_x,prey,'r-');hold on;
-    testplot = plot(test_x, test_y, 'b-');
+   
+    testplot = plot(test_x, test_y, 'b-');hold on;
+    predplot = plot(test_x,prey,'r-');
     trainplot = plot(train_x(1:end-1), train_y(1:end-1), 'bo');
     newpont = plot(train_x(end),  train_y(end), 'go');
-    pause(1)
+    pause(2)
     
     set(predplot, 'Visible', 'off');
     t = 0;
@@ -43,3 +49,4 @@ for iter=1:5
 end
 
 
+rmpath(problem_folder)

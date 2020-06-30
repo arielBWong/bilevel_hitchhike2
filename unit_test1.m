@@ -11,12 +11,12 @@ close all;
 workdir = pwd;
 problem_folder = strcat(pwd,'\problems\EGproblems');
 addpath(problem_folder);
-prob = eval('TNK()');
 
+prob = TNK();
 
 hv_record = zeros(1, 30);
 
-for seed = 18:18
+for seed = 3:3
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;
@@ -35,11 +35,10 @@ for seed = 18:18
     train_x = repmat(xl_bound, num_samples, 1) + repmat((xu_bound - xl_bound), num_samples, 1) .* train_x;
     % [train_y, train_c] = feval(fun_name, train_x);
     [train_y, train_c] = prob.evaluate(train_x);
-    % figure(1)
+    %figure(1)
     for iter=1:29
         
         index_c = sum(train_c <= 0, 2) == num_con;
-        
         if sum(index_c) ~=0
             feasible_y = train_y(index_c, :);
             nd_index = Paretoset(feasible_y);
@@ -47,12 +46,10 @@ for seed = 18:18
             % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
             h = Hypervolume(nd_front,ref_point);
             fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
-        else
-            h = 0;          
-        end 
-        [newx, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, 20, 50,train_c);
+            
+        end
         
-        % check whether newx 
+        [newx, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, 20, 50,train_c);
         
         [newy, newc] =  prob.evaluate(newx);
         train_x = [train_x; newx];
@@ -63,12 +60,9 @@ for seed = 18:18
     end
     
     hv_record(seed) = h;
-    
 end
 
 %record hv
-filename=strcat(pwd, '\result_folder\', prob.name, '_paper_hv.csv' );
+filename=strcat(pwd, '\result_folder\', prob.name, '_c_still_hv.csv' );
 csvwrite(filename, hv_record');
-
-
 rmpath(problem_folder)
