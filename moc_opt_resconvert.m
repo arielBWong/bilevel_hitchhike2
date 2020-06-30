@@ -13,27 +13,33 @@ close all;
 eim_methods = {'EIMnext_znorm' ,'EIMnext'};
 test_problems = {'ZDT1()','ZDT2()','ZDT3()','DTLZ2()','DTLZ5()','DTLZ7()'};
 
+s = 29;
 np = length(test_problems);
 ne = length(eim_methods);
-out_matrix = zeros(30+3, np*ne);
+out_matrix = zeros(s+3, np*ne);
 
 
 for j = 1:np % for each problem list two columns
     for i = 1:ne % method output
         k = (j-1) * ne + i;
         % read in each result file
-        fn = strcat(pwd, '\result_folder', eim_methods{i},'_', test_problems{j}, '_hv.csv');
+        fn = strcat(pwd, '\result_folder\', eim_methods{i},'_', test_problems{j}, '_hv.csv');
         m = csvread(fn);
         
-        out_matrix(1:30, k) = m;
+        out_matrix(1:s, k) = m;
     end
 end
 
 for i=1: np*ne
     
-    out_matrix(31, i) = mean(out_matrix(1:30, i));
-    out_matrix(32, i) = std(out_matrix(1:30, i));
-    out_matrix(33, i) = median(out_matrix(1:30, i));
+    out_matrix(s+1, i) = mean(out_matrix(1:s, i));
+    out_matrix(s+2, i) = std(out_matrix(1:s, i));
+    out_matrix(s+3, i) = median(out_matrix(1:s, i));
+    % draw a graph?
+    col = out_matrix(1:s, i);
+    [~, I] = sort(col);
+    plot_index = I(round(s/2));
+
     
 end
 output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
@@ -50,7 +56,7 @@ end
 fprintf(fp, '\n');
 
 % format matrix
-for i = 1:30
+for i = 1:s
     fprintf(fp, '%d,', i);
     for j = 1: ne*np
         fprintf(fp, '%.4f,', out_matrix(i,j));
@@ -60,11 +66,32 @@ end
 
 % format statistics
 st={'mean', 'std', 'median'};
-for i = 31:33
-    fprintf(fp, '%s,', st{i-30});
+for i = s+1:s+3
+    fprintf(fp, '%s,', st{i-s});
     for j = 1: ne*np
         fprintf(fp, '%.4f,', out_matrix(i,j));
     end
     fprintf(fp, '\n');
 end
 fclose(fp);
+
+function plot_finalnd(seed, problem_i, test_problems, methods)
+np = length(test_problems);
+ne = length(eim_method);
+
+p =  round(problem_i/ne); % problem index
+e = mod(problem_i, ne); % method index
+
+problem = test_problems{p};
+method = methods{e};
+ 
+fn = strcat(pwd, '\result_folder\', method,'_', problem, '_hv.csv');
+m = csvread(fn);
+        
+
+
+
+
+
+
+end

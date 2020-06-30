@@ -74,7 +74,9 @@ end
 %record hv
 filename1=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_hv.csv' );
 filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_trainy.csv' );
+filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_trainc.csv' );
 csvwrite(filename1, hv_record'); % make sure column
-csvwrite(filename2, hv_record'); % for plot
+csvwrite(filename2, train_y); % for plot
+csvwrite(filename3, train_c); % for plot
 
 end
