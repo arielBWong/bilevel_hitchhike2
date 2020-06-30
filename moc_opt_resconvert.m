@@ -3,9 +3,9 @@
 % for 'ZDT1-3', 'DTLZ2/5/7'
 % for EIMnext and EIMnext_znorm comparison
 % run unit_test5_on_parfor to generate results first
-% this function output serve as a support for eim working properly on 
+% this function output serve as a support for eim working properly on
 % mo problems
-% 
+%
 % -------------------------------------------------------------------------
 %%
 clearvars;
@@ -39,7 +39,7 @@ for i=1: np*ne
     col = out_matrix(1:s, i);
     [~, I] = sort(col);
     plot_index = I(round(s/2));
-
+    
     
 end
 output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
@@ -47,7 +47,7 @@ output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
 % put header and index when write in file
 fp=fopen(output_path,'w');
 fprintf(fp, 'seed,');
-for i = 1:np  
+for i = 1:np
     header = strcat(test_problems{i},'_', eim_methods{1});
     fprintf(fp, '%s,', header);
     header = strcat(test_problems{i},'_', eim_methods{2});
@@ -84,14 +84,31 @@ e = mod(problem_i, ne); % method index
 
 problem = test_problems{p};
 method = methods{e};
- 
-fn = strcat(pwd, '\result_folder\', method,'_', problem, '_hv.csv');
-m = csvread(fn);
-        
 
+fn = strcat(pwd, '\result_folder\', method,'_', problem, '_trainy.csv');
+train_y = csvread(fn);
+fn = strcat(pwd, '\result_folder\', method,'_', problem, '_trainc.csv');
+train_c = csvread(fn);
+num_con = size(train_y, 2);
 
+index_c = sum(train_c <= 0, 2) == num_con;
+if sum(index_c) ~=0
+    feasible_y = train_y(index_c, :);
+    nd_index = Paretoset(feasible_y);
+    nd_front = feasible_y(nd_index, :);
+else
+nd_front = [];
+end
+    
+fig = figure(1);
+scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled');
+savename = strcat(pwd, '\result_folder\', method,'_', problem, '_median.jpeg');
+saveas(fig, savename);
 
+fig.savefig()
 
-
-
+    
+    
+    
+    
 end
