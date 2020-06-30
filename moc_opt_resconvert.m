@@ -38,8 +38,8 @@ for i=1: np*ne
     % draw a graph?
     col = out_matrix(1:s, i);
     [~, I] = sort(col);
-    plot_index = I(round(s/2));
-    plot_finalnd(plot_index, problem_i, test_problems, eim_methods)
+    plot_seed = I(round(s/2));
+    plot_finalnd(plot_seed, i, test_problems, eim_methods)
     
 end
 output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
@@ -85,9 +85,9 @@ e = mod(problem_i, ne); % method index
 problem = test_problems{p};
 method = methods{e};
 
-fn = strcat(pwd, '\result_folder\', method,'_', problem, '_trainy.csv');
+fn = strcat(pwd, '\result_folder\', method,'_', problem,'_', num2str(seed), '_trainy.csv');
 train_y = csvread(fn);
-fn = strcat(pwd, '\result_folder\', method,'_', problem, '_trainc.csv');
+fn = strcat(pwd, '\result_folder\', method,'_', problem,'_', num2str(seed), '_trainc.csv');
 train_c = csvread(fn);
 num_con = size(train_y, 2);
 
@@ -97,18 +97,18 @@ if sum(index_c) ~=0
     nd_index = Paretoset(feasible_y);
     nd_front = feasible_y(nd_index, :);
 else
-nd_front = [];
+    nd_front = [];
 end
-    
+
 fig = figure(1);
 scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled');
+title(sprintf('%s problem with %s, seed: %d',fun_name,ite, problem, seed));
 savename = strcat(pwd, '\result_folder\', method,'_', problem, '_median.jpeg');
 saveas(fig, savename);
 
-fig.savefig()
 
-    
-    
-    
-    
+
+
+
+
 end
