@@ -56,7 +56,7 @@ for seed = 1:30
 end
 
 %record hv
-filename=strcat(pwd, '\result_folder\', prob.name, '_cstill_hv.csv' );
+filename=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_hv.csv' );
 csvwrite(filename, hv_record');
 
 end
