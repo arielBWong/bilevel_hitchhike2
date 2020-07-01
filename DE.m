@@ -163,25 +163,25 @@ while ((iter < itermax) && (bestval > VTR))
     ind = randperm(4);
     % shuffle locations of vectors
     a1  = randperm(NP);
-    % csvwrite('a1.csv', a1)
+    %csvwrite('a1.csv', a1)
 
     % rotate indices by ind(1) positions
     rt = rem(rot+ind(1),NP);
     % rotate vector locations
     a2  = a1(rt+1);
-    % csvwrite('a2.csv', a2)
+    %csvwrite('a2.csv', a2)
     
     rt = rem(rot+ind(2),NP);
     a3  = a2(rt+1);
-    % csvwrite('a3.csv', a3)
+    %csvwrite('a3.csv', a3)
     
     rt = rem(rot+ind(3),NP);
     a4  = a3(rt+1);
-    % csvwrite('a4.csv', a4)
+    %csvwrite('a4.csv', a4)
     
     rt = rem(rot+ind(4),NP);
     a5  = a4(rt+1);
-    % csvwrite('a5.csv', a5)
+    %csvwrite('a5.csv', a5)
     
     % shuffled population 1
     pm1 = popold(a1,:);
@@ -199,7 +199,7 @@ while ((iter < itermax) && (bestval > VTR))
     end
     % all random numbers < CR are 1, 0 otherwise
     mui = rand(NP,D) < CR;
-    % csvwrite('mui.csv', mui)
+    %csvwrite('mui.csv', mui)
     % binomial crossover
     if (strategy > 5)
         st = strategy-5;
