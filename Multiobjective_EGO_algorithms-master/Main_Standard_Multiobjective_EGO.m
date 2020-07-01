@@ -1,3 +1,5 @@
+
+function mo_eim(fun_name)
 % 1. The multiobjective EGO algorithm using EIM(expected improvement
 %    matrix)-based criteria, which is significant cheaper-to-evaluate than the
 %    state-of-the-art multiobjective EI criteria. For detailed description
@@ -33,11 +35,11 @@
 clearvars;close all;
 tic
 hseed = [];
-for seed = 1: 1
+for seed = 1: 29
     rng(seed, 'twister');
     % settings of the problem
     % for ZDT test problems, the number of objectives should be 2
-    fun_name = 'ZDT1';
+    % fun_name = 'ZDT1';
     % number of objectives
     num_obj = 2;
     % number of design variables
@@ -134,14 +136,17 @@ for seed = 1: 1
         % print the hypervolume information
         fprintf(' iteration: %d, evaluation: %d, hypervolume: %f\n', iteration, evaluation, hypervolume(iteration +1));
     end
-
+    
     index = Paretoset(sample_y);
     non_dominated_front = sample_y(index,:);
     h = Hypervolume(non_dominated_front,ref_point);
     hseed(end+1)=h;
     fprintf('record hv %f', h);
+    
+    
 end
-disp(hseed);
-fprintf('mean %.6f', mean(hseed));
-fprintf('median %.6f', median(hseed));
+eim_process_name = 'paperdemo';
+filename1=strcat(pwd, '\result_folder\',eim_process_name,'_', fun_name, '_hv.csv' );
+csvwrite(filename1, hseed'); % make sure column
 toc
+end

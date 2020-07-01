@@ -85,11 +85,11 @@ for seed = 1:11
     fprintf('hv redord %.6f', h);
     
     
-    filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
-    filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
-    csvwrite(filename2, train_y); % for plot
-    csvwrite(filename3, train_c); % for plot
-    
+%     filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
+%     filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
+%     csvwrite(filename2, train_y); % for plot
+%     csvwrite(filename3, train_c); % for plot
+%     
     
 end
 %record hv

@@ -14,7 +14,7 @@ addpath(problem_folder3);
 
 %problems = { 'SRN()','BNH()', 'Welded_Beam()'}; % 'TNK()'};
 eim_methods = {'EIMnext'; 'EIMnext_znorm' };
-test_problems = {'ZDT1()','ZDT2()','ZDT3()','DTLZ2()','DTLZ5()','DTLZ7()'};
+test_problems = {'ZDT1()','ZDT2()','ZDT3()'}; %,'DTLZ2()','DTLZ5()','DTLZ7()'};
 np = length(test_problems);
 ne = length(eim_methods);
 
@@ -25,15 +25,13 @@ for i=1:np
         paras{end+1}={test_problems{i}, eim_methods{j}};
     end
 end
-i = 1;
-moc_opt('EIMnext_znorm','ZDT2()');
+%i = 1;
+%moc_opt('EIMnext_znorm','ZDT2()');
 
-% npara = length(paras);
-% parfor i = 1:npara
-%     moc_opt(paras{i}{2}, paras{i}{1});
-% end
-
-
+npara = length(paras);
+parfor i = 1:npara
+     moc_opt(paras{i}{2}, paras{i}{1});
+end
 rmpath(problem_folder1);
 rmpath(problem_folder2);
 rmpath(problem_folder3);
