@@ -1,4 +1,4 @@
-function moc_opt(eim_process_name, prob)
+function moc_opt(eim_process_name, prob, me)
 % (1) intialize training data
 % (2) start loop
 %   (2-1) call EIMnext to generate next x  point
@@ -18,6 +18,10 @@ else
     maxeval = 100;
 end
 
+if nargin>2
+    maxeval = 50;
+end
+
 hv_record = zeros(1, 10);
 eim_function = str2func(eim_process_name);
 
@@ -25,7 +29,7 @@ eim_function = str2func(eim_process_name);
 pareto_front = readtable('zdt3front.txt' );
 pareto_front = pareto_front{:,:};
 
-for seed = 1:29
+for seed = 1:1
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;
@@ -46,7 +50,7 @@ for seed = 1:29
     
     maxiter = maxeval - num_samples;
     for iter=1:maxiter
-     
+        
         [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 50, 200, train_c);
         
         [newy, newc] =  prob.evaluate(newx);
@@ -85,11 +89,11 @@ for seed = 1:29
     fprintf('hv redord %.6f', h);
     
     
-%     filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
-%     filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
-%     csvwrite(filename2, train_y); % for plot
-%     csvwrite(filename3, train_c); % for plot
-%     
+    %     filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
+    %     filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
+    %     csvwrite(filename2, train_y); % for plot
+    %     csvwrite(filename3, train_c); % for plot
+    %
     
 end
 %record hv

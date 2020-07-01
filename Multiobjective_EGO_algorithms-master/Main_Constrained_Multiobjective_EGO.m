@@ -1,3 +1,5 @@
+
+function Main_Constrained_Multiobjective_EGO(fun_name)
 % -----------------------------------------------------------------------------------------
 % 1. The constrained multiobjective EGO algorithm using CEIM (constrained
 %    expected improvement matrix) criteria. For detailed description
@@ -27,14 +29,14 @@
 % zhandawei@swjtu{dot}edu{dot}cn
 % 2018.12.13 initial creation
 % -----------------------------------------------------------------------------------------
-clearvars;close all;
+% clearvars;close all;
 num_seeds = 1 ;
 hvs = zeros(num_seeds, 1);
 for seed = 1:num_seeds
     rng(seed, 'twister');
     % settings of the problem
     %  'SRN', 'TNK', 'BNH', 'Welded_Beam'
-    fun_name ='Welded_Beam';
+    % fun_name ='Welded_Beam';
     % infill criterion: 'CEIM_Euclidean','CEIM_Maximin','CEIM_Hypervolume'
     infill_name= 'CEIM_Hypervolume';
     % number of initial design points
@@ -153,7 +155,12 @@ for seed = 1:num_seeds
     end
     hvs(seed) = hypervolume(end);
 end
-m = median(hvs)
+
+eim_process_name = 'paperdemo';
+filename1=strcat(pwd, '\result_folder\',eim_process_name,'_', fun_name, '_hv.csv' );
+csvwrite(filename1, hvs'); % make sure column
+
+end
 
 
 
