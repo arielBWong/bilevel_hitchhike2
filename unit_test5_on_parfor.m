@@ -13,7 +13,7 @@ addpath(problem_folder3);
 
 
 %problems = { 'SRN()','BNH()', 'Welded_Beam()'}; % 'TNK()'};
-eim_methods = {'EIMnext'}; %, 'EIMnext_znorm' };
+eim_methods = {'EIMnext'; 'EIMnext_znorm' };
 test_problems = {'ZDT1()','ZDT2()','ZDT3()','DTLZ2()','DTLZ5()','DTLZ7()'};
 np = length(test_problems);
 ne = length(eim_methods);

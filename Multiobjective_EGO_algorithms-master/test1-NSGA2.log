@@ -1,0 +1,601 @@
+Starting NSGA-II
+Generation 1
+	Objectives: [ 94.0305 ]
+	Constraints: [ 2.29908 ]
+	Feasible: 68
+	Function Evals: 100
+	Design:   1.41034571   1.29057510  -0.23116335  -3.27044493
+Generation 2
+	Objectives: [ -858.69 ]
+	Constraints: [ 12.7421 ]
+	Feasible: 100
+	Function Evals: 200
+	Design:  -9.82414684   2.08200318   6.85465046   9.48766081
+Generation 3
+	Objectives: [ -964.587 ]
+	Constraints: [ 14.1376 ]
+	Feasible: 100
+	Function Evals: 300
+	Design:  -9.77830112   0.64071738  -8.40366757   9.62266023
+Generation 4
+	Objectives: [ -964.587 ]
+	Constraints: [ 14.1376 ]
+	Feasible: 100
+	Function Evals: 400
+	Design:  -9.77830112   0.64071738  -8.40366757   9.62266023
+Generation 5
+	Objectives: [ -964.587 ]
+	Constraints: [ 14.1376 ]
+	Feasible: 100
+	Function Evals: 500
+	Design:  -9.77830112   0.64071738  -8.40366757   9.62266023
+Generation 6
+	Objectives: [ -976.085 ]
+	Constraints: [ 14.4069 ]
+	Feasible: 100
+	Function Evals: 600
+	Design:  -9.82459646   0.41772860  -8.31207789   9.88218527
+Generation 7
+	Objectives: [ -979.178 ]
+	Constraints: [ 14.0277 ]
+	Feasible: 100
+	Function Evals: 700
+	Design:  -9.82970751   0.80196187  -8.40366757   8.66596917
+Generation 8
+	Objectives: [ -1009.69 ]
+	Constraints: [ 12.9065 ]
+	Feasible: 100
+	Function Evals: 800
+	Design:  -9.98610576   2.07964906  -7.87084775   8.24362337
+Generation 9
+	Objectives: [ -1028.55 ]
+	Constraints: [ 14.3557 ]
+	Feasible: 100
+	Function Evals: 900
+	Design:  -9.99639119   0.64071738  -8.40366757   9.75643843
+Generation 10
+	Objectives: [ -1030.98 ]
+	Constraints: [ 12.9076 ]
+	Feasible: 100
+	Function Evals: 1000
+	Design:  -9.97150038   2.06394155  -8.99038741   9.87402986
+Generation 11
+	Objectives: [ -1050.97 ]
+	Constraints: [ 14.1099 ]
+	Feasible: 100
+	Function Evals: 1100
+	Design:  -9.98491197   0.87497409  -9.50013554  -6.19174864
+Generation 12
+	Objectives: [ -1051.46 ]
+	Constraints: [ 14.9932 ]
+	Feasible: 100
+	Function Evals: 1200
+	Design:  -9.98533125  -0.00786938  -9.48399516   9.07456809
+Generation 13
+	Objectives: [ -1053.21 ]
+	Constraints: [ 14.9759 ]
+	Feasible: 100
+	Function Evals: 1300
+	Design:  -9.99498550   0.01913015  -9.43827130   9.87542841
+Generation 14
+	Objectives: [ -1056.63 ]
+	Constraints: [ 14.3573 ]
+	Feasible: 100
+	Function Evals: 1400
+	Design:  -9.99797115   0.64071738  -9.55592848   5.24874236
+Generation 15
+	Objectives: [ -1059.57 ]
+	Constraints: [ 13.5825 ]
+	Feasible: 100
+	Function Evals: 1500
+	Design:  -9.99480105   1.41226555  -9.77180521   9.48057670
+Generation 16
+	Objectives: [ -1065.56 ]
+	Constraints: [ 14.9683 ]
+	Feasible: 100
+	Function Evals: 1600
+	Design:  -9.99421230   0.02592523  -9.93424872   9.77426164
+Generation 17
+	Objectives: [ -1065.56 ]
+	Constraints: [ 14.9683 ]
+	Feasible: 100
+	Function Evals: 1700
+	Design:  -9.99421230   0.02592523  -9.93424872   9.77426164
+Generation 18
+	Objectives: [ -1066.71 ]
+	Constraints: [ 14.2281 ]
+	Feasible: 100
+	Function Evals: 1800
+	Design:  -9.99549013   0.76741236  -9.98642573   8.74822350
+Generation 19
+	Objectives: [ -1067.46 ]
+	Constraints: [ 14.964 ]
+	Feasible: 100
+	Function Evals: 1900
+	Design:  -9.99995871   0.03597493  -9.94107008   9.72275718
+Generation 20
+	Objectives: [ -1067.79 ]
+	Constraints: [ 15.3457 ]
+	Feasible: 100
+	Function Evals: 2000
+	Design:  -9.99717233  -0.34854196  -9.99063517   9.50231159
+Generation 21
+	Objectives: [ -1068.44 ]
+	Constraints: [ 14.964 ]
+	Feasible: 100
+	Function Evals: 2100
+	Design:  -9.99995871   0.03597493  -9.97882567   9.72409313
+Generation 22
+	Objectives: [ -1068.44 ]
+	Constraints: [ 14.964 ]
+	Feasible: 100
+	Function Evals: 2200
+	Design:  -9.99995871   0.03597493  -9.97882567   9.72409313
+Generation 23
+	Objectives: [ -1068.73 ]
+	Constraints: [ 14.7356 ]
+	Feasible: 100
+	Function Evals: 2300
+	Design:  -9.99957079   0.26399989  -9.99727129   9.78806138
+Generation 24
+	Objectives: [ -1068.9 ]
+	Constraints: [ 14.7316 ]
+	Feasible: 100
+	Function Evals: 2400
+	Design:  -9.99999398   0.26836646  -9.99912031   9.32192692
+Generation 25
+	Objectives: [ -1068.95 ]
+	Constraints: [ 14.9365 ]
+	Feasible: 100
+	Function Evals: 2500
+	Design:  -9.99987325   0.06341517  -9.99976838   9.88069190
+Generation 26
+	Objectives: [ -1068.98 ]
+	Constraints: [ 14.9739 ]
+	Feasible: 100
+	Function Evals: 2600
+	Design:  -9.99996424   0.02603336  -9.99980047   9.52474979
+Generation 27
+	Objectives: [ -1068.98 ]
+	Constraints: [ 14.9739 ]
+	Feasible: 100
+	Function Evals: 2700
+	Design:  -9.99996424   0.02603336  -9.99980047   9.52474979
+Generation 28
+	Objectives: [ -1068.99 ]
+	Constraints: [ 14.9616 ]
+	Feasible: 100
+	Function Evals: 2800
+	Design:  -9.99999326   0.03835450  -9.99980727   9.79102044
+Generation 29
+	Objectives: [ -1068.99 ]
+	Constraints: [ 14.9734 ]
+	Feasible: 100
+	Function Evals: 2900
+	Design:  -9.99999187   0.02655843  -9.99988140   9.36958973
+Generation 30
+	Objectives: [ -1068.99 ]
+	Constraints: [ 14.9734 ]
+	Feasible: 100
+	Function Evals: 3000
+	Design:  -9.99999187   0.02655843  -9.99988140   9.36958973
+Generation 31
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9616 ]
+	Feasible: 100
+	Function Evals: 3100
+	Design:  -9.99999336   0.03835450  -9.99997524   9.79102044
+Generation 32
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9853 ]
+	Feasible: 100
+	Function Evals: 3200
+	Design:  -9.99999952   0.01470879  -9.99989227   9.36986834
+Generation 33
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9738 ]
+	Feasible: 100
+	Function Evals: 3300
+	Design:  -9.99999904   0.02621389  -9.99996813   9.71745800
+Generation 34
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9738 ]
+	Feasible: 100
+	Function Evals: 3400
+	Design:  -9.99999904   0.02621389  -9.99996813   9.71745800
+Generation 35
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9858 ]
+	Feasible: 100
+	Function Evals: 3500
+	Design:  -9.99999904   0.01423889  -9.99997435   9.73362926
+Generation 36
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9854 ]
+	Feasible: 100
+	Function Evals: 3600
+	Design:  -9.99999999   0.01459566  -9.99997663   9.86003221
+Generation 37
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 3700
+	Design:  -9.99999999   0.01342770  -9.99997663   9.86003221
+Generation 38
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9858 ]
+	Feasible: 100
+	Function Evals: 3800
+	Design:  -9.99999904   0.01423889  -9.99999760   9.79012780
+Generation 39
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9852 ]
+	Feasible: 100
+	Function Evals: 3900
+	Design:  -9.99999977   0.01475234  -9.99999750   9.30832160
+Generation 40
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9855 ]
+	Feasible: 100
+	Function Evals: 4000
+	Design:  -9.99999958   0.01450445  -9.99999997   9.78595978
+Generation 41
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 4100
+	Design:  -9.99999999   0.01341743  -9.99999957   9.74783993
+Generation 42
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 4200
+	Design:  -9.99999999   0.01341743  -9.99999957   9.74783993
+Generation 43
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 4300
+	Design:  -9.99999999   0.01341743  -9.99999961   9.74783993
+Generation 44
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9865 ]
+	Feasible: 100
+	Function Evals: 4400
+	Design:  -9.99999999   0.01348282  -9.99999990   7.34696771
+Generation 45
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9865 ]
+	Feasible: 100
+	Function Evals: 4500
+	Design: -10.00000000   0.01351533  -9.99999990   8.03436202
+Generation 46
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 4600
+	Design:  -9.99999999   0.01341227  -9.99999993   7.34696771
+Generation 47
+	Objectives: [ -1069 ]
+	Constraints: [ 14.9866 ]
+	Feasible: 100
+	Function Evals: 4700
+	Design: -10.00000000   0.01341623  -9.99999990   9.70303143
+Generation 48
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0033 ]
+	Feasible: 100
+	Function Evals: 4800
+	Design:  -9.99999999  -0.00327211  -9.99999957   9.74783993
+Generation 49
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0033 ]
+	Feasible: 100
+	Function Evals: 4900
+	Design:  -9.99999999  -0.00327211  -9.99999957   9.74783993
+Generation 50
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0026 ]
+	Feasible: 100
+	Function Evals: 5000
+	Design:  -9.99999999  -0.00258741  -9.99999957   9.74783993
+Generation 51
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0033 ]
+	Feasible: 100
+	Function Evals: 5100
+	Design:  -9.99999999  -0.00329374  -9.99999996   7.31126687
+Generation 52
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0027 ]
+	Feasible: 100
+	Function Evals: 5200
+	Design: -10.00000000  -0.00268560  -9.99999999   8.12273636
+Generation 53
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0027 ]
+	Feasible: 100
+	Function Evals: 5300
+	Design: -10.00000000  -0.00268560  -9.99999999   8.12273636
+Generation 54
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0027 ]
+	Feasible: 100
+	Function Evals: 5400
+	Design: -10.00000000  -0.00268560  -9.99999999   8.12273636
+Generation 55
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0026 ]
+	Feasible: 100
+	Function Evals: 5500
+	Design: -10.00000000  -0.00258929  -9.99999999   9.85676121
+Generation 56
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0026 ]
+	Feasible: 100
+	Function Evals: 5600
+	Design: -10.00000000  -0.00258504  -9.99999999   9.71404443
+Generation 57
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 5700
+	Design: -10.00000000  -0.00242784  -9.99999999   8.28546189
+Generation 58
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 5800
+	Design: -10.00000000  -0.00242784  -9.99999999   8.28546189
+Generation 59
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 5900
+	Design: -10.00000000  -0.00242784  -9.99999999   8.15448854
+Generation 60
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6000
+	Design: -10.00000000  -0.00243374  -9.99999999   8.23942136
+Generation 61
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6100
+	Design: -10.00000000  -0.00240956  -9.99999999   8.23942136
+Generation 62
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6200
+	Design: -10.00000000  -0.00243047 -10.00000000   7.61101086
+Generation 63
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6300
+	Design: -10.00000000  -0.00242191 -10.00000000   8.13233416
+Generation 64
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6400
+	Design: -10.00000000  -0.00242191 -10.00000000   8.13233416
+Generation 65
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6500
+	Design: -10.00000000  -0.00242423 -10.00000000   9.76882352
+Generation 66
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6600
+	Design: -10.00000000  -0.00241058 -10.00000000   9.02518459
+Generation 67
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6700
+	Design: -10.00000000  -0.00241058 -10.00000000   9.02518459
+Generation 68
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6800
+	Design: -10.00000000  -0.00240980 -10.00000000   8.54878959
+Generation 69
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 6900
+	Design: -10.00000000  -0.00241058 -10.00000000   9.02518459
+Generation 70
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7000
+	Design: -10.00000000  -0.00241058 -10.00000000   9.02518459
+Generation 71
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7100
+	Design: -10.00000000  -0.00241058 -10.00000000   8.10480724
+Generation 72
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7200
+	Design: -10.00000000  -0.00241058 -10.00000000   8.10480724
+Generation 73
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7300
+	Design: -10.00000000  -0.00240980 -10.00000000   8.54878959
+Generation 74
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7400
+	Design: -10.00000000  -0.00240980 -10.00000000   8.54878959
+Generation 75
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7500
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 76
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7600
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 77
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7700
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 78
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7800
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 79
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 7900
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 80
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8000
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 81
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8100
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 82
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8200
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 83
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8300
+	Design: -10.00000000  -0.00240979 -10.00000000   8.42826471
+Generation 84
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8400
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 85
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8500
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 86
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8600
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 87
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8700
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 88
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8800
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 89
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 8900
+	Design: -10.00000000  -0.00240979 -10.00000000   8.44106821
+Generation 90
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9000
+	Design: -10.00000000  -0.00240979 -10.00000000   8.48361904
+Generation 91
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9100
+	Design: -10.00000000  -0.00240979 -10.00000000   8.48361904
+Generation 92
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9200
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69606163
+Generation 93
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9300
+	Design: -10.00000000  -0.00240979 -10.00000000   7.58198087
+Generation 94
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9400
+	Design: -10.00000000  -0.00240979 -10.00000000   7.58198087
+Generation 95
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9500
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
+Generation 96
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9600
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
+Generation 97
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9700
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
+Generation 98
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9800
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
+Generation 99
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 9900
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
+Generation 100
+	Objectives: [ -1069 ]
+	Constraints: [ 15.0024 ]
+	Feasible: 100
+	Function Evals: 10000
+	Design: -10.00000000  -0.00240979 -10.00000000   5.69878022
