@@ -1,5 +1,5 @@
 
-function mo_eim(fun_name)
+function Main_Standard_Multiobjective_EGO(fun_name)
 % 1. The multiobjective EGO algorithm using EIM(expected improvement
 %    matrix)-based criteria, which is significant cheaper-to-evaluate than the
 %    state-of-the-art multiobjective EI criteria. For detailed description
@@ -32,7 +32,7 @@ function mo_eim(fun_name)
 % 2018.09.18 update
 % 2018.11.28  use DE optimizer for finding EIM maximum
 % -----------------------------------------------------------------------------------------
-clearvars;close all;
+% clearvars;close all;
 tic
 hseed = [];
 for seed = 1: 29
@@ -80,8 +80,8 @@ for seed = 1: 29
     pareto_front = readtable('zdt3front.txt' );
     pareto_front = pareto_front{:,:};
     if num_obj == 2
-        scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled'); hold on;
-        scatter(pareto_front(:,1), pareto_front(:,2),'bo', 'filled');title(sprintf('iteration: %d, evaluations: %d',0,evaluation));drawnow;
+        % scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled'); hold on;
+        % scatter(pareto_front(:,1), pareto_front(:,2),'bo', 'filled');title(sprintf('iteration: %d, evaluations: %d',0,evaluation));drawnow;
     elseif num_obj == 3
         scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');
         title(sprintf('iteration: %d, evaluations: %d',0,evaluation));drawnow;
@@ -92,9 +92,6 @@ for seed = 1: 29
     % beginning of the iteration
     while evaluation < max_evaluation
         % build the initial kriging model for each objective
-        if iteration == 5
-            % a = 0;
-        end
         for ii=1:num_obj
             kriging_obj{ii} = dacefit(sample_x,sample_y_scaled(:,ii),'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
         end
@@ -141,7 +138,7 @@ for seed = 1: 29
     non_dominated_front = sample_y(index,:);
     h = Hypervolume(non_dominated_front,ref_point);
     hseed(end+1)=h;
-    fprintf('record hv %f', h);
+    % fprintf('record hv %f', h);
     
     
 end

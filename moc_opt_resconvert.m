@@ -1,6 +1,6 @@
 % function moc_opt_resconvert()
 % this function create collective results and mean std median
-% for 'ZDT1-3', 'DTLZ2/5/7'
+% for 'ZDT1-3'
 % for EIMnext and EIMnext_znorm comparison
 % run unit_test5_on_parfor to generate results first
 % this function output serve as a support for eim working properly on
@@ -54,8 +54,10 @@ fprintf(fp, 'seed,');
 for i = 1:np
     header = strcat(test_problems{i},'_', eim_methods{1});
     fprintf(fp, '%s,', header);
-    % header = strcat(test_problems{i},'_', eim_methods{2});
-    % fprintf(fp, '%s,', header);
+    header = strcat(test_problems{i},'_', eim_methods{2});
+    fprintf(fp, '%s,', header);
+    header = strcat(test_problems{i},'_', eim_methods{3});
+    fprintf(fp, '%s,', header);
 end
 fprintf(fp, '\n');
 
