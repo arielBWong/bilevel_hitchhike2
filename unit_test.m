@@ -24,7 +24,7 @@ test_y = testproblem1(test_x');
 figure(1);
 for iter=1:5
     
-    [newx, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, 20, 50);
+    [newx, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, 20, 50, []);
     newy = testproblem1(newx);
     train_x = [train_x; newx];
     train_y = [train_y; newy];

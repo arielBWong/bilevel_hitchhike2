@@ -26,7 +26,7 @@ for i=1:np
     end
 end
 i = 1;
-moc_opt('EIMnext','ZDT3()');
+moc_opt('EIMnext_znorm','ZDT2()');
 
 % npara = length(paras);
 % parfor i = 1:npara

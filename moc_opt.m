@@ -25,7 +25,7 @@ eim_function = str2func(eim_process_name);
 pareto_front = readtable('zdt3front.txt' );
 pareto_front = pareto_front{:,:};
 
-for seed = 1:10
+for seed = 1:11
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;
@@ -42,17 +42,15 @@ for seed = 1:10
     train_x = repmat(xl_bound, num_samples, 1) + repmat((xu_bound - xl_bound), num_samples, 1) .* train_x;
     % [train_y, train_c] = feval(fun_name, train_x);
     [train_y, train_c] = prob.evaluate(train_x);
-    figure(1)
+    % figure(1)
     
     maxiter = maxeval - num_samples;
     for iter=1:maxiter
-
-        
-        
+     
         [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 50, 200, train_c);
         
         [newy, newc] =  prob.evaluate(newx);
-      
+        
         train_x = [train_x; newx];
         train_y = [train_y; newy];
         train_c = [train_c; newc];
@@ -71,10 +69,10 @@ for seed = 1:10
         else  % unconstraint problems
             nd_index = Paretoset(train_y);
             nd_front = train_y(nd_index, :);
-%             clf('reset');
-%             scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on;
-%             scatter(pareto_front(:,1), pareto_front(:,2),'bo', 'filled');
-%             drawnow;
+            %             clf('reset');
+            %             scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on;
+            %             scatter(pareto_front(:,1), pareto_front(:,2),'bo', 'filled');
+            %             drawnow;
             h = Hypervolume(nd_front,ref_point);
             fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
         end
@@ -83,10 +81,10 @@ for seed = 1:10
     nd_front = train_y(nd_index, :);
     h = Hypervolume(nd_front,ref_point);
     hv_record(seed) = h;
-
+    
     fprintf('hv redord %.6f', h);
     
-
+    
     filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
     filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
     csvwrite(filename2, train_y); % for plot

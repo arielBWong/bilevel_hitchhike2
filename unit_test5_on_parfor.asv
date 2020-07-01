@@ -1,10 +1,11 @@
 %% partest
 
-
+clearvars;
+close all;
 workdir = pwd;
 problem_folder1 = strcat(pwd,'\problems\EGproblems');
 problem_folder2 = strcat(pwd,'\problems\ZDT');
-problem_folder3 = strcat(pwd,'\problems\DTLZ');
+problem_folder3 = strcat(pwd,'\problems\DLTZ');
 
 addpath(problem_folder1);
 addpath(problem_folder2);
@@ -12,7 +13,7 @@ addpath(problem_folder3);
 
 
 %problems = { 'SRN()','BNH()', 'Welded_Beam()'}; % 'TNK()'};
-eim_methods = {'EIMnext_znorm' ,'EIMnext'};
+eim_methods = {'EIMnext'}; %, 'EIMnext_znorm' };
 test_problems = {'ZDT1()','ZDT2()','ZDT3()','DTLZ2()','DTLZ5()','DTLZ7()'};
 np = length(test_problems);
 ne = length(eim_methods);
@@ -25,8 +26,8 @@ for i=1:np
     end
 end
 i = 1;
-moc_opt(paras{i}{2}, paras{i}{1});
-% 
+moc_opt('EIMnext_znorm','ZDT2()');
+
 % npara = length(paras);
 % parfor i = 1:npara
 %     moc_opt(paras{i}{2}, paras{i}{1});

@@ -35,7 +35,7 @@ classdef ZDT1
            
             % function only for test, incomplete implementation
             y(:,1)=x(:,1);
-            g=1+(9/(size(x,2)-1))*sum(x(:,2:end),2);
+            g = 1 + (9/(size(x,2)-1))*sum(x(:,2:end),2);
             h=1-(y(:,1)./g).^0.5;
             y(:,2)=g.*h;
             
