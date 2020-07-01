@@ -80,7 +80,7 @@ if ~isempty(train_c)
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
 
-    [train_c_norm, c_mean, c_std] = zscore(train_c, 1, 1);
+    % [train_c_norm, c_mean, c_std] = zscore(train_c, 1, 1);
     % version did not scale train_c
     train_c_norm = train_c;
     c_mean = NaN;
