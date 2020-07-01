@@ -78,7 +78,8 @@ else
 end
 
 % compatibility with constraint problems
-if nargin>6
+% if nargin>6
+if ~isempty(train_c)
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
     % [train_c_norm, c_mean, c_std] = zscore(train_c, 0, 1);
@@ -121,9 +122,9 @@ info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
 
-if nargin>6
-    info.train_cmean = c_mean;
-    info.train_cstd = c_std;
+if ~isempty(train_c)
+    info.train_cmean = NaN;
+    info.train_cstd = NaN;
 end
 
 end

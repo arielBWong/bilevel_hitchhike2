@@ -5,10 +5,12 @@ function moc_opt(eim_process_name, prob)
 %   (2-2) combine new x into training data
 
 
-fprintf('%s', eim_process_name);
-fprintf('%s', prob);
+
 
 prob = eval(prob);
+fprintf('%s', eim_process_name);
+fprintf('%s', prob.name);
+
 % number of iteration setting
 if prob.n_obj>2
     maxeval = 200;
@@ -19,7 +21,7 @@ end
 hv_record = zeros(1, 30);
 eim_function = str2func(eim_process_name);
 
-for seed = 1:29
+for seed = 1:1
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;
@@ -36,11 +38,11 @@ for seed = 1:29
     train_x = repmat(xl_bound, num_samples, 1) + repmat((xu_bound - xl_bound), num_samples, 1) .* train_x;
     % [train_y, train_c] = feval(fun_name, train_x);
     [train_y, train_c] = prob.evaluate(train_x);
-    % figure(1)
+    figure(1)
     
     maxiter = maxeval - num_samples;
     for iter=1:maxiter
-        if ~isempty(train_c)
+        if ~isempty(train_c) % constraint problems
             index_c = sum(train_c <= 0, 2) == num_con;
             if sum(index_c) ~=0
                 feasible_y = train_y(index_c, :);
@@ -50,15 +52,15 @@ for seed = 1:29
                 h = Hypervolume(nd_front,ref_point);
                 fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
             end
-        else
+        else  % unconstraint problems
             nd_index = Paretoset(train_y);
             nd_front = train_y(nd_index, :);
-            % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+            f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
             h = Hypervolume(nd_front,ref_point);
             fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
         end
         
-        [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 20, 50, train_c);
+        [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 50, 200, train_c);
         
         [newy, newc] =  prob.evaluate(newx);
         train_x = [train_x; newx];
@@ -69,8 +71,8 @@ for seed = 1:29
     end
     
     hv_record(seed) = h;
-    filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',str(seed), '_trainy.csv' );
-    filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',str(seed), '_trainc.csv' );
+    filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
+    filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
     csvwrite(filename2, train_y); % for plot
     csvwrite(filename3, train_c); % for plot
     

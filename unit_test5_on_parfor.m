@@ -25,13 +25,13 @@ for i=1:np
         paras{end+1}={test_problems{i}, eim_methods{j}};
     end
 end
-% i = 1;
-% moc_opt(paras{i}{2}, paras{i}{1});
+i = 1;
+moc_opt('EIMnext','ZDT3()');
 
-npara = length(paras);
-parfor i = 1:npara
-    moc_opt(paras{i}{2}, paras{i}{1});
-end
+% npara = length(paras);
+% parfor i = 1:npara
+%     moc_opt(paras{i}{2}, paras{i}{1});
+% end
 
 
 rmpath(problem_folder1);

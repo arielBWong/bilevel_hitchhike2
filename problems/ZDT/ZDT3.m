@@ -26,7 +26,7 @@ classdef ZDT3
                 obj.xu = ones(1, obj.n_var);
                 obj.n_con = 0;
                 obj.n_obj = 2;
-                obj.ref = ones(1, obj.n_obj) * 11;
+                obj.ref = ones(1, obj.n_obj) * 1.1;
                 obj.name = 'ZDT3';
             end
         end
