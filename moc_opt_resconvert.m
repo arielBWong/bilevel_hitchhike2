@@ -40,7 +40,10 @@ for i=1: np*ne
     [~, I] = sort(col);
     plot_index = I(round(s/2));
     plot_finalnd(plot_index, i, test_problems, eim_methods)
-    
+
+    plot_seed = I(round(s/2));
+    plot_finalnd(plot_seed, i, test_problems, eim_methods)
+
 end
 output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
 
@@ -85,6 +88,7 @@ ne = length(methods);
 problem = test_problems{problem_i};
 method = methods{1};
 
+
 fn = strcat(pwd, '\result_folder\', method,'_', problem, '_',num2str(seed),'_trainy.csv');
 train_y = csvread(fn);
 % fn = strcat(pwd, '\result_folder\', method,'_', problem, '_',num2str(seed), '_trainc.csv');
@@ -104,15 +108,32 @@ num_con = size(train_y, 2);
 nd_index = Paretoset(train_y);
 nd_front = train_y(nd_index, :);
     
+
+fn = strcat(pwd, '\result_folder\', method,'_', problem,'_', num2str(seed), '_trainy.csv');
+train_y = csvread(fn);
+fn = strcat(pwd, '\result_folder\', method,'_', problem,'_', num2str(seed), '_trainc.csv');
+train_c = csvread(fn);
+num_con = size(train_y, 2);
+
+index_c = sum(train_c <= 0, 2) == num_con;
+if sum(index_c) ~=0
+    feasible_y = train_y(index_c, :);
+    nd_index = Paretoset(feasible_y);
+    nd_front = feasible_y(nd_index, :);
+else
+    nd_front = [];
+end
+
 fig = figure(1);
 scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled');
+title(sprintf('%s problem with %s, seed: %d',fun_name,ite, problem, seed));
 savename = strcat(pwd, '\result_folder\', method,'_', problem, '_median.jpeg');
 saveas(fig, savename);
-
 close(fig);
 
-    
-    
-    
-    
+
+
+
+
+
 end

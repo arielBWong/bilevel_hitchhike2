@@ -83,8 +83,10 @@ for seed = 1:10
     nd_front = train_y(nd_index, :);
     h = Hypervolume(nd_front,ref_point);
     hv_record(seed) = h;
+
     fprintf('hv redord %.6f', h);
     
+
     filename2=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainy.csv' );
     filename3=strcat(pwd, '\result_folder\',eim_process_name,'_', prob.name, '_',num2str(seed), '_trainc.csv' );
     csvwrite(filename2, train_y); % for plot
