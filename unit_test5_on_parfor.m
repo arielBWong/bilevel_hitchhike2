@@ -3,6 +3,7 @@
 clearvars;
 close all;
 workdir = pwd;
+%-------------------my code unit test--------------
 problem_folder1 = strcat(pwd,'\problems\EGproblems');
 problem_folder2 = strcat(pwd,'\problems\ZDT');
 problem_folder3 = strcat(pwd,'\problems\DLTZ');
@@ -30,8 +31,19 @@ end
 
 npara = length(paras);
 parfor i = 1:npara
-     moc_opt(paras{i}{2}, paras{i}{1});
+    moc_opt(paras{i}{2}, paras{i}{1});
 end
 rmpath(problem_folder1);
 rmpath(problem_folder2);
 rmpath(problem_folder3);
+%-------------------my code unit test--------------
+
+%------------where to start running paper demo
+workdir = pwd;
+problem_folder1 = strcat(pwd,'\Multiobjective_EGO_algorithms-master');
+for i = 1:np
+    fun_name = test_problems{i}(1:end-2);
+    mo_eim(fun_name);
+    
+end
+rmpath(problem_folder1);

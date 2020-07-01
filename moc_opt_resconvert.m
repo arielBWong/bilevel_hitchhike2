@@ -10,8 +10,8 @@
 %%
 clearvars;
 close all;
-eim_methods = {'EIMnext'}; %'EIMnext_znorm' ,
-test_problems = {'ZDT1','ZDT2','ZDT3','DTLZ2','DTLZ5','DTLZ7'};
+eim_methods = {'EIMnext', 'EIMnext_znorm', 'paperdemo'};
+test_problems = {'ZDT1','ZDT2','ZDT3'}; %,'DTLZ2','DTLZ5','DTLZ7'};
 
 s = 29;
 np = length(test_problems);
@@ -35,14 +35,15 @@ for i=1: np*ne
     out_matrix(s+1, i) = mean(out_matrix(1:s, i));
     out_matrix(s+2, i) = std(out_matrix(1:s, i));
     out_matrix(s+3, i) = median(out_matrix(1:s, i));
-    % draw a graph?
-    col = out_matrix(1:s, i);
-    [~, I] = sort(col);
-    plot_index = I(round(s/2));
-    plot_finalnd(plot_index, i, test_problems, eim_methods)
-
-    plot_seed = I(round(s/2));
-    plot_finalnd(plot_seed, i, test_problems, eim_methods)
+% no more drawing
+%     % draw a graph?
+%     col = out_matrix(1:s, i);
+%     [~, I] = sort(col);
+%     plot_index = I(round(s/2));
+%     plot_finalnd(plot_index, i, test_problems, eim_methods)
+% 
+%     plot_seed = I(round(s/2));
+%     plot_finalnd(plot_seed, i, test_problems, eim_methods)
 
 end
 output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
@@ -78,6 +79,9 @@ for i = s+1:s+3
 end
 fclose(fp);
 
+
+%--------------------------------------
+% not using the following function
 function plot_finalnd(seed, problem_i, test_problems, methods)
 np = length(test_problems);
 ne = length(methods);
@@ -130,10 +134,5 @@ title(sprintf('%s problem with %s, seed: %d',fun_name,ite, problem, seed));
 savename = strcat(pwd, '\result_folder\', method,'_', problem, '_median.jpeg');
 saveas(fig, savename);
 close(fig);
-
-
-
-
-
 
 end
