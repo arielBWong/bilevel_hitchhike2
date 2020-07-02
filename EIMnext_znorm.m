@@ -79,15 +79,14 @@ end
 if ~isempty(train_c) 
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
-
-    % [train_c_norm, c_mean, c_std] = zscore(train_c, 1, 1);
+    % constraints should not be normalised
     % version did not scale train_c
-    % train_c_norm = train_c;
-    % c_mean = NaN;
-    % c_std = NaN;
+    train_c_norm = train_c;
+    c_mean = NaN;
+    c_std = NaN;
     for ii = 1:num_con
         % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
-        kriging_con{ii} = dacefit(train_x_norm,train_c_norm(:,ii),...
+        kriging_con{ii} = dacefit(train_x_norm, train_c_norm(:,ii),...
              'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  %test
 
     end

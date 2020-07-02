@@ -12,8 +12,8 @@ seed = 1;
 problem_folder = strcat(pwd,'\problems\SMD');
 addpath(problem_folder);
 
-problem = smd9();
-xu = [0, 0];
+problem = smd10();
+xu = [1, 1];
 rng(seed, 'twister');
 [xl, n, flag] = llmatch(xu, problem, 100, 100, 30, 20);
 
