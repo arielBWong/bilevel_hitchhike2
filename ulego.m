@@ -34,6 +34,7 @@ for i=1:inisize_u
 end
 %--xu evaluation
 [fu, fc] = pro.evaluate_u(xu, xl);
+num_con = size(fc, 2);
 
 %--fu adjust
 for i=1:inisize_u
@@ -58,13 +59,18 @@ for i = 1:numiter_u
 end
 
 %-bilevel local search
+[xu_start, ~, ~] = localsolver_startselection(xu, fc, fu);
+ newxu, n_up, n_low = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);
+ n_up = n_up + size(xu, 1);
+ n_low = n_low + feval;
 
 %-final hybrid ll search
+%-- use newxu 
+[newxl, feval] = hybrid_llsearch(newxu, prob, hy_pop, hy_gen);
+n_low = n_low + feval;
 
 %-performance record
-
-
-
+perf_record(prob, newxu, newxl, n_up, n_low);
 end
 
 function fu = llfeasi_modify(fu, feasi_list, ind)

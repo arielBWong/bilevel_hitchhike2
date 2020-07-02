@@ -2,7 +2,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 % method of searching for a match xl for xu
 % usage:
 %
-% input: xu             - upper level variable, to be matched 
+% input: xu             - upper level variable, to be matched
 %        prob           - problem instance
 %        num_pop        - DE parameter
 %        num_gen        - DE parameter
@@ -46,26 +46,9 @@ for iter = 1:iter_size
     train_fc = [train_fc; new_fc];  %compatible with nonconstraint
 end
 
-% provide local search with best solution
-if ~isempty(train_fc)
-    ind_feas = sum(train_fc<=0, 2)== l_ncons;
-    if sum(ind_feas) ~= 0  % feasible solution exists
-        train_xl = train_xl(ind_feas, :);
-        train_fl = train_fl(ind_feas, :);
-        train_fc = train_fc(ind_feas, :);
-    end
-    % if there is no feasible select with smallest fl
-    % same as non constraint problems, compatibility checked
-end
-
 % local search starting point selelction
 % lower level is considered as single objective
-[~, best_ind] = min(train_fl);
-if length(best_ind) > 1
-    best_ind = best_ind(0); end
-best_x = train_xl(best_ind, :);
-% best_f = train_fl(best_ind, :);
-% compatible with constraint problem
+best_x, best_f, s =  localsolver_startselection(train_xl, train_fc, train_fl);
 
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);
@@ -73,20 +56,24 @@ fmin_con = @(x)llconstraint(x, xu, prob);
 opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
 opts.MaxFunctionEvaluations = 100;
-[newxl, newfl, flag, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
+[newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
     prob.xl_bl, prob.xl_bu, fmin_con,opts);
-newxl
-newfl
+
 % decide which x to return
 % compatible with constraint problem
 flag = true;
-if ~isempty(train_fc)&& sum(ind_feas) == 0 && output.constrviolation > 0
-% for constraint problems
-% surrogate has no feasible andlocal search also return no feasible
-flag = false; 
-end         
-    
-match_xl = newxl; 
+if ~s % ego return feasible or unconstraint problem
+    match_xl = newxl;
+    if best_f < newfl
+        match_xl = best_x;
+    end
+else
+    match_xl = newxl;
+    if output.constrviolation > 0
+        flag = false;
+    end
+end
+
 % count local search number
 n_fev = iter_size + output.funcCount;
 end
