@@ -82,9 +82,9 @@ if ~isempty(train_c)
 
     [train_c_norm, c_mean, c_std] = zscore(train_c, 1, 1);
     % version did not scale train_c
-    train_c_norm = train_c;
-    c_mean = NaN;
-    c_std = NaN;
+    % train_c_norm = train_c;
+    % c_mean = NaN;
+    % c_std = NaN;
     for ii = 1:num_con
         % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
         kriging_con{ii} = dacefit(train_x_norm,train_c_norm(:,ii),...

@@ -8,7 +8,8 @@ classdef smd9
         xu_bl;
         xu_bu;
         xl_bl;
-        xl_bu;              
+        xl_bu;
+        name;
     end
     methods
         function obj = smd9(p, q, r)
@@ -21,6 +22,8 @@ classdef smd9
                 obj.q = 2;
                 obj.r = 1;
             end
+            obj.name = 'SMD9';
+
             % level variables
             obj.n_lvar = obj.q + obj.r;
             obj.n_uvar = obj.p + obj.r;
@@ -32,11 +35,12 @@ classdef smd9
             xu_bu_2 = ones(1, obj.r) * 1.0;
             obj.xu_bl = [xu_bl_1, xu_bl_2];
             obj.xu_bu = [xu_bu_1, xu_bu_2];
+            
             % init bound lower level
             xl_bl_1 = ones(1, obj.q) * (-5.0);
             xl_bu_1 = ones(1, obj.q) * 10.0;
-            xl_bl_2 = ones(1, obj.r) * (-1.0);
-            xl_bu_2 = ones(1, obj.r) *  exp(1);
+            xl_bl_2 = ones(1, obj.r) * (-1.0 + 1e-10);
+            xl_bu_2 = ones(1, obj.r) * (-1.0 + exp(1));
             obj.xl_bl = [xl_bl_1, xl_bl_2];
             obj.xl_bu = [xl_bu_1, xl_bu_2];
             
@@ -53,7 +57,7 @@ classdef smd9
                 - sum((xl1).^2) ...
                 + sum((xu2).^2) - sum((xu2 - log(1+xl2)).^2);
             
-            f = -functionValue;
+            f = functionValue;
             
             inequalityConstrVals(1) = sum(xu1.^2)+sum(xu2.^2) - floor(sum(xu1.^2)+sum(xu2.^2)+0.5);
             c = - inequalityConstrVals;
@@ -71,7 +75,7 @@ classdef smd9
                 + sum((xl1).^2, 2) ...
                 + sum((xu2 - log(1+xl2)).^2, 2);
             
-            f = -functionValue;
+            f = functionValue;
             
             
             %Write the constraints here

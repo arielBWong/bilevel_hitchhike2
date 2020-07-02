@@ -20,6 +20,12 @@ upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
 train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
+train_xl = repmat(lower_bound, init_size, 1) + repmat((upper_bound - lower_bound), init_size, 1) .* train_xl;
+
+% test only---
+testname = 'trainx.csv';
+csvwrite(testname,train_xl);
+% test only-----
 
 % evaluate training fl from xu_init and train_xl
 % compatible with non-constriant problem
@@ -29,7 +35,7 @@ l_ncons= size(train_fc, 2);
 % call EIM next
 for iter = 1:iter_size
     % eim propose next
-    [new_xl, ~] = EIMnext(train_xl, train_fl, upper_bound, lower_bound, ...
+    [new_xl, ~] = EIMnext_znorm(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc);
     % evaluate next
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -37,7 +43,7 @@ for iter = 1:iter_size
     % add to training
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc]; %compatible with nonconstraint
+    train_fc = [train_fc; new_fc];  %compatible with nonconstraint
 end
 
 % provide local search with best solution
@@ -49,7 +55,7 @@ if ~isempty(train_fc)
         train_fc = train_fc(ind_feas, :);
     end
     % if there is no feasible select with smallest fl
-    % same as non constraint problems
+    % same as non constraint problems, compatibility checked
 end
 
 % local search starting point selelction
@@ -68,8 +74,9 @@ opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
 opts.MaxFunctionEvaluations = 100;
 [newxl, newfl, flag, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
-    prob.xl_bl, prob.xl_bu, fmin_con,options);
-
+    prob.xl_bl, prob.xl_bu, fmin_con,opts);
+newxl
+newfl
 % decide which x to return
 % compatible with constraint problem
 flag = true;
