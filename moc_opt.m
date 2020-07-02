@@ -29,7 +29,7 @@ eim_function = str2func(eim_process_name);
 pareto_front = readtable('zdt3front.txt' );
 pareto_front = pareto_front{:,:};
 
-for seed = 1:1
+for seed = 1:29
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;

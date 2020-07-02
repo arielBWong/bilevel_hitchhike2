@@ -11,7 +11,8 @@
 clearvars;
 close all;
 eim_methods = {'EIMnext', 'EIMnext_znorm', 'paperdemo'};
-test_problems = {'ZDT1','ZDT2','ZDT3'}; %,'DTLZ2','DTLZ5','DTLZ7'};
+% test_problems = {'ZDT1','ZDT2','ZDT3'}; %,'DTLZ2','DTLZ5','DTLZ7'};
+test_problems = {'BNH', 'SRN', 'Welded_Beam'}; 
 
 s = 29;
 np = length(test_problems);
@@ -23,7 +24,7 @@ for j = 1:np % for each problem list two columns
     for i = 1:ne % method output
         k = (j-1) * ne + i;
         % read in each result file
-        fn = strcat(pwd, '\result_folder\', eim_methods{i},'_', test_problems{j}, '_hv.csv');
+        fn = strcat(pwd, '\result_folder\', eim_methods{i},'_', test_problems{j}, '_hv.csv')
         m = csvread(fn);
         
         out_matrix(1:s, k) = m(1:s);
@@ -46,7 +47,7 @@ for i=1: np*ne
 %     plot_finalnd(plot_seed, i, test_problems, eim_methods)
 
 end
-output_path = strcat(pwd, '\result_folder\moc_opt_resconvert.csv');
+output_path = strcat(pwd, '\result_folder\moc_opt_resconvert_corig.csv');
 
 % put header and index when write in file
 fp=fopen(output_path,'w');

@@ -17,7 +17,7 @@ classdef Welded_Beam
             obj.n_con = 4;
             obj.n_obj = 2;
             obj.ref = [100, 0.08];
-            obj.name = 'WeldedBeam';
+            obj.name = 'Welded_Beam';
         end
         
         function [f, con] = evaluate(obj, x)

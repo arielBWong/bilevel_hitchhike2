@@ -30,7 +30,7 @@ function Main_Constrained_Multiobjective_EGO(fun_name)
 % 2018.12.13 initial creation
 % -----------------------------------------------------------------------------------------
 % clearvars;close all;
-num_seeds = 1 ;
+num_seeds = 29 ;
 hvs = zeros(num_seeds, 1);
 for seed = 1:num_seeds
     rng(seed, 'twister');
@@ -56,8 +56,8 @@ for seed = 1:num_seeds
     end
     % the intial design points
     sample_x = repmat(design_space(1,:),num_initial,1) + repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);
-    fname = 'sample_x'+ string(seed) + '.csv';
-    csvwrite(fname, sample_x);
+    % fname = 'sample_x'+ string(seed) + '.csv';
+    % csvwrite(fname, sample_x);
     
     [sample_y, sample_g] = feval(fun_name, sample_x);
     sample_y_scaled =(sample_y - repmat(min(sample_y),size(sample_y,1),1))./repmat(max(sample_y)-min(sample_y),size(sample_y,1),1);
@@ -139,8 +139,8 @@ for seed = 1:num_seeds
             index = Paretoset(feasible_y);
             non_dominated_front = feasible_y(index,:);
             non_dominated_front_scaled = feasible_y_scaled(index,:);
-            fname = 'hytest'+ string(seed) + '.csv';
-            csvwrite(fname, non_dominated_front);
+            % fname = 'hytest'+ string(seed) + '.csv';
+            % scsvwrite(fname, non_dominated_front);
             hypervolume(iteration+1) = Hypervolume(non_dominated_front,ref_point);
             % plot current non-dominated front points
             if num_obj == 2

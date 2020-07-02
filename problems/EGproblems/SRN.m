@@ -16,7 +16,7 @@ classdef SRN
             obj.n_con = 2;
             obj.n_obj = 2;
             obj.ref = [250, 50];
-            obj.name = 'SNR';
+            obj.name = 'SRN';
         end
         function [f, con] = evaluate(obj, x)
             % ----------------------------------------------------------------------------
