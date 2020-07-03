@@ -1,8 +1,8 @@
-function [best_x,best_f, s] = localsolver_startselection(x, fc, ff)
+function [best_x,best_f, s] = localsolver_startselection(x,  ff, fc)
 % this function select a starting point for local search
 % need documentation and unit test
 % need to check compatibility with non constraint probs
-if size(ff, 2)>0
+if size(ff, 2)> 1
     error('this function does not compatible with mo problem')
 end
 if isempty(fc) % non constraint problem

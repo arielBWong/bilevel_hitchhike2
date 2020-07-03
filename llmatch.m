@@ -48,7 +48,7 @@ end
 
 % local search starting point selelction
 % lower level is considered as single objective
-best_x, best_f, s =  localsolver_startselection(train_xl, train_fc, train_fl);
+[best_x, best_f, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
 
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);
