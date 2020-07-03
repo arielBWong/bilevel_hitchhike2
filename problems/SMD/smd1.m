@@ -9,6 +9,8 @@ classdef smd1
         xu_bu;
         xl_bl;
         xl_bu;
+        uopt = 0;
+        lopt = 0;
         name;
     end
     methods
@@ -68,7 +70,7 @@ classdef smd1
                 + sum((xl1).^2, 2) ...
                 + sum((xu2 - tan(xl2)).^2, 2);
             %-cie
-            c=[]
+            c=[];
             
         end
     end

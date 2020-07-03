@@ -10,6 +10,8 @@ classdef smd8
         xl_bl;
         xl_bu;
         name;
+        uopt = 0;
+        lopt = 0;
     end
     methods
         function obj = smd8(p, q, r)

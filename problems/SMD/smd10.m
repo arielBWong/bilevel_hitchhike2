@@ -10,6 +10,8 @@ classdef smd10
         xl_bl;
         xl_bu;
         name;
+        uopt = 4.0;
+        lopt = 3.0;
     end
     methods
         function obj = smd10(p, q, r)

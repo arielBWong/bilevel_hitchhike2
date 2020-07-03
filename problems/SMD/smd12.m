@@ -10,6 +10,8 @@ classdef smd12
         xl_bl;
         xl_bu;
         name;
+        uopt = 3;
+        lopt = 4;
     end
     methods
         function obj = smd12(p, q, r)

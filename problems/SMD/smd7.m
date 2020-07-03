@@ -10,6 +10,8 @@ classdef smd7
         xl_bl;
         xl_bu;
         name;
+        uopt = 0;
+        lopt = 0;
     end
     methods
         function obj = smd7(p, q, r)

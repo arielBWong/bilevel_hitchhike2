@@ -23,10 +23,8 @@ function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
 %                   - info.krgc
 %                   - info.train_xmean
 %                   - info.train_ymean
-%                   - info.train_cmean
 %                   - info.train_xstd
 %                   - info.train_ystd
-%                   - info.train_cstd
 %                   - info.info.eim_normf
 %--------------------------------------------------------------------------
 
@@ -47,10 +45,6 @@ lb = (xl_bound - x_mean)./ x_std;
 
 % train objective kriging model
 if num_obj > 1
-%     train_y_norm = (train_y -repmat(min(train_y),num_x,1))./...
-%          repmat(max(train_y)-min(train_y),num_x,1);
-%     y_mean = NaN;
-%     y_std = NaN;
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
     % further normalization ??
     train_y_norm = (train_y_norm -repmat(min(train_y_norm),num_x,1))./...
@@ -82,8 +76,6 @@ if ~isempty(train_c)
     % constraints should not be normalised
     % version did not scale train_c
     train_c_norm = train_c;
-    c_mean = NaN;
-    c_std = NaN;
     for ii = 1:num_con
         % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
         kriging_con{ii} = dacefit(train_x_norm, train_c_norm(:,ii),...
@@ -125,16 +117,11 @@ info.train_xmean = x_mean;
 info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
-
-%if nargin>6
-if ~isempty(train_c)
-    info.train_cmean = c_mean;
-    info.train_cstd = c_std;
-end
-
 end
 
 function x = fixbound_violation(x, xu, xl)
+% local function for znorm correctness, if x fall out of boundary
+% move them on boudary
     l_vio = x < xl;
     x(l_vio) = xl(l_vio);
     
@@ -222,7 +209,8 @@ if nargin>3
         [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
         % [mu_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii}); %test
     end
-    mse_g = sqrt(max(0,mse_g));
+    % mse_g = sqrt(max(0,mse_g));  %only compare with predictor not
+    % dace_predict
     pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
 end
 fit = -EIM .* pof;

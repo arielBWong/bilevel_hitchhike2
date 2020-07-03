@@ -10,6 +10,8 @@ classdef smd11
         xl_bl;
         xl_bu;
         name;
+        uopt = -1;
+        lopt = 1;
     end
     methods
         function obj = smd11(p, q, r)
