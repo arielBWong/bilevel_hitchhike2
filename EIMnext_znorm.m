@@ -157,7 +157,7 @@ mse = zeros(num_x,num_obj);
 % pof init
 pof = 1;
 
-if length(f) == 0 && nargin > 3   % refer no feasible solution
+if isempty(f) && nargin > 3   % refer no feasible solution
     % the number of constraints
     num_con = length(kriging_con);
     % the kriging prediction and varince

@@ -3,11 +3,24 @@
 % cv method also has close point elimination, so it should have better
 % modelling ability than non point elimination version
 % tests should  support above  two claims
-%---
+%------
 % (1) test on normal and cross validation this first should be single level
-% problem, let me use SMD10 upper level, and fix xl to optimum
-% (2) test on point elimination, if previous test is positive
-% should show better mse
+% problem, use SMD problems upper level (single objective), and fix xl to optimum
+% ** Conclusion: crossvalidation improves performance when training data
+% ** exceed certain amount.
+% ** if training data is not enough, then crossvalidation is not as good as
+% ** using all data for training
+%------
+% (2) test on point elimination, with point elimination the 
+% algorithm is supposed to overcome situations when 
+%  ulego has too close point in training data
+%  kriging approximation is not able to approximate function
+%  to validate above claim, I need to reproduce the data 
+%  where prediction on test data are better than only use whole data
+% can also be used to compare with crossvalidation train
+%-------------------------------------------------------
+
+
 
 %----verbose
 seed = 2;
@@ -15,9 +28,16 @@ rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\SMD');
 addpath(problem_folder);
 
+test1();
+
+%----verbose
+rmpath(problem_folder);
+
+
+function test1()
 %--test1
 xl  =  [0,  0 , 0];
-num_train = 50;
+num_train = 80;
 num_test = 30;
 prob = smd3();
 
@@ -59,11 +79,7 @@ m1 = mse(test_y,test_yu );
 disp(m1);
 mcv = mse(test_cvy, test_yu);
 disp(mcv);
-
-%----verbose
-rmpath(problem_folder);
-
-
+end
 
 
 
@@ -87,12 +103,10 @@ for j = 1:k
         'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
     %--test
     [test_y, mse_test]  = dace_predict(trainx_r(teIdx, :), krg_perfolder {j});
-    
-    
     mse_perfolder(j) =  mse(test_y, trainy_r(teIdx, 1));
 end
 
-% --pick 
+% --pick
 [msemin, mseind] = min(mse_perfolder);
 krg = krg_perfolder{mseind};
 
@@ -100,55 +114,6 @@ krg = krg_perfolder{mseind};
 end
 
 
-
-
-
-function krg =  cvtrain_withdatacheck(trainx, trainy, nd)
-% trainy is one column
-if size(trainy, 2)>1
-    error('response variable should have only one variable');
-end
-
-mse_crossnd = zeros(1, nd);
-krg_crossnd = cell(1, nd);
-k=5;
-num_vari =  size(trainx,2);
-
-for i = 1:nd % nd number of digits
-    % --elimination scheme
-    % --r potentially reduced data size
-    [trainx_r,  trainy_r]  = close_elimination(trainx, trainy, i);
-    
-    % --create krg with cross validation
-    cv_par = cvpartition(trainx_r, 'k', k);
-    mse_perfolder = zeros(cv_par.NumTestSets,1);
-    krg_perfolder  =  cell(1, k);
-    for j = 1:k
-        %---train
-        trIdx = cv_par.training(i);
-        teIdx = cv_par.test(i);
-        krg_perfolder {j}= dacefit(trainx_r(trIdx , :), trainy_r(trIdx, ii),...
-            'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
-        %--test
-        [~, mse_test]  = dace_predict(trainx_r(teIdx, :), krg_perfolder {j});
-        mse_perfolder(j) =  sum(mse_test);
-    end
-    %-- pick krg
-    [mse_min, ind] = min(mse_perfolder);
-    mse_crossnd(i) = mse_min;
-    krg_crossnd{i} = krg_perfolder{ind};
-end
-% -pick across nd
-[~, ind] = min(mse_crossnd);
-krg = krg_crossnd{ind};
-end
-
-
-function [x_after, y_after] = close_elimination(x, y, ndigi)
-x = round(x, ndigi);
-[x_after, ia] = unique(x, 'row');
-y_after = y(ia, :);
-end
 
 
 

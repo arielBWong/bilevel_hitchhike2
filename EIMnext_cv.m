@@ -209,11 +209,20 @@ end
 fit = -EIM .* pof;
 end
 
-
 %-----test  needed---
 function[krg_obj, krg_con] = surrogate_build(trainx, trainy, trainc)
 % this function checks closeness of x
-% use cross validation results to choose which elimination distance to uses
+% and use cross validation results to choose 
+% which elimination distance to uses
+% usage:
+% input
+%           trainx
+%           trainy
+%           trainc
+% output
+%           krg_obj
+%           krg_con
+%-----------------------------------------------------------------
 
 nd = 3;  %nd number of digits
 n_obj  =  size(trainy,2);
@@ -232,50 +241,3 @@ for i = 1:n_con
 end
 end
 
-
-function krg =  cvtrain_withdatacheck(trainx, trainy, nd)
-% trainy is one column
-if size(trainy, 2)>1
-    error('response variable should have only one variable');
-end
-
-mse_crossnd = zeros(1, nd);
-krg_crossnd = cell(1, nd);
-k=5;
-num_vari =  size(trainx,2);
-
-for i = 1:nd % nd number of digits
-    % --elimination scheme
-    % --r potentially reduced data size
-    [trainx_r,  trainy_r]  = close_elimination(trainx, trainy, i);
-    
-    % --create krg with cross validation
-    cv_par = cvpartition(trainy_r, 'k', k);     %cv class use respond to partition
-    mse_perfolder = zeros(cv_par.NumTestSets,1);
-    krg_perfolder  =  cell(1, k);
-    for j = 1:k
-        %---train
-        trIdx = cv_par.training(j);
-        teIdx = cv_par.test(j);
-        krg_perfolder {j}= dacefit(trainx_r(trIdx , :), trainy_r(trIdx, 1),...
-            'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
-        %--test
-        [~, mse_test]  = dace_predict(trainx_r(teIdx, :), krg_perfolder {j});
-        mse_perfolder(j) =  sum(mse_test);
-    end
-    %-- pick krg
-    [mse_min, ind] = min(mse_perfolder);
-    mse_crossnd(i) = mse_min;
-    krg_crossnd(i) = krg_perfolder{ind};
-end
-% -pick across nd
-[~, ind] = min(mse_crossnd);
-krg = krg_crossnd(ind);
-end
-
-
-function [x_after, y_after] = close_elimination(x, y, ndigi)
-x = round(x, ndigi);
-[x_after, ia] = unique(x, 'row');
-y_after = y(ia, :);
-end

@@ -1,6 +1,7 @@
-%%
-% This unittest is for testing llmatch
-% no past yet
+%% This unittest is for testing llmatch
+% test through all smd problems
+% set xu to optimum, llmatch should find xl optimum
+% ** Conclusion: pass, but smd3 needs more init size, and iteration number
 
 clearvars;
 close all;
@@ -22,11 +23,11 @@ xu = [0, 0];  %smd1,2, 3, 4, 5, 6, 7, 8
 
 rng(seed, 'twister');
 [xl, n, flag] = llmatch(xu, problem, 100, 100, 30, 20);
-xl
+disp(xl);
 [f,c] = problem.evaluate_u(xu, xl);
-f
+disp(f);
 acc = abs(f-problem.uopt);
-disp(acc)
+disp(acc);
 
 
 rmpath(problem_folder);
