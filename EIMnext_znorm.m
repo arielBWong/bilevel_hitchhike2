@@ -4,28 +4,30 @@ function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
 % normalization is zscore on all variables
 % usage:
 %
-% input: train_x    - design variables
-%                       1/2d array: (num_samples, num_varibles)
-%        train_y    - objective values
-%                       1/2d array: (num_samples, num_objectives)
-%        xu_bound   - upper bound of train_x
-%                       1d array
-%        xl_bound   - lower bound of train_x
-%                       1d array
-%        num_pop    - EIM optimization parameter
-%        num_gen    - EIM optimization parameter
-%        train_c    - constraints values
-%                       1/2d array: (num_samples, num_constraints)
-% output: best_x    - proposed next x to be evaluated by EIM
-%         info      - returned information for functor caller to recreate
-%                   - or check information
-%                   - info.krg
-%                   - info.krgc
-%                   - info.train_xmean
-%                   - info.train_ymean
-%                   - info.train_xstd
-%                   - info.train_ystd
-%                   - info.info.eim_normf
+% input: 
+%        train_x                - design variables
+%                                           1/2d array: (num_samples, num_varibles)
+%        train_y                - objective values
+%                                           1/2d array: (num_samples, num_objectives)
+%        xu_bound          - upper bound of train_x
+%                                           1d array
+%        xl_bound           - lower bound of train_x
+%                                           1d array
+%        num_pop          - EIM optimization parameter
+%        num_gen          - EIM optimization parameter
+%        train_c                - constraints values
+%                                           1/2d array: (num_samples, num_constraints)
+% output: 
+%       best_x                 - proposed next x to be evaluated by EIM
+%       info                     - returned information for functor caller to recreate
+%                                   - or check information
+%                                   - info.krg
+%                                   - info.krgc
+%                                   - info.train_xmean
+%                                   - info.train_ymean
+%                                   - info.train_xstd
+%                                   - info.train_ystd
+%                                   - info.info.eim_normf
 %--------------------------------------------------------------------------
 
 % number of objective
@@ -133,12 +135,14 @@ function [fit] = EIM_eval(x, f, kriging_obj, kriging_con)
 % function of using EIM as fitness evaluation
 % usage:
 %
-% input: x            - pop to evaluate
-%        f            - best f so far/feasible pareto front
-%                           in multi-objective probs
-%        kriging_obj  - kriging model for objectives
-%        kriging_con  - kriging model for constraints
-% output: fit         - pop fitness
+% input: 
+%        x                          - pop to evaluate
+%        f                           - best f so far/feasible pareto front
+%                                           in multi-objective probs
+%        kriging_obj       - kriging model for objectives
+%        kriging_con      - kriging model for constraints
+% output: 
+%       fit                         - pop fitness
 %--------------------------------------------------------------------------
 
 

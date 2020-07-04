@@ -4,28 +4,28 @@ function[best_x, info] = EIMnext_cv(train_x, train_y, xu_bound, xl_bound, ...
 % normalization is zscore on all variables
 % usage:
 %
-% input: train_x    - design variables
-%                       1/2d array: (num_samples, num_varibles)
-%        train_y    - objective values
-%                       1/2d array: (num_samples, num_objectives)
-%        xu_bound   - upper bound of train_x
-%                       1d array
-%        xl_bound   - lower bound of train_x
-%                       1d array
-%        num_pop    - EIM optimization parameter
-%        num_gen    - EIM optimization parameter
-%        train_c    - constraints values
-%                       1/2d array: (num_samples, num_constraints)
-% output: best_x    - proposed next x to be evaluated by EIM
-%         info      - returned information for functor caller to recreate
-%                   - or check information
-%                   - info.krg
-%                   - info.krgc
-%                   - info.train_xmean
-%                   - info.train_ymean
-%                   - info.train_xstd
-%                   - info.train_ystd
-%                   - info.info.eim_normf
+% input:        train_x                  - design variables
+%                                                           1/2d array: (num_samples, num_varibles)
+%                    train_y                 - objective values
+%                                                           1/2d array: (num_samples, num_objectives)
+%                    xu_bound           - upper bound of train_x
+%                                                           1d array
+%                    xl_bound             - lower bound of train_x
+%                                                           1d array
+%                    num_pop            - EIM optimization parameter
+%                    num_gen             - EIM optimization parameter
+%                    train_c                   - constraints values
+%                                                            1/2d array: (num_samples, num_constraints)
+% output:     best_x                   - proposed next x to be evaluated by EIM
+%                    info                       - returned information for functor caller to recreate
+%                                                    - or check information
+%                                                   - info.krg
+%                                                   - info.krgc
+%                                                   - info.train_xmean
+%                                                    - info.train_ymean
+%                                                   - info.train_xstd
+%                                                   - info.train_ystd
+%                                                    - info.info.eim_normf
 %--------------------------------------------------------------------------
 
 % number of objective
@@ -36,15 +36,14 @@ kriging_obj = cell(1,num_obj);
 num_x = size(train_x,1);
 num_vari = size(train_x, 2);
 
-% normalise train data
-[train_x_norm, x_mean, x_std] = zscore(train_x, 1, 1);  % flag 0 sample zscore
+% normalise train data x
+[train_x_norm, x_mean, x_std] = zscore(train_x, 1, 1); 
 
 % adjust x bounds according to zscore normalization
 ub = (xu_bound - x_mean)./ x_std;
 lb = (xl_bound - x_mean)./ x_std;
 
-
-% train objective kriging model
+%  normalise train data y 
 if num_obj > 1
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
     % further normalization ??
@@ -55,21 +54,21 @@ else
 end
 
 % prepare f_best for EIM, first only consider non-constraint situation
+% for contrainted problems update is done later
 if num_obj > 1
     index_p = Paretoset(train_y_norm);
-    f_best = train_y_norm(index_p, :); % constraint problem has further process
+    f_best = train_y_norm(index_p, :); % constraint problem has further update
 else
     f_best = min(train_y_norm, [], 1);
 end
 
 % compatibility with constraint problems
-% if nargin>6
 if ~isempty(train_c)
     % constraints should not be normalised
-    % version did not scale train_c
+    % lazy in changing names
     train_c_norm = train_c;
     num_con = size(train_c, 2);
-    % adjust f_best according to feasibility
+    % update f_best according to feasibility
     % feasibility needs to be valued in original range
     index_c = sum(train_c <= 0, 2) == num_con;
     if sum(index_c) == 0 % no feasible
@@ -81,7 +80,7 @@ if ~isempty(train_c)
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end
-    % there needs a model selection before dive into EIM
+    % Generate krging model  before dive into EIM
     [kriging_obj, kriging_con] = surrogate_build(train_x_norm, train_y_norm, train_c_norm);
     fitness_val = @(x)EIM_eval(x,f_best, kriging_obj, kriging_con);
 else
@@ -93,12 +92,12 @@ end
 [best_x, eim_f] = DE(fitness_val, num_vari, lb, ub, num_pop, num_gen);
 
 % convert best_x to denormalized value
-best_x = best_x .* x_std + x_mean;  % commit for test
+best_x = best_x .* x_std + x_mean;  
 
 % fix bound violation
 best_x = fixbound_violation(best_x, xu_bound, xl_bound);
 
-%--
+% form output 
 info = struct();
 info.eim_normf = eim_f;
 info.krg = kriging_obj;
@@ -106,6 +105,10 @@ info.train_xmean = x_mean;
 info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
+info.krg_con = [];
+if  ~isempty(train_c)
+    info.krgc = kriging_con;
+end
 end
 
 function x = fixbound_violation(x, xu, xl)
@@ -122,14 +125,15 @@ function [fit] = EIM_eval(x, f, kriging_obj, kriging_con)
 % function of using EIM as fitness evaluation
 % usage:
 %
-% input: x            - pop to evaluate
-%        f            - best f so far/feasible pareto front
-%                           in multi-objective probs
-%        kriging_obj  - kriging model for objectives
-%        kriging_con  - kriging model for constraints
-% output: fit         - pop fitness
+% input: 
+%        x                            - pop to evaluate
+%        f                             - best f so far/feasible pareto front
+%                                           in multi-objective probs
+%        kriging_obj         - kriging model for objectives
+%        kriging_con        - kriging model for constraints
+% output: 
+%       fit                           - pop fitness
 %--------------------------------------------------------------------------
-
 
 % number of input designs
 num_x = size(x,1);
@@ -205,6 +209,8 @@ end
 fit = -EIM .* pof;
 end
 
+
+%-----test  needed---
 function[krg_obj, krg_con] = surrogate_build(trainx, trainy, trainc)
 % this function checks closeness of x
 % use cross validation results to choose which elimination distance to uses
@@ -244,14 +250,14 @@ for i = 1:nd % nd number of digits
     [trainx_r,  trainy_r]  = close_elimination(trainx, trainy, i);
     
     % --create krg with cross validation
-    cv_par = cvpartition(trainx_r, 'k', k);
+    cv_par = cvpartition(trainy_r, 'k', k);     %cv class use respond to partition
     mse_perfolder = zeros(cv_par.NumTestSets,1);
     krg_perfolder  =  cell(1, k);
     for j = 1:k
         %---train
-        trIdx = cv_par.training(i);
-        teIdx = cv_par.test(i);
-        krg_perfolder {j}= dacefit(trainx_r(trIdx , :), trainy_r(trIdx, ii),...
+        trIdx = cv_par.training(j);
+        teIdx = cv_par.test(j);
+        krg_perfolder {j}= dacefit(trainx_r(trIdx , :), trainy_r(trIdx, 1),...
             'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
         %--test
         [~, mse_test]  = dace_predict(trainx_r(teIdx, :), krg_perfolder {j});

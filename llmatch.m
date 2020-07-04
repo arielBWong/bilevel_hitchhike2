@@ -3,19 +3,21 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 % Problem(Prob) definition needs 
 % evaluation method of the form 'evaluation_l(xu, xl)'
 % usage
-% input: xu             - upper level variable, to be matched
-%        prob           - problem instance, require certin evaluation
-%                                   method name defintion-- check problems
-%                                   folder
+% input: 
+%       xu                       - upper level variable, to be matched
+%        prob                 - problem instance, require certin evaluation
+%                                       method name defintion-- check problems
+%                                       folder
 %        num_pop        - DE parameter
-%        num_gen        - DE parameter
-%        init_size      -surrogate parameter: number of initiliazation samples
-%        iter_size      -surrogate parameter: number of iterations
+%        num_gen         - DE parameter
+%        init_size            -surrogate parameter: number of initiliazation samples
+%        iter_size            -surrogate parameter: number of iterations
 %
-% output: matching_xl   - found xl for xu 
-%         n_fev         - total number of function evaluation on lower
-%                           level
-%         flag          - whether xl is a feasible solution(true/false)
+% output: 
+%        matching_xl    - found xl for xu 
+%         n_fev                - total number of function evaluation on lower
+%                                           level
+%         flag                   - whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
