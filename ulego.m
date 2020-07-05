@@ -1,17 +1,35 @@
-function ulego(prob, seed, num_pop,num_gen,iter_size)
+function ulego(prob, seed, eim)
 % method of main optimization process of upper level ego
-% usage:
-%
-% input: prob    -problem instance
+% usage: 
+%     input
+%               prob                          : problem instance                  
+%               seed                          : random process seed
+%     output  
+%               csv files saved in result folder
+%               performance statistics include 3*3 matrix
+%                                                       [  ul  accuracy, ll accuracy;
+%                                                          upper number of feval, lower number of feval;
+%                                                          upper feasibility, lower feasibility]
+%                                                                      
+%                                                                       
 %--------------------------------------------------------------------------
-
-% performance record
+tic;
+rng(seed, 'twister');
+% performance record variable
 n_feval = 0;
 
 % algo parameter
 inisize_l = 30;
 numiter_l = 20;
 numiter_u = 50;
+num_pop = 100;
+num_gen = 100;
+hy_pop = 20;
+hy_gen  = 50;
+
+% parallel compatible setting
+prob = eval(prob);
+eim = str2func(eim);
 
 %--upper problem variable
 u_nvar = prob.n_uvar;
@@ -33,20 +51,20 @@ for i=1:inisize_u
     n_feval = n_feval + n; %record lowerlevel nfeval
 end
 %--xu evaluation
-[fu, fc] = pro.evaluate_u(xu, xl);
+[fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
 
 %--fu adjust
 for i=1:inisize_u
-    fu = llfeasi_modify(fu, ll_feasi_flag, i);
+    fu = llfeasi_modify(fu, llfeasi_flag, i);
 end
-
+disp('main ego')
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
-    [newxu, ~] = EIMnext_znorm(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
+    [newxu, ~] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
     %--get its xl
-    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,low_init_size, numiter_l);
+    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
@@ -56,11 +74,12 @@ for i = 1:numiter_u
     fc = [fc; newfc];
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
+    disp(i);
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);
 end
 
 %-bilevel local search
-[xu_start, ~, ~] = localsolver_startselection(xu, fc, fu);
+[xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc);
 [newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);
 n_up = n_up + size(xu, 1);
 n_low = n_low + n_feval;
@@ -68,7 +87,7 @@ n_low = n_low + n_feval;
 
 %-final hybrid ll search
 %-- use newxu
-[newxl, feval,flag] = hybrid_llsearch(newxu, prob, hy_pop, hy_gen);
+[newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
 n_low = n_low + feval;
 
 
@@ -77,9 +96,15 @@ n_low = n_low + feval;
 [fl, cl] = prob.evaluate_l(newxu, newxl);
 num_conu = size(cu, 2);
 num_conl = size(cl, 2);
+% contraint tolerance adjust
+cu(cu < 1e-6) = 0;
+cl(cl<1e-6) = 0;
+% check feasibility
 cu = sum(cu<=0, 2)==num_conu;
 cl = sum(cl<=0, 2)==num_conl;
-perf_record(prob, fu, cu, fl, cl, n_up, n_low);
+perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed);
+
+toc
 end
 
 function fu = llfeasi_modify(fu, feasi_list, ind)
@@ -88,10 +113,19 @@ function fu = llfeasi_modify(fu, feasi_list, ind)
 % so that this point is not preferred in later search
 % consider range(1:ind) to deal with both one instance and
 % a list of instances
-if ~feasi_list(ind)
-    f = max(fu(1:ind));
-    f =  f + 1;
-    modify_ind = feasi_list(1:ind) == 0;
-    fu(modify_ind) = f;
+if size(fu, 2) > 1
+    error('this function is not compatible with mo problem');
+end
+% use those feasible fu before current match
+% to determine modified fu value
+feasi_xl = feasi_list(1:ind-1) == true; 
+if sum(feasi_xl) >0  % if there eixts feasible solution in previous list to set modified fu                                                                      
+    if ~feasi_list(ind)     % current flag is false
+        f = max(fu(feasi_xl));
+        f =  f + 1;
+        % all previous infeasible fu needs update
+        modify_ind = feasi_list(1:ind) == false;
+        fu(modify_ind) = f;
+    end
 end
 end

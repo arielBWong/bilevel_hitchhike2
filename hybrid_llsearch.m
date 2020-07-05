@@ -2,14 +2,16 @@ function [newxl, n_feval, flag] = hybrid_llsearch(xu, xl_start, prob, hy_pop, hy
 % This function uses a starting point of xl
 % to further improve xu's match on lower level
 % usage:    
-% input     xu             : the final xu for re-evaluation
-%           xl_start       : xl matched from upper ego
-%           prob           : problem instance
-%           hy_pop         : lower global search parameter
-%           hy_gen         : lower global search parameter
-% output    newxl          : xl returned from re-evaluation
-%           n_feval        : number of lower level function evaluation
-%           flag           : indicating whether newxl is feasible (true/false)
+% input     
+%           xu                          : the final xu for re-evaluation
+%           xl_start                 : xl matched from upper ego
+%           prob                     : problem instance
+%           hy_pop                : lower global search parameter
+%           hy_gen                : lower global search parameter
+% output    
+%           newxl                  : xl returned from re-evaluation
+%           n_feval                : number of lower level function evaluation
+%           flag                      : indicating whether newxl is feasible (true/false)
 %--------------------------------------------------------------------------
 % use xl_start as initial point
 
@@ -35,8 +37,8 @@ opts.MaxFunctionEvaluations = 100;
 newxl = newxl_l;
 n_feval = hy_pop * hy_gen + output.funcCount;
 flag = true;
-if output.constrviolation > 0
-    flag = False;
+if output.constrviolation > 1e-6 
+    flag = false;
     warning('hybrid search did not find any feasible lower match');
 end
 end
