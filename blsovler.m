@@ -3,17 +3,19 @@ function [xu_end, xl_end, n_up, n_low] = blsovler(prob, xu_start, num_pop, ...
 % this function performs local search on upper level problem
 % a wrapper around lower ego is provided to local solver
 % usage
-% input     prob        :bilevel problem
-%           xu_start    :starting point
-%           num_pop     :lower ego parameter
-%           num_gen     :lower ego parameter
-%           inisize_l   :lower ego parameter
-%           numiter_l   :lower ego parameter
+% input     
+%           prob                       :bilevel problem
+%           xu_start                  :starting point
+%           num_pop              :lower ego parameter
+%           num_gen               :lower ego parameter
+%           inisize_l                  :lower ego parameter
+%           numiter_l              :lower ego parameter
 %
-% output    xu_end      :optimization result on xu
-%           xl_end      :optimiation result on matching xl
-%           n_up        :count on number function evaluation on ul
-%           n_low       :total count of number function evaluation on ll
+% output    
+%           xu_end                  :optimization result on xu
+%           xl_end                    :optimiation result on matching xl
+%           n_up                       :count on number function evaluation on ul
+%           n_low                     :total count of number function evaluation on ll
 %--------------------------------------------------------------------------
 global xu_g
 global xl_g
