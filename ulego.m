@@ -92,6 +92,7 @@ n_low = n_low + feval;
 
 
 %-performance record
+%--constraints compatible
 [fu, cu] = prob.evaluate_u(newxu, newxl);
 [fl, cl] = prob.evaluate_l(newxu, newxl);
 num_conu = size(cu, 2);

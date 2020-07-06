@@ -9,7 +9,7 @@ rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\SMD');
 addpath(problem_folder);
 
-prob = 'smd12()';
+prob = 'smd1()';
 ulego(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 
