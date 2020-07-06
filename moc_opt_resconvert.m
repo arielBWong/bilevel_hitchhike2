@@ -24,7 +24,7 @@ for j = 1:np % for each problem list two columns
     for i = 1:ne % method output
         k = (j-1) * ne + i;
         % read in each result file
-        fn = strcat(pwd, '\result_folder\', eim_methods{i},'_', test_problems{j}, '_hv.csv')
+        fn = strcat(pwd, '\result_folder\', eim_methods{i},'_', test_problems{j}, '_hv.csv');
         m = csvread(fn);
         
         out_matrix(1:s, k) = m(1:s);
