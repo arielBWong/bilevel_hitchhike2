@@ -14,6 +14,8 @@ rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\SMD');
 addpath(problem_folder);
 
+initsize = 20;
+numiter = 30;
 problem = smd3();
 xu = [0, 0];  %smd1,2, 3, 4, 5, 6, 7, 8
 %xu = [0, 0];  %smd9
@@ -22,7 +24,7 @@ xu = [0, 0];  %smd1,2, 3, 4, 5, 6, 7, 8
 %xu = [1, 1];  %smd12
 
 rng(seed, 'twister');
-[xl, n, flag] = llmatch(xu, problem, 100, 100, 30, 20);
+[xl, n, flag] = llmatch(xu, problem, 100, 100, initsize, numiter);
 disp(xl);
 [f,c] = problem.evaluate_u(xu, xl);
 disp(f);

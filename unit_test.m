@@ -39,6 +39,7 @@ for iter=1:5
     predplot = plot(test_x,prey,'r-');
     trainplot = plot(train_x(1:end-1), train_y(1:end-1), 'bo');
     newpont = plot(train_x(end),  train_y(end), 'go');
+    legend('real','predict');
     pause(2)
     
     set(predplot, 'Visible', 'off');

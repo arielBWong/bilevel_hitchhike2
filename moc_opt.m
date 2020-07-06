@@ -1,4 +1,6 @@
-function moc_opt(eim_process_name, prob, me)
+function moc_opt(eim_process_name, prob)
+% this test is a unit test function for compare EIMnext, EIMnext_znorm
+% and paper demo
 % (1) intialize training data
 % (2) start loop
 %   (2-1) call EIMnext to generate next x  point
@@ -25,11 +27,7 @@ end
 hv_record = zeros(1, 10);
 eim_function = str2func(eim_process_name);
 
-% test
-pareto_front = readtable('zdt3front.txt' );
-pareto_front = pareto_front{:,:};
-
-for seed = 1:29
+for seed = 1:11
     fprintf(' seed: %d\n', seed);
     num_vari = prob.n_var;
     num_samples = 11 * num_vari - 1;

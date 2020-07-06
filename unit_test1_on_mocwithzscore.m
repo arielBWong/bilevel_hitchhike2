@@ -1,5 +1,6 @@
-%%
-% This unittest is for 2 objectives 2 variables and 2 constraints
+%% This unittest is for 2 objectives 2 variables and 2 constraints
+%  this is test is step test on EIMnext_znorm process 
+%  expecting it to generate hv step by step
 clearvars;
 close all;
 
@@ -63,6 +64,6 @@ for seed = 3:3
 end
 
 %record hv
-filename=strcat(pwd, '\result_folder\', prob.name, '_c_still_hv.csv' );
+filename=strcat(pwd, '\result_folder\', prob.name, '_znorm_hv.csv' );
 csvwrite(filename, hv_record');
 rmpath(problem_folder)
