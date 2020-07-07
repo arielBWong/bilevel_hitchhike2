@@ -9,7 +9,7 @@ addpath(problem_folder);
              % 'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
 problems = { 'bltp1()','bltp2()','bltp3()','bltp4()','bltp5()','bltp6()','bltp7()',...
              'bltp8()','bltp9()', 'bltp10()','bltp11()'};
-seeds = linspace(1, 1, 11);
+seeds = linspace(2, 11, 10);
 
 np = length(problems);
 ns = length(seeds);
