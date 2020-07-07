@@ -1,6 +1,6 @@
-function ulego(prob, seed, eim)
+function ulego_umoc(prob, seed, eim)
 % method of main optimization process of upper level ego
-% adapt to upper level problems of "single objective"
+% adapt to upper level problems of "multiple objectives"
 % usage: 
 %     input
 %               prob                          : problem instance                  
@@ -20,13 +20,13 @@ rng(seed, 'twister');
 n_feval = 0;
 
 % algo parameter
-inisize_l = 30;
-numiter_l = 20;
-numiter_u = 50;
-num_pop = 100;
-num_gen = 100;
-hy_pop = 20;
-hy_gen  = 50;
+inisize_l                  = 30;
+numiter_l               = 20;
+numiter_u             = 50;
+num_pop              = 100;
+num_gen              = 100;
+hy_pop                  = 20;
+hy_gen                  = 50;
 
 % parallel compatible setting
 prob = eval(prob);
@@ -59,7 +59,7 @@ num_con = size(fc, 2);
 for i=1:inisize_u
     fu = llfeasi_modify(fu, llfeasi_flag, i);
 end
-disp('main ego')
+
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
@@ -76,7 +76,7 @@ for i = 1:numiter_u
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
     disp(i);
-    fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);  % --?
+    fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i); 
 end
 
 %-bilevel local search

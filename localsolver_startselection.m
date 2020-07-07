@@ -2,9 +2,12 @@ function [best_x,best_f, best_c, s] = localsolver_startselection(x,  ff, fc)
 % this function select a starting point for a local search algorithm
 % usage
 % input:
-%           x                       : 2d matrix of design variables
+%           x                       : 2d matrix of design variables,
+%                                              (original range)
 %           ff                      : objective function values of x
+%                                              (original range)
 %           fc                      : constraint values of x
+%                                              (original range)
 % output:
 %           best_x              : one x instance with smallest objective value
 %                                               or with smallest feasible objective value
