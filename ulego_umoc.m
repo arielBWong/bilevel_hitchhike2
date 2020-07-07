@@ -1,18 +1,18 @@
 function ulego_umoc(prob, seed, eim)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "multiple objectives"
-% usage: 
+% usage:
 %     input
-%               prob                          : problem instance                  
+%               prob                          : problem instance
 %               seed                          : random process seed
-%     output  
+%     output
 %               csv files saved in result folder
 %               performance statistics include 3*3 matrix
 %                                                       [  ul  accuracy, ll accuracy;
 %                                                          upper number of feval, lower number of feval;
 %                                                          upper feasibility, lower feasibility]
-%                                                                      
-%                                                                       
+%
+%
 %--------------------------------------------------------------------------
 tic;
 rng(seed, 'twister');
@@ -77,6 +77,37 @@ for i = 1:numiter_u
     %--adjust fu by lower feasibility
     disp(i);
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
+    
+    %-plot ----
+    if ~isempty(fc) % constraint problems
+        ref_point = ones(1, num_con) * 1.1;
+        
+        index_c = sum(fc <= 0, 2) == num_con;
+        if sum(index_c) ~=0
+            feasible_y = fu(index_c, :);
+            nd_index = Paretoset(feasible_y);
+            nd_front = feasible_y(nd_index, :);
+            f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+            num_nd = size(nd_front, 1);
+            if num_nd > 1
+                nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
+                h = Hypervolume(nd_front,ref_point);
+                fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  iter,  h);
+            end
+        end
+    else  % unconstraint problems
+        nd_index = Paretoset(fu);
+        nd_front = fu(nd_index, :);
+        clf('reset');
+        scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+        num_nd = size(nd_front, 1);
+        if num_nd >1
+            nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
+            h = Hypervolume(nd_front,ref_point);
+            fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
+        end
+    end
+    %-plot ----
 end
 
 
@@ -84,17 +115,17 @@ end
 % %-bilevel local search
 % [xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc);              % upper mo?
 % [newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);  %upper mo?
-% 
+%
 % n_up = n_up + size(xu, 1);
 % n_low = n_low + n_feval;
-% 
-% 
+%
+%
 % %-final hybrid ll search
 % %-- use newxu
 % [newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
 % n_low = n_low + feval;
-% 
-% 
+%
+%
 % %-performance record
 % %--constraints compatible
 % [fu, cu] = prob.evaluate_u(newxu, newxl);

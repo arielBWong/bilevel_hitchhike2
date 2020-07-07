@@ -18,7 +18,7 @@ function fu = llfeasi_modify(fu, feasi_list, ind)  % unit test needed
 feasi_xl = feasi_list(1:ind-1) == true; 
 if sum(feasi_xl) >0                                         % if there eixts feasible solution in previous list to set modified fu                                                                      
     if ~feasi_list(ind)                                         % current flag is false
-        f = max(fu(feasi_xl), 1);                         % multiple objective compatible
+        f = max(fu(feasi_xl),[], 1);                         % multiple objective compatible
         f =  f + 1;
         % all previous infeasible fu needs update
         modify_ind = feasi_list(1:ind) == false;

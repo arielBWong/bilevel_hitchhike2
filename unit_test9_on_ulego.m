@@ -4,12 +4,12 @@
 % claim is using ulego, the optimization should be as good as 
 % reported in paper, start with smd9/10/11/12
 % -----------------------
-seed = 5;
+seed = 1;
 rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\SMD');
 addpath(problem_folder);
 
-prob = 'smd1()';
+prob = 'bltp1()';
 ulego(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 

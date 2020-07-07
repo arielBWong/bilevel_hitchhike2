@@ -21,6 +21,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
+init_size = 11 * l_nvar -1;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);

@@ -62,6 +62,7 @@ end
 disp('main ego')
 %-main ulego routine
 for i = 1:numiter_u
+    disp(i);
     %--search next xu
     [newxu, ~] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
     %--get its xl

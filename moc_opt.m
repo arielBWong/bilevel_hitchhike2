@@ -49,8 +49,7 @@ for seed = 1:11
     maxiter = maxeval - num_samples;
     for iter=1:maxiter
         
-        [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 50, 200, train_c);
-        
+        [newx, info] = eim_function(train_x, train_y, xu_bound, xl_bound, 50, 200, train_c);       
         [newy, newc] =  prob.evaluate(newx);
         
         train_x = [train_x; newx];

@@ -2,11 +2,14 @@
 %
 clearvars;
 close all;
-problem_folder = strcat(pwd,'\problems\SMD');
+problem_folder = strcat(pwd,'\problems\BLTP');
 addpath(problem_folder);
 
-problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()','smd8()','smd9()', 'smd10()','smd11()','smd12()'};
-seeds = linspace(1, 5, 5);
+% problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
+             % 'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
+problems = { 'bltp1()','bltp2()','bltp3()','bltp4()','bltp5()','bltp6()','bltp7()',...
+             'bltp8()','bltp9()', 'bltp10()','bltp11()'};
+seeds = linspace(1, 1, 11);
 
 np = length(problems);
 ns = length(seeds);
