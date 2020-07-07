@@ -1,5 +1,5 @@
 function [xu_end, xl_end, n_up, n_low] = blsovler(prob, xu_start, num_pop, ...
-    num_gen, inisize_l, numiter_l)
+    num_gen, inisize_l, numiter_l, ff)
 % this function performs local search on upper level problem
 % a wrapper around lower ego is provided to local solver
 % usage
@@ -31,7 +31,7 @@ opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
 opts.Display = 'off';
 opts.MaxFunctionEvaluations = 20;
-[xu_end, endfu, flag, output] = fmincon(fmin_obj, xu_start, [], [],[], [],  ...
+[xu_end, ~, ~, output] = fmincon(fmin_obj, xu_start, [], [],[], [],  ...
     prob.xu_bl, prob.xu_bu, fmin_con,opts);
 
 %return xu with corresponding xl
@@ -42,6 +42,24 @@ n_low = ll_n;
 clear global
 end
 
+
+function hvu = blobj_hv(xu, prob, num_pop, num_gen, inisize_l, numiter_l)
+xl = check_exist(xu);
+if isempty(xl)
+    [xl, n, ~] = llmatch(xu, prob,num_pop, num_gen,inisize_l, numiter_l);
+
+    global xu_g
+    global xl_g
+    global ll_n
+    ll_n = ll_n + n;
+    xu_g = [xu_g; xu];
+    xl_g = [xl_g; xl];
+end
+[fu, ~] = prob.evaluate_u(xu, xl);
+
+% convert to single objective
+
+end
 function fu =  blobj(xu, prob, num_pop, num_gen, inisize_l, numiter_l)
 % to improve efficiency check existing match
 xl = check_exist(xu);

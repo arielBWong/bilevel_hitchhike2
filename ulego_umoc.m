@@ -76,35 +76,38 @@ for i = 1:numiter_u
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
     disp(i);
-    fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i); 
+    fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
 end
 
-%-bilevel local search
-[xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc); % --?
-[newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);
-n_up = n_up + size(xu, 1);
-n_low = n_low + n_feval;
 
-
-%-final hybrid ll search
-%-- use newxu
-[newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
-n_low = n_low + feval;
-
-
-%-performance record
-%--constraints compatible
-[fu, cu] = prob.evaluate_u(newxu, newxl);
-[fl, cl] = prob.evaluate_l(newxu, newxl);
-num_conu = size(cu, 2);
-num_conl = size(cl, 2);
-% contraint tolerance adjust
-cu(cu < 1e-6) = 0;
-cl(cl<1e-6) = 0;
-% check feasibility
-cu = sum(cu<=0, 2)==num_conu;
-cl = sum(cl<=0, 2)==num_conl;
-perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed);
-
+%--------investigation sep to be modified-----------------------------------
+% %-bilevel local search
+% [xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc);              % upper mo?
+% [newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);  %upper mo?
+% 
+% n_up = n_up + size(xu, 1);
+% n_low = n_low + n_feval;
+% 
+% 
+% %-final hybrid ll search
+% %-- use newxu
+% [newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
+% n_low = n_low + feval;
+% 
+% 
+% %-performance record
+% %--constraints compatible
+% [fu, cu] = prob.evaluate_u(newxu, newxl);
+% [fl, cl] = prob.evaluate_l(newxu, newxl);
+% num_conu = size(cu, 2);
+% num_conl = size(cl, 2);
+% % contraint tolerance adjust
+% cu(cu < 1e-6) = 0;
+% cl(cl<1e-6) = 0;
+% % check feasibility
+% cu = sum(cu<=0, 2)==num_conu;
+% cl = sum(cl<=0, 2)==num_conl;
+% perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed);
+%---------investigation sep------------------------------------------------
 toc
 end
