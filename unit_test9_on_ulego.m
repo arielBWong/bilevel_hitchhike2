@@ -6,10 +6,10 @@
 % -----------------------
 seed = 1;
 rng(seed, 'twister');
-problem_folder = strcat(pwd,'\problems\SMD');
+problem_folder = strcat(pwd,'\problems\BLTP');
 addpath(problem_folder);
 
-prob = 'bltp1()';
+prob = 'bltp5()';
 ulego(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 

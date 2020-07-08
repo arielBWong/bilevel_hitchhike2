@@ -54,6 +54,7 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
+scatter(xu, fu, 'b'); drawnow;
 
 %--fu adjust
 for i=1:inisize_u
@@ -62,9 +63,8 @@ end
 disp('main ego')
 %-main ulego routine
 for i = 1:numiter_u
-    disp(i);
     %--search next xu
-    [newxu, ~] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
+    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
     n_feval = n_feval + n;
@@ -72,17 +72,25 @@ for i = 1:numiter_u
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
     %--assemble xu fu fc
     xu = [xu; newxu];
+    xl = [xl; newxl];
     fu = [fu; newfu];
     fc = [fc; newfc];
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
-    disp(i);
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);  % --?
+    scatter(xu, fu, 'r'); drawnow;
+    disp(i);
 end
 
+% performance investigate step, comment out when run experiment
+save('vari.mat', 'xu', 'fu', 'xl');
+save('info.mat', '-struct', 'info');
+
+
 %-bilevel local search
-[xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc); % --?
-[newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);
+[xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc); 
+penaltyf =  max(fu, [], 1); % for lower problem being constraint
+[newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l, penaltyf);
 n_up = n_up + size(xu, 1);
 n_low = n_low + n_feval;
 
@@ -96,6 +104,9 @@ n_low = n_low + feval;
 %-performance record
 %--constraints compatible
 [fu, cu] = prob.evaluate_u(newxu, newxl);
+ 
+scatter(newxu, fu, 'r'); drawnow;
+
 [fl, cl] = prob.evaluate_l(newxu, newxl);
 num_conu = size(cu, 2);
 num_conl = size(cl, 2);

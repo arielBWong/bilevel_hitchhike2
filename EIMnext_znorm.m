@@ -115,6 +115,9 @@ best_x = fixbound_violation(best_x, xu_bound, xl_bound);
 info = struct();
 info.eim_normf = eim_f;
 info.krg = kriging_obj;
+if  ~isempty(train_c)
+    info.krgc = kriging_con;
+end
 info.train_xmean = x_mean;
 info.train_xstd = x_std;
 info.train_ymean = y_mean;

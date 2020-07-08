@@ -70,14 +70,14 @@ opts.MaxFunctionEvaluations = 100;
 % decide which xl to return back to upper level
 % compatible with unconstraint problem
 flag = true;
-if ~s % ego return feasible or unconstraint problem
+if s  % ego return feasible or unconstraint problem
     match_xl = newxl; 
     if best_f < newfl % if local search performance is not as good as ego
         match_xl = best_x;
     end
 else % ego did not find feasible 
     match_xl = newxl;
-    if output.constrviolation > 0 % local solver also fails
+    if output.constrviolation > 1e-6% local solver also fails
         flag = false;
         % neither ego or local search found feasible, return by smaller
         % constraint

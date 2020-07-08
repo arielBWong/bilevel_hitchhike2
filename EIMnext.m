@@ -122,9 +122,8 @@ info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
 
-if ~isempty(train_c)
-    info.train_cmean = NaN;
-    info.train_cstd = NaN;
+if  ~isempty(train_c)
+    info.krgc = kriging_con;
 end
 
 end

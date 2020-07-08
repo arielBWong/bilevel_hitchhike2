@@ -12,16 +12,20 @@ close all;
 seed = 2;
 rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\SMD');
+% problem_folder = strcat(pwd,'\problems\BLTP');
 addpath(problem_folder);
 
-initsize = 20;
-numiter = 30;
-problem = smd3();
-xu = [0, 0];  %smd1,2, 3, 4, 5, 6, 7, 8
-%xu = [0, 0];  %smd9
-%xu = [1, 1];  %smd10
-%xu = [0, 0];  %smd11
-%xu = [1, 1];  %smd12
+initsize = 50;
+numiter = 100;
+
+
+%----smd test---
+problem = smd11();
+% xu = [0, 0];  %smd1,2, 3, 4, 5, 6, 7, 8
+% xu = [0, 0];  %smd9
+% xu = [1, 1];  %smd10
+% xu = [0, 0];  %smd11
+xu = [1, 1];  %smd12
 
 rng(seed, 'twister');
 [xl, n, flag] = llmatch(xu, problem, 100, 100, initsize, numiter);
