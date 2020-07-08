@@ -4,20 +4,20 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 % evaluation method of the form 'evaluation_l(xu, xl)'
 % usage
 % input: 
-%       xu                       - upper level variable, to be matched
-%        prob                 - problem instance, require certin evaluation
-%                                       method name defintion-- check problems
-%                                       folder
-%        num_pop        - DE parameter
-%        num_gen         - DE parameter
-%        init_size            -surrogate parameter: number of initiliazation samples
-%        iter_size            -surrogate parameter: number of iterations
+%       xu                                                   :  upper level variable, to be matched
+%        prob                                              : problem instance, require certin evaluation
+%                                                                               method name defintion-- check problems
+%                                                                               folder
+%        num_pop                                    : DE parameter
+%        num_gen                                     : DE parameter
+%        init_size                                        : surrogate parameter: number of initiliazation samples
+%        iter_size                                        : surrogate parameter: number of iterations
 %
 % output: 
-%        matching_xl    - found xl for xu 
-%         n_fev                - total number of function evaluation on lower
-%                                           level
-%         flag                   - whether xl is a feasible solution(true/false)
+%        matching_xl                                : found xl for xu 
+%         n_fev                                            : total number of function evaluation on lower
+%                                                                                 level
+%         flag                                              : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
@@ -62,7 +62,7 @@ fmin_obj = @(x)llobjective(x, xu, prob);
 fmin_con = @(x)llconstraint(x, xu, prob);
 opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
-opts.Display = 'off';
+% opts.Display = 'off';
 opts.MaxFunctionEvaluations = 100;
 [newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
     prob.xl_bl, prob.xl_bu, fmin_con,opts);

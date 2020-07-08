@@ -5,12 +5,13 @@ function ulego(prob, seed, eim)
 %     input
 %               prob                          : problem instance                  
 %               seed                          : random process seed
+%               eim                            : string, the name of eim function 
 %     output  
 %               csv files saved in result folder
 %               performance statistics include 3*3 matrix
-%                                                       [  ul  accuracy, ll accuracy;
-%                                                          upper number of feval, lower number of feval;
-%                                                          upper feasibility, lower feasibility]
+%                                                       [  ul  accuracy,                       ll accuracy;
+%                                                          upper number of feval,   lower number of feval;
+%                                                          upper feasibility,               lower feasibility]
 %                                                                      
 %                                                                       
 %--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ scatter(xu, fu, 'b'); drawnow;
 for i=1:inisize_u
     fu = llfeasi_modify(fu, llfeasi_flag, i);
 end
-disp('main ego')
+% disp('main ego')
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
@@ -83,8 +84,8 @@ for i = 1:numiter_u
 end
 
 % performance investigate step, comment out when run experiment
-save('vari.mat', 'xu', 'fu', 'xl');
-save('info.mat', '-struct', 'info');
+% save('vari.mat', 'xu', 'fu', 'xl');
+% save('info.mat', '-struct', 'info');
 
 
 %-bilevel local search

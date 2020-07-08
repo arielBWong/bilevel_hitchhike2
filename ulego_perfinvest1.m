@@ -1,14 +1,11 @@
-%%
+%% the test might just to be deleted
 % function  ulego_perfinvest1(xu, fu, prob, info)
 % this function create a plot about the real problem function and
 % the kriging recreated function, info comes from EIMnext_znorm
 % so this is not an independent function, follow the main process
-% of ulego after step main ego
+% of ulego after step main ego, save info, xu, fu, 
 % sprinkle with xu and fu
 % assume eim method is eim_znorm
-% usage
-%   input
-%   output
 %-------------------------------------------------------------------
 problem_folder = strcat(pwd,'\problems\BLTP');
 addpath(problem_folder);

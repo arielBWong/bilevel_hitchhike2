@@ -31,7 +31,7 @@ fmin_obj = @(x)blobj(x, prob, num_pop, num_gen, inisize_l, numiter_l, penalityf)
 fmin_con = @(x)blcon(x, prob, num_pop, num_gen, inisize_l, numiter_l);
 opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
-%opts.Display = 'off';
+opts.Display = 'off';
 opts.MaxFunctionEvaluations = 20;
 [xu_end, ~, ~, output] = fmincon(fmin_obj, xu_start, [], [],[], [],  ...
     prob.xu_bl, prob.xu_bu, fmin_con,opts);
@@ -91,7 +91,7 @@ end
 global ll_n
 ll_n = ll_n + 1;
 lc(lc<1e-6) = 0;   % constraint tolerance
-if sum(lc)>0         % infeasible lower
+if sum(lc)>0         % cope with infeasible lower  
     fu = penaltyf;
 end
 
@@ -112,7 +112,6 @@ if isempty(xl)
     xl_g = [xl_g; xl];
 end
 [~, c] = prob.evaluate_u(xu, xl);
-
 ceq = [];
 end
 
@@ -129,7 +128,7 @@ else
     diff = xu_g - xu;
     ind = sum(diff, 2) == 0;
     
-    if sum(ind)>0 % should be only 1, if exists
+    if sum(ind)>0           % should be only 1, if exists
         % fprintf('found xu in global save %d\n', sum(ind));
         xl = xl_g(ind, :);
         if sum(ind)>1

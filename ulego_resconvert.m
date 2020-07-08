@@ -18,15 +18,21 @@ seeds = linspace(1, s, s);
 np = length(problems);
 ns = length(seeds);
 collectmatrix = zeros(ns + 3, np * 2);
+feasimatrix = zeros(ns, np * 2);
 
 for i = 1:np
     savepath = strcat(pwd, '\result_folder\', problems{i}(1:end-2) );
     for j = 1:ns
         seed = seeds(j);
         singlerun_file = strcat(savepath, '\acc_con_fea_', num2str(seed),'.csv');
-        smatrix = csvread(singlerun_file);
-        collectmatrix(j, (i-1)*2 + 1) = smatrix(1,1);
-        collectmatrix(j, (i-1)*2 + 2) = smatrix(1,2);       
+        smatrix = csvread(singlerun_file);                % performance records
+        collectmatrix(j, (i-1)*2 + 1) = smatrix(1,1); % upper accuracy
+        collectmatrix(j, (i-1)*2 + 2) = smatrix(1,2);  % lower accuracy
+        feasimatrix(j, (i-1)*2 + 1)  = smatrix(3, 1);    % upper feasi
+        feasimatrix(j, (i-1)*2 + 2) = smatrix(3, 2);    % lower feasi
+        
+       
+        
     end
 end
 for i =1: np*2
@@ -34,6 +40,15 @@ for i =1: np*2
    collectmatrix(ns+2, i) = std(collectmatrix(1:ns, i));
    collectmatrix(ns+3, i) = median(collectmatrix(1:ns, i));
 end
+
+%---
+for i =1: np
+    
+   collectmatrix(ns+1, i) = mean(collectmatrix(1:ns, i));
+   collectmatrix(ns+2, i) = std(collectmatrix(1:ns, i));
+   collectmatrix(ns+3, i) = median(collectmatrix(1:ns, i));
+end
+%---
 
 output_path = strcat(pwd, '\result_folder\bltp_resconvert.csv');
 fp=fopen(output_path,'w');

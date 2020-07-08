@@ -31,8 +31,8 @@ classdef mobp1
         
         function [f, c] = evaluate_u(obj, xu, xl) 
             %-obj
-            f(:, 1) = (xu(:, 1) + 2 * xl(:, 2) + 3) * (3 * xl(:, 1) + 2);
-            f(:, 2) = (2 * xu(:, 1) + xl(:, 2) + 2) * (xl(:, 2) + 1);
+            f(:, 1) = (xu(:, 1) + 2 * xl(:, 2) + 3)  .*  (3 * xl(:, 1) + 2);
+            f(:, 2) = (2 * xu(:, 1) + xl(:, 1) + 2) .* (xl(:, 2) + 1);
           
          
             %-cie
@@ -45,7 +45,7 @@ classdef mobp1
         function [f, c] = evaluate_l(obj, xu, xl)
            
             %-obj
-            f = (xl(:, 1) + 1) * (xu(:, 1) + xl(:, 1) + xl(:, 2) + 3);
+            f = (xl(:, 1) + 1) .* (xu(:, 1) + xl(:, 1) + xl(:, 2) + 3);
             
             %-cie
             c(:, 1) = xu(:, 1) + 2 * xl(:, 1) + xl(:, 2) - 2;

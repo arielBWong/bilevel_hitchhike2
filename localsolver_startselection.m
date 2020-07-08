@@ -47,7 +47,7 @@ if size(ff, 2) == 1 % single objective
 else % multiple objective
     % input ff is all ffs ulego have got, new starting point should be
     % the solution that contriubte most to hv compared to the rest of the ffs
-    % it means this ff locates on a nd area where there are not many points
+    % it means this ff locates on an nd area where there are not many points
     % reference point should be just 1.1 in normalized space
     [i, s] = hvcontribution_selectf(ff, fc);
     best_x = x(i, :);
@@ -63,7 +63,11 @@ function [bestf_id, s] = hvcontribution_selectf(ff, fc)
 % has compatibility with constrain and non constraint problems
 % usage
 %   input
+%               ff                                      : all f value  instances to choose from 
+%               fc                                     :  corresponding constraint instances
 %   output
+%               bestf_id                         : index in ff to choose
+%               s                                      : feasibility flag
 %---------------------------------------------------------------------------
 num_con = size(fc, 2);
 num_obj = size(ff, 2);
@@ -71,13 +75,20 @@ num_ff = size(ff, 1);
 ref_point = ones(1, num_obj) * 1.1;
 
 if num_con == 0
+    % for unconstraint mo problem, select from nd front
+    % the one with maximum hv contribution
+    % selection of one instance does not involve any maximization process,
+    % so normalization is done on all objective values
+    % another benefit of using normalization on f rather than on nd is that
+    % reverse looking for bestf index in f from nd might not cause small numeric
+    % changes, like what happened when doing reverse znorm
     ff_norm = (ff -repmat(min(ff), num_ff, 1))./repmat(max(ff)-min(ff),num_ff,1);
     nd_index = Paretoset(ff_norm);
     nd_front = ff_norm(nd_index, :);
     ff_max =  maxcontribution_select(nd_front, ref_point);
     % max_id's original ff location
     ff_norm = sum(ff_norm - ff_max, 2);
-    bestf_id = find(ff_norm < 1e-10);
+    bestf_id = find(ff_norm < 1e-6);
     s = true;
     return
 end
@@ -92,9 +103,9 @@ if sum(index_c) ~=0   % feasible solution exists
     nd_front = feasi_fnorm(nd_index, :);
     ff_max =  maxcontribution_select(nd_front, ref_point);
     
-    % max_id's original ff location
+    % reverse search for ff_max's original ff location
     ff_norm = sum(ff_norm - ff_max, 2);
-    bestf_id = find(ff_norm < 1e-10);
+    bestf_id = find(ff_norm < 1e-6);
     s = true;
 else
     % feasible solution does not exist
@@ -112,7 +123,10 @@ function ff_max = maxcontribution_select(nd_front, ref_point)
 % gives back a ff instance, which singlely contributes most to hv values
 % usage
 %   input
+%               nd_front                                        : normalized nd front
+%               ref_point                                       : 1.1
 %   ouput
+%              ff_max                                            : an   instance from nd front that contribute most to hv
 %--------------------------------------------------------------------------
 num_nd = size(nd_front, 1);
 hv_leaveoneout = zeros(num_nd, 1);

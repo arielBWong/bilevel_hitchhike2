@@ -82,7 +82,7 @@ for k = 1 : m-1
 end
 if  min(sum(abs(D),2) ) == 0
     SS = S; YY = Y;
-	warning('Multiple design sites are not allowed. Selecting unique design sites...'), 
+	% warning('Multiple design sites are not allowed. Selecting unique design sites...'), 
 	[S,id_S] = unique(SS,'rows','stable');
     Y = YY(id_S,:);
 end

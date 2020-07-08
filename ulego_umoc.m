@@ -5,12 +5,14 @@ function ulego_umoc(prob, seed, eim)
 %     input
 %               prob                          : problem instance
 %               seed                          : random process seed
+%               eim                            : string, the name of eim function 
+%              
 %     output
 %               csv files saved in result folder
 %               performance statistics include 3*3 matrix
-%                                                       [  ul  accuracy, ll accuracy;
-%                                                          upper number of feval, lower number of feval;
-%                                                          upper feasibility, lower feasibility]
+%                                                       [  ul  accuracy,                        ll accuracy;
+%                                                          upper number of feval,    lower number of feval;
+%                                                          upper feasibility,                lower feasibility]
 %
 %
 %--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ numiter_u             = 50;
 num_pop              = 100;
 num_gen              = 100;
 hy_pop                  = 20;
-hy_gen                  = 50;
+hy_gen                   = 50;
 
 % parallel compatible setting
 prob = eval(prob);
@@ -66,6 +68,9 @@ for i = 1:numiter_u
     [newxu, ~] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
+    disp(i);
+    disp([newxu, newxl]);
+    fprintf('xl is %d', flag);
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
@@ -92,7 +97,7 @@ for i = 1:numiter_u
             if num_nd > 1
                 nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
                 h = Hypervolume(nd_front,ref_point);
-                fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  iter,  h);
+                fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
             end
         end
     else  % unconstraint problems
@@ -102,7 +107,7 @@ for i = 1:numiter_u
         scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1
-            nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
+            nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
             h = Hypervolume(nd_front,ref_point);
             fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
         end
