@@ -8,7 +8,7 @@ rng(seed, 'twister');
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
 
-prob = 'mobp1()';
+prob = 'mobp11(6)';
 ulego_umoc(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 

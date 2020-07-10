@@ -56,6 +56,8 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
+scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
+
 
 %--fu adjust
 for i=1:inisize_u
@@ -68,9 +70,7 @@ for i = 1:numiter_u
     [newxu, ~] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
-    disp(i);
-    disp([newxu, newxl]);
-    fprintf('xl is %d', flag);
+    fprintf('xl is %d \n', flag);
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
@@ -80,13 +80,12 @@ for i = 1:numiter_u
     fc = [fc; newfc];
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
-    disp(i);
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
     
     %-plot ----
-    if ~isempty(fc) % constraint problems
-        ref_point = ones(1, num_con) * 1.1;
-        
+    num_obj = size(fu, 2);
+    ref_point = ones(1, num_obj) * 1.1;
+    if ~isempty(fc) % constraint problems 
         index_c = sum(fc <= 0, 2) == num_con;
         if sum(index_c) ~=0
             feasible_y = fu(index_c, :);
@@ -109,41 +108,10 @@ for i = 1:numiter_u
         if num_nd >1
             nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
             h = Hypervolume(nd_front,ref_point);
-            fprintf(' iteration: %d, hypervolume: %f\n',  iter,  h);
+            fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
         end
     end
     %-plot ----
 end
-
-
-%--------investigation sep to be modified-----------------------------------
-% %-bilevel local search
-% [xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc);              % upper mo?
-% [newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l);  %upper mo?
-%
-% n_up = n_up + size(xu, 1);
-% n_low = n_low + n_feval;
-%
-%
-% %-final hybrid ll search
-% %-- use newxu
-% [newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
-% n_low = n_low + feval;
-%
-%
-% %-performance record
-% %--constraints compatible
-% [fu, cu] = prob.evaluate_u(newxu, newxl);
-% [fl, cl] = prob.evaluate_l(newxu, newxl);
-% num_conu = size(cu, 2);
-% num_conl = size(cl, 2);
-% % contraint tolerance adjust
-% cu(cu < 1e-6) = 0;
-% cl(cl<1e-6) = 0;
-% % check feasibility
-% cu = sum(cu<=0, 2)==num_conu;
-% cl = sum(cl<=0, 2)==num_conl;
-% perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed);
-%---------investigation sep------------------------------------------------
 toc
 end
