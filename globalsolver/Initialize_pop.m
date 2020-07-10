@@ -1,5 +1,9 @@
 function [pop,archive,evals,track]=Initialize_pop(prob,param,evals,objnum)
-N = param.popsize;pop.G=[];infeas_ids=[];G_pop=[];id2=[];
+N = param.popsize;
+pop.G=[];
+infeas_ids=[];
+G_pop=[];
+id2=[];
 funh = str2func(param.prob_name);
 X_pop = repmat(prob.range(:,1)',N,1) + repmat((prob.range(:,2)'-prob.range(:,1)'),N,1).*lhsdesign(N,prob.nx);
 [F_pop,~]=funh(objnum,X_pop);

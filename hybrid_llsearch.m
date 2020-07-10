@@ -1,17 +1,18 @@
 function [newxl, n_feval, flag] = hybrid_llsearch(xu, xl_start, prob, hy_pop, hy_gen)
 % This function uses a starting point of xl
 % to further improve xu's match on lower level
+% with first a innate matlab ga, then a local search 
 % usage:    
 % input     
 %           xu                          : the final xu for re-evaluation
-%           xl_start                 : xl matched from upper ego
-%           prob                     : problem instance
-%           hy_pop                : lower global search parameter
-%           hy_gen                : lower global search parameter
+%           xl_start                    : xl matched from upper ego
+%           prob                        : problem instance
+%           hy_pop                      : lower global search parameter
+%           hy_gen                      : lower global search parameter
 % output    
-%           newxl                  : xl returned from re-evaluation
-%           n_feval                : number of lower level function evaluation
-%           flag                      : indicating whether newxl is feasible (true/false)
+%           newxl                       : xl returned from re-evaluation
+%           n_feval                     : number of lower level function evaluation
+%           flag                        : indicating whether newxl is feasible (true/false)
 %--------------------------------------------------------------------------
 % use xl_start as initial point
 
