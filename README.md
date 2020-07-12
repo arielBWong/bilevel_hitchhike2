@@ -1,3 +1,3 @@
 Another round of trying...
-unittest1:
-single objective function
+entrance 1 ulego_main
+entrance 2 ulego_umoc
