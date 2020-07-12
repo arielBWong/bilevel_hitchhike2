@@ -5,10 +5,18 @@
 % -----------------------
 seed = 1;
 rng(seed, 'twister');
-problem_folder = strcat(pwd,'\problems\MOBP');
+
+
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\MOBP');
 addpath(problem_folder);
+addpath(upperfolder);
+
 
 prob = 'mobp11(6)';
 ulego_umoc(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 
+rmpath(upperfolder);

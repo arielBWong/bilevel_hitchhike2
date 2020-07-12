@@ -8,9 +8,18 @@ close all;
 %   (2-1) call EIMnext to generate next x  point
 %   (2-2) combine new x into training data
 
+
+
 workdir = pwd;
-problem_folder = strcat(pwd,'\problems\EGproblems');
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\EGproblems');
 addpath(problem_folder);
+addpath(upperfolder);
+
+
+
+
 prob = eval('TNK()');
 
 
@@ -67,8 +76,9 @@ for seed = 18:18
 end
 
 %record hv
-filename=strcat(pwd, '\result_folder\', prob.name, '_paper_hv.csv' );
+filename=strcat(upperfolder, '\result_folder\', prob.name, '_paper_hv.csv' );
 csvwrite(filename, hv_record');
 
 
-rmpath(problem_folder)
+rmpath(problem_folder);
+rmpath(upperfolder);

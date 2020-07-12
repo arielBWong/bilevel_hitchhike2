@@ -8,16 +8,23 @@
 clearvars;
 close all;
 workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+addpath(upperfolder);
+
+
 eim_methods = {'EIMnext'; 'EIMnext_znorm' };
 test_problems = {'ZDT1()','ZDT2()','ZDT3()'}; %,'DTLZ2()','DTLZ5()','DTLZ7()'};
-EIMimp_test(eim_methods,test_problems);
-paper_demo(eim_methods,test_problems)
+EIMimp_test(eim_methods,test_problems,upperfolder);
+paper_demo(eim_methods,test_problems, upperfolder)
+
+rmpath(upperfolder);
 
 
-function EIMimp_test(eim_methods,test_problems)
+function EIMimp_test(eim_methods,test_problems, upperfolder)
 %-------------------my code unit test--------------
-problem_folder1 = strcat(pwd,'\problems\EGproblems');
-problem_folder2 = strcat(pwd,'\problems\ZDT');
+problem_folder1 = strcat(upperfolder,'\problems\EGproblems');
+problem_folder2 = strcat(upperfolder,'\problems\ZDT');
 
 
 addpath(problem_folder1);
@@ -45,10 +52,10 @@ rmpath(problem_folder2);
 
 end
 
-function paper_demo(eim_methods,test_problems)
+function paper_demo(eim_methods,test_problems, upperfolder)
 %------------where to start running paper demo
 workdir = pwd;
-problem_folder1 = strcat(pwd,'\Multiobjective_EGO_algorithms-master');
+problem_folder1 = strcat(upperfolder,'\Multiobjective_EGO_algorithms-master');
 addpath(problem_folder1);
 np = length(test_problems);
 ne = length(eim_methods);

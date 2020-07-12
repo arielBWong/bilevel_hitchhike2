@@ -11,9 +11,16 @@ close all;
 
 seed = 2;
 rng(seed, 'twister');
-problem_folder = strcat(pwd,'\problems\SMD');
-% problem_folder = strcat(pwd,'\problems\BLTP');
+
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\SMD');
 addpath(problem_folder);
+addpath(upperfolder);
+
+
+
 
 initsize = 50;
 numiter = 100;
@@ -37,3 +44,4 @@ disp(acc);
 
 
 rmpath(problem_folder);
+rmpath(upperfolder);

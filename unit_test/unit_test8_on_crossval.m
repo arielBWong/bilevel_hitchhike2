@@ -25,14 +25,18 @@
 %----verbose
 seed = 2;
 rng(seed, 'twister');
-problem_folder = strcat(pwd,'\problems\SMD');
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\SMD');
 addpath(problem_folder);
+addpath(upperfolder);
 
 test1();
 
 %----verbose
 rmpath(problem_folder);
-
+rmpath(upperfolder);
 
 function test1()
 %--test1

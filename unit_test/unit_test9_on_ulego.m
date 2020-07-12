@@ -6,10 +6,18 @@
 % -----------------------
 seed = 1;
 rng(seed, 'twister');
-problem_folder = strcat(pwd,'\problems\BLTP');
+
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\BLTP');
 addpath(problem_folder);
+addpath(upperfolder);
+
+
 
 prob = 'bltp5()';
 ulego(prob, seed, 'EIMnext_znorm');
 
 rmpath(problem_folder); 
+rmpath(upperfolder);

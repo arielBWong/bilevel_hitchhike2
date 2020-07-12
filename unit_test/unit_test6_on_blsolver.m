@@ -1,7 +1,13 @@
 %%
 % this unit test is for blsolver
 
-problem_folder = strcat(pwd,'\problems\SMD');
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\SMD');
+addpath(problem_folder);
+addpath(upperfolder);
+
 addpath(problem_folder);
 
 tic
@@ -20,3 +26,4 @@ disp(fu);
 disp(fl);
 
 rmpath(problem_folder);
+rmpath(upperfolder);

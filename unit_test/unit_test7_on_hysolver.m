@@ -1,7 +1,11 @@
 %% Use this to check with SMD3
 % one chance
-problem_folder = strcat(pwd,'\problems\SMD');
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\SMD');
 addpath(problem_folder);
+addpath(upperfolder);
 
 seed = 2;
 
@@ -19,4 +23,5 @@ xl_start = [];
 disp(f);
 
 rmpath(problem_folder);
+rmpath(upperfolder);
 

@@ -7,9 +7,13 @@ close all;
 % (2) start loop
 %   (2-1) call EIMnext to generate next x  point
 %   (2-2) combine new x into training data
+
 workdir = pwd;
-problem_folder = strcat(pwd,'\problems');
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems');
 addpath(problem_folder);
+addpath(upperfolder);
 
 
 num_samples = 3;
@@ -22,7 +26,7 @@ test_x = linspace(0, 1, 100);
 test_y = testproblem1(test_x');
 
 figure(1);
-for iter=1:5
+for iter=1:10
     
     [newx, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, 20, 50, []);
     newy = testproblem1(newx);

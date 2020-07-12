@@ -10,8 +10,14 @@ test_problems = {'BNH()','SRN()','Welded_Beam()'};
 np = length(test_problems);
 ne = length(eim_methods);
 
-problem_folder1 = strcat(pwd,'\problems\EGproblems');
-addpath(problem_folder1);
+
+workdir = pwd;
+idcs = strfind(workdir, '\');
+upperfolder = workdir(1: idcs(end)-1);
+problem_folder = strcat(upperfolder,'\problems\EGproblems');
+addpath(problem_folder);
+addpath(upperfolder);
+
 % 
 paras={};
 for i=1:np
@@ -31,8 +37,8 @@ rmpath(problem_folder1);
 
 
 %------------where to start running paper demo
-workdir = pwd;
-problem_folder1 = strcat(pwd,'\Multiobjective_EGO_algorithms-master');
+
+problem_folder1 = strcat(upperfolder,'\Multiobjective_EGO_algorithms-master');
 addpath(problem_folder1);
 % Main_Constrained_Multiobjective_EGO('BNH');
 parfor i = 1:np
