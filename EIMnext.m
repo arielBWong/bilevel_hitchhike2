@@ -103,9 +103,9 @@ if ~isempty(train_c)
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end   
-    fitness_val = @(x)EIM_eval(x,f_best, kriging_obj, kriging_con);
+    fitness_val = @(x)EIM_evalor(x,f_best, kriging_obj, kriging_con); % paper version
 else
-    fitness_val = @(x)EIM_eval(x, f_best, kriging_obj);
+    fitness_val = @(x)EIM_evalor(x, f_best, kriging_obj);
 end
 
 % call DE evolution
@@ -130,7 +130,7 @@ end
 
 
 
-function [fit] = EIM_eval(x, f, kriging_obj, kriging_con)
+function [fit] = EIM_evalor(x, f, kriging_obj, kriging_con)
 % function of using EIM as fitness evaluation
 % usage:
 %

@@ -1,4 +1,4 @@
-function ulego(prob, seed, eim)
+function ulego(prob, seed, eim, fitnesshandle)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "single objective"
 % usage: 
@@ -6,6 +6,8 @@ function ulego(prob, seed, eim)
 %               prob                          : problem instance                  
 %               seed                          : random process seed
 %               eim                            : string, the name of eim function 
+%               fitnesshandle          : string, the function that eim use to
+%                                                                evaluate fitess in its ea process of proposing next point
 %     output  
 %               csv files saved in result folder
 %               performance statistics include 3*3 matrix
@@ -32,6 +34,7 @@ hy_gen  = 50;
 % parallel compatible setting
 prob = eval(prob);
 eim = str2func(eim);
+fithn = str2func(fitnesshandle);
 
 %--upper problem variable
 u_nvar = prob.n_uvar;
@@ -46,7 +49,9 @@ xu = repmat(lower_bound, inisize_u, 1) + repmat((upper_bound - lower_bound), ini
 xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
+disp('init');
 for i=1:inisize_u
+    disp(i);
     [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l);
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
@@ -55,7 +60,7 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
-scatter(xu, fu, 'b'); drawnow;
+% scatter(xu, fu, 'b'); drawnow;
 
 %--fu adjust
 for i=1:inisize_u
@@ -65,7 +70,7 @@ end
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
-    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc);
+    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn);
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
     n_feval = n_feval + n;
@@ -79,7 +84,7 @@ for i = 1:numiter_u
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);  % --?
-    scatter(xu, fu, 'r'); drawnow;
+    % scatter(xu, fu, 'r'); drawnow;
     disp(i);
 end
 
@@ -106,7 +111,7 @@ n_low = n_low + feval;
 %--constraints compatible
 [fu, cu] = prob.evaluate_u(newxu, newxl);
  
-scatter(newxu, fu, 'r'); drawnow;
+% scatter(newxu, fu, 'r'); drawnow;
 
 [fl, cl] = prob.evaluate_l(newxu, newxl);
 num_conu = size(cu, 2);

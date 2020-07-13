@@ -16,8 +16,8 @@ addpath(upperfolder);
 
 
 
-prob = 'bltp5()';
-ulego(prob, seed, 'EIMnext_znorm');
+prob = 'bltp1()';
+ulego(prob, seed, 'EIMnext_znorm', 'EIM_eval');
 
 rmpath(problem_folder); 
 rmpath(upperfolder);

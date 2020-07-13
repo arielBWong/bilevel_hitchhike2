@@ -7,9 +7,11 @@ addpath(problem_folder);
 
 % problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
              % 'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
-problems = { 'bltp1()','bltp2()','bltp3()','bltp4()','bltp5()','bltp6()','bltp7()',...
-             'bltp8()','bltp9()', 'bltp10()','bltp11()'};
-seeds = linspace(2, 11, 10);
+% problems = { 'bltp1()','bltp2()','bltp3()','bltp4()','bltp5()','bltp6()','bltp7()',...
+             % 'bltp8()','bltp9()', 'bltp10()','bltp11()'};
+         
+problems = { 'bltp1()', 'bltp2()'};
+seeds = linspace(1, 2, 2);
 
 np = length(problems);
 ns = length(seeds);
@@ -23,7 +25,7 @@ end
 
 nrun = length(paras);
 parfor i = 1:nrun
-    ulego(paras{i}{1}, paras{i}{2},'EIMnext_znorm' );
+    ulego(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , 'EIM_eval');
 end
 
 rmpath(problem_folder);

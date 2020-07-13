@@ -39,10 +39,12 @@ if size(train_fl, 2)>1
 end
 
 % call EIM to expand train xl one by one
+fithn = str2func('EIM_eval');
 for iter = 1:iter_size
     % eim propose next xl
+    % lower level is single objective so fitness function is eim
     [new_xl, ~] = EIMnext_znorm(train_xl, train_fl, upper_bound, lower_bound, ...
-        num_pop, num_gen, train_fc);
+        num_pop, num_gen, train_fc, fithn);
     
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -62,7 +64,7 @@ fmin_obj = @(x)llobjective(x, xu, prob);
 fmin_con = @(x)llconstraint(x, xu, prob);
 opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
-% opts.Display = 'off';
+opts.Display = 'off';
 opts.MaxFunctionEvaluations = 100;
 [newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
     prob.xl_bl, prob.xl_bu, fmin_con,opts);
