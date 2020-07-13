@@ -1,8 +1,8 @@
-function  perfrecord_umoc(xu, fu, fc, prob, seed)
+function  perfrecord_umoc(xu, fu, fc, prob, seed, method)
 % save nd front
 %
 
-savepath = strcat(pwd, '\result_folder\', prob.name );
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)
@@ -30,7 +30,7 @@ else % non constraint upper problem/ nd always exists
     nd_index = Paretoset(fu);
     fu_nd = fu(nd_index, :);
     xu_nd = xu(nd_index, :);
-    fc_nd = fc(nd_index, :);
+    fc_nd = [];
 end
 
 % save nd front

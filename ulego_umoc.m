@@ -124,7 +124,7 @@ for i = 1:numiter_u
     %-plot ----
 end
 
- perfrecord_umoc(xu, fu, fc, prob, seed);
+perfrecord_umoc(xu, fu, fc, prob, seed, fitnesshandle);
 toc
 end
 
