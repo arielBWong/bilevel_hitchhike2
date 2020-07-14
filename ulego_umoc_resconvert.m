@@ -111,7 +111,7 @@ for seed = 1:seedmax
     for ii = 1:np
         for jj = 1:nm
             ele = ndmatrix_problems(seed, (ii -1) *nm +jj);
-            fprintf(fp, '%f,', ele);         
+            fprintf(fp, '%f,', ele);
         end
     end
     fprintf(fp, '\n');

@@ -13,10 +13,11 @@ xu = [0, 0];
 obj = @(x)hyobj(x, xu, prob);
 con = @(x)hycon(x, xu, prob);
 
-param.popsize = 50;
-param.gen = 100;
+opts = optimoptions('ga');
+opts.MaxGenerations = 100;
+opts.PopulationSize = 50;
 
- [bestx, bestf, bestc]  = gsolver(obj,prob.n_lvar, prob.xl_bl, prob.xl_bu, initxl, con, param);
+[newxl_g, newfl_g] = ga(obj, prob.n_lvar, [],[],[],[], prob.xl_bl, prob.xl_bu,con, opts);
 
 rmpath(problem_folder)
 

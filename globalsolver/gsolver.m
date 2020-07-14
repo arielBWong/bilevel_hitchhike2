@@ -26,16 +26,18 @@ bestf = NaN;
 bestc = NaN;
 
 % Initialization
-[pop,archive] = initialize_pop(funh_obj, funh_con, num_xvar, lb, ub, initmatrix, param, []);
+[pop,archive] = initialize_pop(funh_obj, funh_con, num_xvar, lb, ub, initmatrix, param);
 
 gen=1;
 while gen<= param.gen
     % Recombination
-    child.X=generate_child(pop,param,archive,prob,gen,objnum);      
+    child.X=generate_child(lb, ub, pop, param);   
+    
     % Evaluate and Order
-    [pop,archive]= evaluate_order(pop,prob,param,archive,evals,objnum,child.X,gen,track);     
+    [pop,archive]= evaluate_order(pop,archive, funh_obj, funh_con, child.X, gen, param);  
+    
     % Reduce 2N to N
-     [pop]=reduce_pop(pop,param);
+     [pop]=reduce_pop(pop,param.popsize);
      
      gen = gen+1;
     % disp(gen);
@@ -47,7 +49,11 @@ num_con = size(pop.C, 2);
 if num_obj == 1
     bestx = pop.X(1, :);
     bestf = pop.F(1, :);
+    if ~isempty(pop.C)
     bestc = pop.C(1, :);
+    else
+        bestc = [];
+    end
     return 
 end
 
