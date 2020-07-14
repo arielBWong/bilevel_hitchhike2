@@ -4,7 +4,7 @@ clearvars;
 close all;
 
 
-seedmax = 1;
+seedmax = 15;
 % read a seed and
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 methods = {'Ehv_eval', 'EIM_eval'};
@@ -29,18 +29,18 @@ for ii = 1: np
             savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
             
             % --- save plots----
-            nd_front = csvread(savename_fu);
-            
-            fig1 = gcf;
-            scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
-            t = [prob.name,' ', method, ' seed ', num2str(seed) ];
-            title(t);
-            savename = strcat(savepath, '\nd_', num2str(seed),'.fig');
-            savefig(savename);
-            savename = strcat(savepath, '\nd_', num2str(seed),'.png');
-            
-            saveas(fig1, savename);
-            close(fig1);
+             nd_front = csvread(savename_fu);
+%             
+%             fig1 = gcf;
+%             scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+%             t = [prob.name,' ', method, ' seed ', num2str(seed) ];
+%             title(t);
+%             savename = strcat(savepath, '\nd_', num2str(seed),'.fig');
+%             savefig(savename);
+%             savename = strcat(savepath, '\nd_', num2str(seed),'.png');
+%             
+%             saveas(fig1, savename);
+%             close(fig1);
             %----
             
             %--- calculate hyper volume results---
@@ -70,7 +70,7 @@ for ii = 1: np
             ndmatrix_problems(seed, (ii -1) *nm +jj)= Hypervolume(nd_fu{seed, jj} , ref);
         end
     end
-    
+    clear nd_fu;
     %----for ii -- problem routine
 end
 
@@ -119,11 +119,11 @@ end
 % format statistics
 st = {'mean', 'std', 'median', 'median id'};
 for s = 1:4
-    fprintf(fp, st{s});
+    fprintf(fp, '%s,', st{s});
     for ii = 1:nm * np
         fprintf(fp, '%f,', statistic_matrix(s, ii) );
     end
-    fprintf('\n');
+    fprintf(fp, '\n');
 end
 fclose(fp);
 rmpath(problem_folder);

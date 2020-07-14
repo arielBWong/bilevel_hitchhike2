@@ -1,4 +1,4 @@
-function  perfrecord_umoc(xu, fu, fc, prob, seed, method)
+function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
 % save nd front
 %
 
@@ -33,11 +33,14 @@ else % non constraint upper problem/ nd always exists
     fc_nd = [];
 end
 
+nn = [nxu, nxl];
 % save nd front
 savename_xu = strcat(savepath, '\xu_', num2str(seed),'.csv');
 savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
 savename_fc = strcat(savepath, '\fc_', num2str(seed),'.csv');
+savename_nn = strcat(savepath, '\nn_', num2str(seed),'.csv');
 csvwrite(savename_xu, xu_nd);
 csvwrite(savename_fu, fu_nd);
 csvwrite(savename_fc, fc_nd);
+csvwrite(savename_nn, nn);
 end
