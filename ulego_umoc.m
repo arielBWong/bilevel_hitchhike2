@@ -37,6 +37,7 @@ prob = eval(prob);
 eim = str2func(eim);
 fithn = str2func(fitnesshandle);
 
+n_feval = 0;
 %--upper problem variable
 u_nvar = prob.n_uvar;
 upper_bound = prob.xu_bu;
@@ -123,8 +124,9 @@ for i = 1:numiter_u
     end
     %-plot ----
 end
-
-perfrecord_umoc(xu, fu, fc, prob, seed, fitnesshandle);
+nxu = size(xu, 1);
+nxl = n_feval;
+perfrecord_umoc(xu, fu, fc, prob, seed, fitnesshandle,nxu, nxl);
 toc
 end
 

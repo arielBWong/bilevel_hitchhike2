@@ -7,7 +7,7 @@ addpath(problem_folder);
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 algs = {'EIM_eval', 'Ehv_eval'};
 
-seeds = linspace(1, 1, 1);
+seeds = linspace(1, 15, 15);
 
 np = length(problems);
 ns = length(seeds);
