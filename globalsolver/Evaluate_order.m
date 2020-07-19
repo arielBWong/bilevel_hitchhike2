@@ -73,7 +73,7 @@ end
 if numcon>0
     % Ordering considers constraints
     c(c<=0) = 0;
-    fy_ind = sum(c, 2) == numcon;                 % feasibility index
+    fy_ind = sum(c, 2) == 0;                 % feasibility index
     cv_ind =~fy_ind;                                            % constraint violation index
     
     

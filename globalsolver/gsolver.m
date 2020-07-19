@@ -61,9 +61,10 @@ end
 % return feasible nd front
 if num_obj > 1
     if ~isempty(pop.C)                                    % constraint problem
-        fy_ind = sum(pop.C, 2) ==num_con;
+        pop.C(pop.C<=0) = 0;
+        fy_ind = sum(pop.C, 2) ==0;
     else
-        fy_ind = [1:para.popsize];                    % unconstraint problem
+        fy_ind =true(param.popsize ,1);                    % unconstraint problem
     end
 end
 

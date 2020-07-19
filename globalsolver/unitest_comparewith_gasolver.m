@@ -1,12 +1,12 @@
 %% development test on gsolver
-
+clearvars;
 workdir = pwd;
 idcs = strfind(workdir, '\');
 upperfolder = workdir(1: idcs(end)-1);
 problem_folder = strcat(upperfolder,'\problems\SMD');
 addpath(problem_folder);
 
-prob = smd9();
+prob = smd11();
 xu = [0, 0];
 
 %-global search
@@ -18,6 +18,8 @@ opts.MaxGenerations = 100;
 opts.PopulationSize = 50;
 
 [newxl_g, newfl_g] = ga(obj, prob.n_lvar, [],[],[],[], prob.xl_bl, prob.xl_bu,con, opts);
+
+[newxc, ~] = hycon(newxl_g, xu, prob);
 
 rmpath(problem_folder)
 

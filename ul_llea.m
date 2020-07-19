@@ -1,4 +1,4 @@
-function ul_llea(prob, seed)
+function ul_llea(prob_str, seed)
 % this is a comparison algorithm for ulego
 % it uses true evaluations on both levels to search for optimum solution
 % usage
@@ -38,7 +38,6 @@ gsolver(funh_obj, num_xvar, lb, ub, initmatrix, funh_con, param);
 
 % xu _g and xl_g stores all the solutions in the whole process
 % therefore, final results can use xu_g and xl_g to generate
-
 finalresults_process(xu_g, xl_g, prob, seed)
 end
 
