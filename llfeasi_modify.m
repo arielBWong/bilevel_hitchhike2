@@ -1,5 +1,5 @@
 function fu = llfeasi_modify(fu, feasi_list, ind)  % unit test needed
-% this function is to varify the feasibility of xl
+% this function is to varify fu wrt the feasibility of xl
 % if xl is infeasible, fu is modified to a higher value
 % so that this point is not preferred in later search
 % consider range(1:ind) to deal with both one instance and

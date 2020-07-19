@@ -1,4 +1,4 @@
-function [bestx, bestf, bestc] = gsolver(funh_obj, num_xvar, lb, ub, initmatrix, funh_con, param)
+function [bestx, bestf, bestc, archive] = gsolver(funh_obj, num_xvar, lb, ub, initmatrix, funh_con, param, varargin)
 % This function is a wrapper on methods in global optimization/minimization
 % folder. Main process is nsga, but reproducation is a DE operator
 % Be aware, this method only handle inequality constraints 
@@ -12,7 +12,8 @@ function [bestx, bestf, bestc] = gsolver(funh_obj, num_xvar, lb, ub, initmatrix,
 %       initmatrix                                               :  partial population to be embeded in
 %                                                                                      initial population 
 %       funh_con                                               : function handle to constraint functions
-%       opts                                                        : structure specifying ea parameters
+%       param                                                    : structure specifying ea parameters(param. popsize; param.gen)
+%       varargin                                                 : additional variables for dealing with bilevel problems
 % output:
 %       bestx                                                      : global search results of design variables  (best value or nd front)                      
 %       bestf                                                       : global search results of objective values   (best value or nd front)      
@@ -21,7 +22,7 @@ function [bestx, bestf, bestc] = gsolver(funh_obj, num_xvar, lb, ub, initmatrix,
 %  ** under development of archive handling
 %--------------------------------------------------------------------------
 
-bestx =NaN;
+bestx = NaN;
 bestf = NaN;
 bestc = NaN;
 

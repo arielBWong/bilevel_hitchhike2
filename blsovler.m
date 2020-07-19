@@ -45,24 +45,7 @@ clear global
 end
 
 
-function hvu = blobj_hv(xu, prob, num_pop, num_gen, inisize_l, numiter_l)
-xl = check_exist(xu);
-if isempty(xl)
-    [xl, n, flag] = llmatch(xu, prob,num_pop, num_gen,inisize_l, numiter_l);
 
-    global xu_g
-    global xl_g
-    global ll_n
-    ll_n = ll_n + n;
-    xu_g = [xu_g; xu];
-    xl_g = [xl_g; xl];
-end
-[fu, ~] = prob.evaluate_u(xu, xl);
-
-
-% convert to single objective
-
-end
 function fu =  blobj(xu, prob, num_pop, num_gen, inisize_l, numiter_l, penaltyf)
 % to improve efficiency check existing match
 xl = check_exist(xu);
@@ -86,6 +69,7 @@ end
 [fu, ~] = prob.evaluate_u(xu, xl);
 
 % fu should be modified according to feasibility of lower constraints
+
 % following efficiency can be improved
 [~, lc] = prob.evaluate_l(xu, xl);
 global ll_n
