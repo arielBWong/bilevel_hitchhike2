@@ -1,4 +1,4 @@
-function [match_xl, n_fev] = losolver(best_x, s, prob,  xu)
+function [match_xl, n_fev] = losolver(best_x, s, best_f, prob,  xu)
 %
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);

@@ -1,7 +1,7 @@
 function [bestx, bestf, bestc, archive] = gsolver(funh_obj, num_xvar, lb, ub, initmatrix, funh_con, param, varargin)
 % This function is a wrapper on methods in global optimization/minimization
 % folder. Main process is nsga, but reproducation is a DE operator
-% Be aware, this method only handle inequality constraints 
+% Be aware, this method only handle inequality constraints
 % Don't use on equality constraints
 % input:
 %       funh_obj                                                : function handle to objective function
@@ -10,13 +10,13 @@ function [bestx, bestf, bestc, archive] = gsolver(funh_obj, num_xvar, lb, ub, in
 %                                                                                      1d row array
 %       up                                                           : lower bound of design variables
 %       initmatrix                                               :  partial population to be embeded in
-%                                                                                      initial population 
+%                                                                                      initial population
 %       funh_con                                               : function handle to constraint functions
 %       param                                                    : structure specifying ea parameters(param. popsize; param.gen)
 %       varargin                                                 : additional variables for dealing with bilevel problems
 % output:
-%       bestx                                                      : global search results of design variables  (best value or nd front)                      
-%       bestf                                                       : global search results of objective values   (best value or nd front)      
+%       bestx                                                      : global search results of design variables  (best value or nd front)
+%       bestf                                                       : global search results of objective values   (best value or nd front)
 %       bestc                                                      : global search results of constraints
 %                                                                                       for constraint problems, if no feasible is found, return least infeasible one
 %  ** under development of archive handling
@@ -32,15 +32,15 @@ bestc = NaN;
 gen=1;
 while gen<= param.gen
     % Recombination
-    child.X=generate_child(lb, ub, pop, param);   
+    child.X=generate_child(lb, ub, pop, param);
     
     % Evaluate and Order
-    [pop,archive]= evaluate_order(pop,archive, funh_obj, funh_con, child.X, gen, param);  
+    [pop,archive]= evaluate_order(pop,archive, funh_obj, funh_con, child.X, gen, param);
     
     % Reduce 2N to N
-     [pop]=reduce_pop(pop,param.popsize);
-     
-     gen = gen+1;
+    [pop]=reduce_pop(pop,param.popsize);
+    
+    gen = gen+1;
     % disp(gen);
 end
 
@@ -51,11 +51,11 @@ if num_obj == 1
     bestx = pop.X(1, :);
     bestf = pop.F(1, :);
     if ~isempty(pop.C)
-    bestc = pop.C(1, :);
+        bestc = pop.C(1, :);
     else
         bestc = [];
     end
-    return 
+    return
 end
 
 % return feasible nd front
@@ -73,7 +73,11 @@ if sum(fy_ind) > 0
     [fronts, ~, ~] = nd_sort(pop.F, find(fy_ind));
     bestf = pop.F(fronts(1).f, :);
     bestx = pop.X(fronts(1).f, :);
-    bestc = pop.C(fronts(1).f, :);
+    if ~isempty(pop.C)
+        bestc = pop.C(fronts(1).f, :);
+    else
+        bestc = [];
+    end
 else
     % no feasible solution in final population
     % return least infeasible on
@@ -81,6 +85,6 @@ else
     [~, id] = sort(sumc);
     bestf = pop.F(id(1),  :);
     bestx = pop.X(id(1),  :);
-    bestc = pop.C(id(1),  :);  
-end 
+    bestc = pop.C(id(1),  :);
+end
 end

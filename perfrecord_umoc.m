@@ -17,10 +17,12 @@ if ~isempty(fc) % constraint problems
         feasible_y = fu(index_c, :);
         feasible_x = xu(index_c, :);
         feasible_c =fc(index_c, :);
+        
         nd_index = Paretoset(feasible_y);
         fu_nd = feasible_y(nd_index, :);
         xu_nd = feasible_x(nd_index, :);
         fc_nd = feasible_c(nd_index, :);
+        
     else
         fu_nd =[];
         xu_nd = [];

@@ -29,7 +29,7 @@ pop.C = [pop.C; child.C];
 [pop.F, pop.X, pop.C] = pop_sort(pop.F, pop.X, pop.C);
 
 % dealing with feasibility on lower level
-if length(varargin) ~= 0
+if ~isempty(varargin)
     prob = varargin{1};
     xu_g =  varargin{2};
     xl_g = varargin{3};
@@ -60,7 +60,7 @@ numobj = size(f, 2);
 if numcon == 0                                             % unconstraint problem
     sc = [];
     if numobj > 1                                             % mo problem
-        [~, ids, ~] = nd_sort(f, [1:size(f, 1)]);
+        [~, ids, ~] = nd_sort(f, (1:size(f, 1))');
     else                                                                % so problem
         [~, ids] = sort(f);                                     % acending sort/minimization
     end
@@ -85,7 +85,7 @@ if numcon>0
     
     % sort feasible
     if numobj>1
-        [~, ids, ~] = nd_sort(fy_F, (1: size(fy_F, 1)));   % reason to do this is, nd_sort.m is not compatible with so
+        [~, ids, ~] = nd_sort(fy_F, (1: size(fy_F, 1))');   % reason to do this is, nd_sort.m is not compatible with so
     else
         [~, ids] = sort(fy_F);
     end
