@@ -25,7 +25,7 @@ end
 
 nrun = length(paras);
 parfor i = 1:nrun
-    ulego(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , 'EIM_eval');
+    ulego(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , 'EIM_eval', 'normalization_y');
 end
 
 rmpath(problem_folder);

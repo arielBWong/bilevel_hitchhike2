@@ -29,7 +29,7 @@ for ii = 1:num_obj
     [u(:, ii), mse(:, ii)] = dace_predict(x, kriging_obj{ii});
 end
 
-% constraint problem handling
+% predict contriant values if prob has contraints
 if nargin > 3
     num_con = length(kriging);
     uc = zeros(num_x, num_con);

@@ -16,7 +16,7 @@ addpath(upperfolder);
 
 
 prob = 'mobp5()';
-ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval');
+ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd');
 % ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval');
 
 rmpath(problem_folder); 

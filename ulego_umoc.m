@@ -1,4 +1,4 @@
-function ulego_umoc(prob, seed, eim, fitnesshandle)
+function ulego_umoc(prob, seed, eim, fitnesshandle, normhn)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "multiple objectives"
 % usage:
@@ -7,6 +7,7 @@ function ulego_umoc(prob, seed, eim, fitnesshandle)
 %               seed                          : random process seed
 %               eim                            : string, the name of eim function
 %               fitnesshandle          : string, the function that eim use to
+%               normhn                    : string, normalization function used in EIMnext_znorm
 %
 %
 %     output
@@ -36,6 +37,7 @@ hy_gen                   = 50;
 prob = eval(prob);
 eim = str2func(eim);
 fithn = str2func(fitnesshandle);
+normhn = str2func(normhn);
 
 n_feval = 0;
 %--upper problem variable
@@ -71,10 +73,10 @@ end
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
-    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn);
+    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn, normhn);
     
     %---test on recreating expected fu from kriging
-    expfu = expectedfu_fromkrg(newxu, info);
+    % expfu = expectedfu_fromkrg(newxu, info);
     
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);

@@ -1,10 +1,10 @@
 function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
-    num_pop, num_gen, train_c, fitnesshn)
+    num_pop, num_gen, train_c, fitnesshn, normhn)
 % method of using EIM to generate next point
 % normalization is zscore on all variables
 % usage:
 %
-% input: 
+% input:
 %        train_x                - design variables
 %                                           1/2d array: (num_samples, num_varibles)
 %        train_y                - objective values
@@ -19,7 +19,8 @@ function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
 %                                           1/2d array: (num_samples, num_constraints)
 %        fitnesshn           -fitness valuation handle (callback) for ea process of
 %                                           proposing next poing
-% output: 
+%       normhn             -normalization handle on y
+% output:
 %       best_x                 - proposed next x to be evaluated by EIM
 %       info                     - returned information for functor caller to recreate
 %                                   - or check information
@@ -54,8 +55,7 @@ if num_obj > 1
     info.train_ynormmin = min(train_y_norm);
     info.train_ynormmax = max(train_y_norm);
     % further normalization ??
-    train_y_norm = (train_y_norm -repmat(min(train_y_norm),num_x,1))./...
-         repmat(max(train_y_norm)-min(train_y_norm),num_x,1);
+    train_y_norm = normhn(train_y_norm);
 else
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
 end
@@ -64,7 +64,7 @@ for ii = 1:num_obj
     % kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
     kriging_obj{ii} = dacefit(train_x_norm,train_y_norm(:,ii),...
         'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
-
+    
 end
 
 % prepare f_best for EIM, first only consider non-constraint situation
@@ -77,7 +77,7 @@ end
 
 % compatibility with constraint problems
 % if nargin>6
-if ~isempty(train_c) 
+if ~isempty(train_c)
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
     % constraints should not be normalised
@@ -86,8 +86,8 @@ if ~isempty(train_c)
     for ii = 1:num_con
         % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
         kriging_con{ii} = dacefit(train_x_norm, train_c_norm(:,ii),...
-             'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  %test
-
+            'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  %test
+        
     end
     % adjust f_best according to feasibility
     % feasibility needs to be valued in original range
@@ -115,7 +115,7 @@ best_x = best_x .* x_std + x_mean;  % commit for test
 % fix bound violation
 best_x = fixbound_violation(best_x, xu_bound, xl_bound);
 
-%--info 
+%--info
 info.eim_normf = eim_f;
 info.krg = kriging_obj;
 if  ~isempty(train_c)
@@ -131,11 +131,11 @@ end
 function x = fixbound_violation(x, xu, xl)
 % local function for znorm correctness, if x fall out of boundary
 % move them on boudary
-    l_vio = x < xl;
-    x(l_vio) = xl(l_vio);
-    
-    u_vio = x > xu;
-    x(u_vio) = xu(u_vio);   
+l_vio = x < xl;
+x(l_vio) = xl(l_vio);
+
+u_vio = x > xu;
+x(u_vio) = xu(u_vio);
 end
 
- 
+

@@ -1,4 +1,4 @@
-function ulego(prob, seed, eim, fitnesshandle)
+function ulego(prob, seed, eim, fitnesshandle, normhn)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "single objective"
 % usage: 
@@ -8,6 +8,8 @@ function ulego(prob, seed, eim, fitnesshandle)
 %               eim                            : string, the name of eim function 
 %               fitnesshandle          : string, the function that eim use to
 %                                                                evaluate fitess in its ea process of proposing next point
+%               normhn                    : string, normalization function used in EIMnext_znorm
+%               
 %     output  
 %               csv files saved in result folder
 %               performance statistics include 3*3 matrix
@@ -35,6 +37,7 @@ hy_gen  = 50;
 prob = eval(prob);
 eim = str2func(eim);
 fithn = str2func(fitnesshandle);
+normhn = str2func(normhn);
 
 %--upper problem variable
 u_nvar = prob.n_uvar;
@@ -70,7 +73,7 @@ end
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
-    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn);
+    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn, normhn);
     %--get its xl
     [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
     n_feval = n_feval + n;
