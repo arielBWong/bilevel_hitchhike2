@@ -7,7 +7,8 @@ close all;
 seedmax = 15;
 % read a seed and
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-methods = {'Ehv_eval', 'EIM_eval'};
+methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
+
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
 
