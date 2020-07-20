@@ -79,7 +79,7 @@ if numcon>0
     
     % seperate feasible and infeasible
     % sort two subset seperately
-    fy_F = f(fy_ind, :);  cv_F = f(cv_ind, :);         % operation should be valid when no feasible solutions
+    fy_F = f(fy_ind, :); cv_F = f(cv_ind, :);         % operation should be valid when no feasible solutions
     fy_C = c(fy_ind, :); cv_C = c(cv_ind, :);
     fy_X = x(fy_ind, :); cv_X = x(cv_ind, :);
     
@@ -92,7 +92,12 @@ if numcon>0
     fy_F = fy_F(ids, :); fy_C = fy_C(ids, :); fy_X = fy_X(ids, :);
     
     % sort infeasible
-    [~, idc] = sort(cv_C); 
+    if numcon > 1
+        sum_cv = sum(cv_C, 2);
+    else
+        sum_cv = cv_C;
+    end
+    [~, idc] = sort(sum_cv); 
     cv_F = cv_F(idc, :); cv_C = cv_C(idc, :); cv_X = cv_X(idc, :);
     
     % replace unsorted each fields of pop

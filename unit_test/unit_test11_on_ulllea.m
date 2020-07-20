@@ -3,6 +3,8 @@
 % result of bilevel optimization on upper level moc lower level soc
 % round 1: to be passed
 % -----------------------
+clearvars;
+close all;
 seed = 1;
 rng(seed, 'twister');
 
@@ -11,12 +13,15 @@ workdir = pwd;
 idcs = strfind(workdir, '\');
 upperfolder = workdir(1: idcs(end)-1);
 problem_folder = strcat(upperfolder,'\problems\MOBP');
+sort_folder = strcat(upperfolder,'\ND_Sort');
 addpath(problem_folder);
 addpath(upperfolder);
+addpath(sort_folder);
 
-
-prob = 'mobp5()';
+problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+prob = problems{6};
 ul_llea(prob, seed);
 
 rmpath(problem_folder); 
 rmpath(upperfolder);
+rmpath(sort_folder);
