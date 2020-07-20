@@ -1,3 +1,4 @@
 Another round of trying...
-entrance 1 ulego_main
-entrance 2 ulego_umoc
+functions that normalization affects
+
+(1)expectedfu_fromkrg in ulego_umoc
