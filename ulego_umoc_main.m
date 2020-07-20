@@ -28,7 +28,7 @@ end
 
 nrun = length(paras);
 parfor i = 1:nrun
-    ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , paras{i}{3});
+    ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , paras{i}{3}, 'normalization_nd');
 end
 
 rmpath(problem_folder);

@@ -91,7 +91,7 @@ else % ego did not find feasible
 end
 
 % count local search number
-n_fev = iter_size + output.funcCount;
+n_fev = init_size + iter_size + output.funcCount;
 end
 
 %objective wrapper

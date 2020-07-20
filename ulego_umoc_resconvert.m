@@ -29,6 +29,7 @@ for ii = 1: np
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
             savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
             
+            
             % --- save plots----
              nd_front = csvread(savename_fu);
 %             
@@ -76,7 +77,7 @@ for ii = 1: np
 end
 
 %---process ndmatrix_problems----
-statistic_matrix = zeros(4, nm * np); %(mean, std, median, median_id)
+statistic_matrix = zeros(5, nm * np); %(mean, std, median, median_id, nn)
 for ii = 1:np
     for jj = 1: nm
         one_column = ndmatrix_problems(:, (ii-1) * nm + jj) ;
@@ -90,6 +91,15 @@ for ii = 1:np
         middle = round(seedmax/2);
         [~, ids] = sort(one_column);
         statistic_matrix(4, (ii-1) * nm + jj)  =  ids(middle);
+        
+        % median function evaluation
+        prob = eval(problems{ii});
+        method = methods{jj};
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+        savename_nn = strcat(savepath, '\nn_', num2str(ids(middle)),'.csv');
+        nn = csvread(savename_nn);
+        statistic_matrix(5, (ii-1) * nm + jj)  =  sum(nn);
+        
     end
 end
 
@@ -118,8 +128,8 @@ for seed = 1:seedmax
     fprintf(fp, '\n');
 end
 % format statistics
-st = {'mean', 'std', 'median', 'median id'};
-for s = 1:4
+st = {'mean', 'std', 'median', 'median id', 'nfev_median'};
+for s = 1:length(st)
     fprintf(fp, '%s,', st{s});
     for ii = 1:nm * np
         fprintf(fp, '%f,', statistic_matrix(s, ii) );
