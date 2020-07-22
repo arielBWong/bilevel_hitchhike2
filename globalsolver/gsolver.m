@@ -31,6 +31,7 @@ bestc = NaN;
 
 gen=1;
 while gen<= param.gen
+
     % Recombination
     child.X=generate_child(lb, ub, pop, param);
     
