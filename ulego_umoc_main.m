@@ -3,7 +3,9 @@
 clearvars;
 close all;
 problem_folder = strcat(pwd,'\problems\MOBP');
+dace_folder = strcat(pwd,'\dace');
 addpath(problem_folder);
+addpath(dace_folder);
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 algs = {'EIM_eval', 'Ehv_eval'};
 
