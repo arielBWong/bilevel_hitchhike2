@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+%% this script extract empirical_pf from exghausive search results
+% read result folder from seeds
+% combine them together and extract nd front
+% save them into a pf file named 'empf_{problemname}'
+clearvars;
+close all;
+
+=======
 %% this script is used to extract empirical pf from generated results
 % similar to resconvert script
 % (1) read across seed
@@ -10,12 +19,14 @@ close all;
 
 seedmax = 4;
 % read a seed and
+>>>>>>> fe697ea6dea24c773421ee5057866bc9f0187643
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
 
 np = length(problems);
 
+<<<<<<< HEAD
 for ii = 1:np
     prob = eval(problems{ii});
     fu = [];
@@ -34,7 +45,8 @@ for ii = 1:np
     % save empf to nd_front
     outname =  strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
     csvread(outname, nd_front);
-end
+    
+=======
 for ii = 1: np
     prob = eval(problems{ii});
     allnds = [];
@@ -69,4 +81,5 @@ for ii = 1: np
     saveas(fig1, savename);
     close(fig1);
 
+>>>>>>> fe697ea6dea24c773421ee5057866bc9f0187643
 end
