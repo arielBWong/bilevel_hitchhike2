@@ -2,7 +2,8 @@ function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
 % save nd front
 %
 
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+num = length(prob.xl_bl);
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)

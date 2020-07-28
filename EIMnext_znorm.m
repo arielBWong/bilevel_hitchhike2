@@ -54,7 +54,7 @@ if num_obj > 1
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
     info.train_ynormmin = min(train_y_norm);
     info.train_ynormmax = max(train_y_norm);
-    % further normalization ??
+    % further normalization 
     train_y_norm = normhn(train_y_norm);
 else
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);

@@ -1,4 +1,4 @@
-function ulego_umoc(prob, seed, eim, fitnesshandle, normhn)
+function ulego_umoc(prob, seed, eim, fitnesshandle, normhn, llmatch_fithn)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "multiple objectives"
 % usage:
@@ -8,6 +8,7 @@ function ulego_umoc(prob, seed, eim, fitnesshandle, normhn)
 %               eim                            : string, the name of eim function
 %               fitnesshandle          : string, the function that eim use to
 %               normhn                    : string, normalization function used in EIMnext_znorm
+%               llmatch_fithn          : str,  lower level match fitness method
 %
 %
 %     output
@@ -53,8 +54,9 @@ xu = repmat(lower_bound, inisize_u, 1) + repmat((upper_bound - lower_bound), ini
 xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
+llmatch_fithn = ;
 for i=1:inisize_u
-    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l);
+    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l,llmatch_fithn);
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + n; %record lowerlevel nfeval
@@ -79,8 +81,8 @@ for i = 1:numiter_u
     % expfu = expectedfu_fromkrg(newxu, info);
     
     %--get its xl
-    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
-    fprintf('xl matching feasibility is %d \n', flag);
+    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l, llmatch_fithn);
+    % fprintf('xl matching feasibility is %d \n', flag);
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
@@ -107,7 +109,7 @@ for i = 1:numiter_u
             if num_nd > 1
                 nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
                 h = Hypervolume(nd_front,ref_point);
-                fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
+               % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
             end
         end
     else  % unconstraint problems
@@ -121,7 +123,7 @@ for i = 1:numiter_u
         if num_nd >1
             nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
             h = Hypervolume(nd_front,ref_point);
-            fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
+           %  fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
         end
     end
     %-plot ----

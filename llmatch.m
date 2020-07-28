@@ -1,10 +1,10 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size, iter_size)
+function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size, iter_size, llfit_hn)
 % method of searching for a match xl for xu. 
 % Problem(Prob) definition needs 
 % evaluation method of the form 'evaluation_l(xu, xl)'
 % usage
 % input: 
-%       xu                                                   :  upper level variable, to be matched
+%        xu                                                   :  upper level variable, to be matched
 %        prob                                              : problem instance, require certin evaluation
 %                                                                               method name defintion-- check problems
 %                                                                               folder
@@ -12,6 +12,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 %        num_gen                                     : DE parameter
 %        init_size                                        : surrogate parameter: number of initiliazation samples
 %        iter_size                                        : surrogate parameter: number of iterations
+%        llfit_hn                                          :  str, lower level  seach fitness 
 %
 % output: 
 %        matching_xl                                : found xl for xu 
@@ -38,11 +39,11 @@ if size(train_fl, 2)>1
     error('lower level problem is multiple objective, algorithm is not compatible');
 end
 
-% call EIM to expand train xl one by one
-fithn = str2func('EIM_eval');
+% call EIM/Ehv to expand train xl one by one
+fithn = str2func(llfit_hn);
 for iter = 1:iter_size
     % eim propose next xl
-    % lower level is single objective so fitness function is eim
+    % lower level is single objective so no normalization method is needed
     [new_xl, ~] = EIMnext_znorm(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
     
