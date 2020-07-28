@@ -54,7 +54,6 @@ xu = repmat(lower_bound, inisize_u, 1) + repmat((upper_bound - lower_bound), ini
 xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
-llmatch_fithn = ;
 for i=1:inisize_u
     [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l,llmatch_fithn);
     xl = [xl; xl_single];

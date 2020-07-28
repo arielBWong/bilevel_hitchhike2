@@ -4,21 +4,21 @@ function [bestx, bestf, bestc, archive] = gsolver(funh_obj, num_xvar, lb, ub, in
 % Be aware, this method only handle inequality constraints
 % Don't use on equality constraints
 % input:
-%       funh_obj                                                : function handle to objective function
-%       num_xvar                                              : number design variables
-%       lb                                                             : upper bound of design varibles
-%                                                                                      1d row array
-%       up                                                           : lower bound of design variables
-%       initmatrix                                               :  partial population to be embeded in
-%                                                                                      initial population
-%       funh_con                                               : function handle to constraint functions
-%       param                                                    : structure specifying ea parameters(param. popsize; param.gen)
-%       varargin                                                 : additional variables for dealing with bilevel problems
+%       funh_obj : function handle to objective function
+%       num_xvar : number design variables
+%       lb: upper bound of design varibles
+%                1d row array
+%       up: lower bound of design variables
+%       initmatrix:  partial population to be embeded in
+%                           initial population
+%       funh_con : function handle to constraint functions
+%       param : structure specifying ea parameters(param. popsize; param.gen)
+%       varargin : additional variables for dealing with bilevel problems
 % output:
-%       bestx                                                      : global search results of design variables  (best value or nd front)
-%       bestf                                                       : global search results of objective values   (best value or nd front)
-%       bestc                                                      : global search results of constraints
-%                                                                                       for constraint problems, if no feasible is found, return least infeasible one
+%       bestx : global search results of design variables  (best value or nd front)
+%       bestf : global search results of objective values   (best value or nd front)
+%       bestc : global search results of constraints
+%                       for constraint problems, if no feasible is found, return least infeasible one
 %  ** under development of archive handling
 %--------------------------------------------------------------------------
 
@@ -31,11 +31,10 @@ bestc = NaN;
 
 gen=1;
 while gen<= param.gen
-
     % Recombination
     child.X=generate_child(lb, ub, pop, param);
     
-    % Evaluate and Order
+    % Evaluate and Order(need to test varargin)
     [pop,archive]= evaluate_order(pop,archive, funh_obj, funh_con, child.X, gen, param);
     
     % Reduce 2N to N

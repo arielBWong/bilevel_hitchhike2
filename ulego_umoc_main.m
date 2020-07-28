@@ -7,17 +7,16 @@ dace_folder = strcat(pwd,'\dace');
 addpath(problem_folder);
 
 % problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
+% problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
 addpath(dace_folder);
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()'}; %,'mobp11(6)' };
 algs = {'EIM_eval', 'Ehv_eval'};
 
-seeds = linspace(1, 5, 5);
+seeds = linspace(1, 1, 1);
 
 np = length(problems);
 ns = length(seeds);
 na = length(algs);
-
 
 paras=cell(1, np*ns * na);
 nn = 1;
@@ -33,7 +32,7 @@ end
 
 nrun = length(paras);
 parfor i = 1:nrun
-    ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , paras{i}{3}, 'normalization_nd');
+    ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , paras{i}{3}, 'normalization_nd', paras{i}{3});
 end
 
 rmpath(problem_folder);

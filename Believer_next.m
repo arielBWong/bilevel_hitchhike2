@@ -1,6 +1,7 @@
-function[best_x, info] = EIMnext_znorm(train_x, train_y, xu_bound, xl_bound, ...
+function [best_x, info] = Believer_next(train_x, train_y, xu_bound, xl_bound, ...
     num_pop, num_gen, train_c, fitnesshn, normhn)
-% method of using EIM to generate next point
+% This function is also a surrogate assisted method, but it does not
+% consider variances in prediction
 % normalization is zscore on all variables
 % usage:
 %
@@ -54,7 +55,7 @@ if num_obj > 1
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
     info.train_ynormmin = min(train_y_norm);
     info.train_ynormmax = max(train_y_norm);
-    % further normalization 
+    % further normalization
     train_y_norm = normhn(train_y_norm);
 else
     [train_y_norm, y_mean, y_std] = zscore(train_y, 1, 1);
@@ -106,8 +107,17 @@ else
     fitness_val = @(x)fitnesshn(x, f_best, kriging_obj);
 end
 
-% call DE evolution
-[best_x, eim_f] = DE(fitness_val, num_vari, lb, ub, num_pop, num_gen);
+% call global solver evolution
+funh_obj = @(x)obj(x,kriging_obj);
+if ~isempty(train_c)
+    funh_con = @(x)con(x,kriging_con);
+else
+    funh_con = @(x)con(x, []);
+end
+param = struct();
+param.gen= num_gen;
+param.popsize = num_pop;
+[best_x, best_f, ~, ~] = gsolver(funh_obj, num_vari, lb, ub, [], funh_con, param);
 
 % convert best_x to denormalized value
 best_x = best_x .* x_std + x_mean;  % commit for test
@@ -116,7 +126,7 @@ best_x = best_x .* x_std + x_mean;  % commit for test
 best_x = fixbound_violation(best_x, xu_bound, xl_bound);
 
 %--info
-info.eim_normf = eim_f;
+info.eim_normf = best_f;
 info.krg = kriging_obj;
 if  ~isempty(train_c)
     info.krgc = kriging_con;
@@ -136,6 +146,36 @@ x(l_vio) = xl(l_vio);
 
 u_vio = x > xu;
 x(u_vio) = xu(u_vio);
+end
+
+function [c] = con(x, krg)
+
+if ~isempty(krg)
+    % number of input designs
+    num_x = size(x, 1);
+    num_con = length(krg);
+    
+    % the kriging prediction and varince
+    c = zeros(num_x,num_con);
+    for ii = 1:num_con
+        [c(:, ii), ~] = dace_predict(x, krg{ii});
+    end
+else
+    c = [];
+end
+end
+
+
+function [f] = obj(x, krg)
+% number of input designs
+num_x = size(x, 1);
+num_obj = length(krg);
+
+% the kriging prediction and varince
+f = zeros(num_x,num_obj);
+for ii = 1:num_obj
+    [f(:, ii), ~] = dace_predict(x, krg{ii});
+end
 end
 
 

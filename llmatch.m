@@ -13,6 +13,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size,
 %        init_size                                        : surrogate parameter: number of initiliazation samples
 %        iter_size                                        : surrogate parameter: number of iterations
 %        llfit_hn                                          :  str, lower level  seach fitness 
+%        Believer_next
 %
 % output: 
 %        matching_xl                                : found xl for xu 

@@ -3,13 +3,13 @@ function [fit] = Ehv_eval(x, f, kriging_obj, kriging_con)
 % usage:
 %
 % input:
-%        x                          - pop to evaluate
-%        f                           - best f so far/feasible pareto front
+%        x - pop to evaluate
+%        f - best f so far/feasible pareto front
 %                                           in multi-objective probs
-%        kriging_obj       - kriging model for objectives
-%        kriging_con      - kriging model for constraints
+%        kriging_obj - kriging model for objectives
+%        kriging_con - kriging model for constraints
 % output:
-%       fit                         - pop fitness
+%        fit - pop fitness
 %--------------------------------------------------------------------------
 
 % number of input designs/population size
@@ -40,9 +40,9 @@ if nargin > 3
 end
 
 basehv = Hypervolume(f, ref_point);
-fit = zeros(num_x, 1);                                   % contribution of each x-f to existing nd front
+fit = zeros(num_x, 1);                                        % contribution of each x-f to existing nd front
 
-for ii = 1:num_x                                              %population size
+for ii = 1:num_x                                              % population size
     extendf = [f; u(ii, :)];
     % put constraint into consideration
     % skip computating if  infeasible
