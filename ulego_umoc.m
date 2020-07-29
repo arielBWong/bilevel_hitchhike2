@@ -1,14 +1,15 @@
-function ulego_umoc(prob, seed, eim, fitnesshandle, normhn, llmatch_fithn)
+function ulego_umoc(prob, seed, str_nextxhn, fitnesshandle, normhn, llmatch_nextx)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "multiple objectives"
 % usage:
 %     input
-%               prob                          : problem instance
-%               seed                          : random process seed
-%               eim                            : string, the name of eim function
-%               fitnesshandle          : string, the function that eim use to
-%               normhn                    : string, normalization function used in EIMnext_znorm
-%               llmatch_fithn          : str,  lower level match fitness method
+%               prob: problem instance
+%               seed: random process seed
+%               str_nextxhn: string, upper level method to propose next x
+%               fitnesshandle: string, the function that upper level next x method uses for its evolution process
+%               normhn: string, normalization function used in EIMnext_znorm
+%               llmatch_nextx: string, lower level match next x propose method
+%             
 %
 %
 %     output
@@ -20,13 +21,10 @@ function ulego_umoc(prob, seed, eim, fitnesshandle, normhn, llmatch_fithn)
 %
 %
 %--------------------------------------------------------------------------
-tic;
+
 rng(seed, 'twister');
-% performance record variable
-n_feval = 0;
 
 % algo parameter
-inisize_l                  = 30;
 numiter_l               = 20;
 numiter_u             = 50;
 num_pop              = 100;
@@ -36,7 +34,7 @@ hy_gen                   = 50;
 
 % parallel compatible setting
 prob = eval(prob);
-eim = str2func(eim);
+nextxhn = str2func(str_nextxhn);
 fithn = str2func(fitnesshandle);
 normhn = str2func(normhn);
 
@@ -55,7 +53,7 @@ xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
 for i=1:inisize_u
-    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l,llmatch_fithn);
+    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,llmatch_nextx, numiter_l, fitnesshandle);
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + n; %record lowerlevel nfeval
@@ -74,13 +72,13 @@ end
 %-main ulego routine
 for i = 1:numiter_u
     %--search next xu
-    [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn, normhn);
+    [newxu, info] = nextxhn(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn, normhn);
     
     %---test on recreating expected fu from kriging
     % expfu = expectedfu_fromkrg(newxu, info);
     
     %--get its xl
-    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l, llmatch_fithn);
+    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen, llmatch_nextx, numiter_l, fitnesshandle);
     % fprintf('xl matching feasibility is %d \n', flag);
     n_feval = n_feval + n;
     %--evaluate xu
@@ -130,7 +128,7 @@ end
 nxu = size(xu, 1);
 nxl = n_feval;
 perfrecord_umoc(xu, fu, fc, prob, seed, fitnesshandle,nxu, nxl);
-toc
+
 end
 
 % auxiliary function for investigation

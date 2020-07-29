@@ -10,8 +10,8 @@ function [pop, archive]= evaluate_order(pop, archive, funh_obj, funh_con, cx, ge
 %           gen: current generation
 %           param: evolution parameter (gen popsize)
 % output
-%         pop: extended and sorted population
-%         archive: extended archive
+%           pop: extended and sorted population
+%           archive: extended archive
 %-------------------------
 child.X=cx;
 % This is NSGA-II

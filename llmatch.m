@@ -1,25 +1,23 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, init_size, iter_size, llfit_hn)
+function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn)
 % method of searching for a match xl for xu. 
 % Problem(Prob) definition needs 
 % evaluation method of the form 'evaluation_l(xu, xl)'
 % usage
 % input: 
-%        xu                                                   :  upper level variable, to be matched
-%        prob                                              : problem instance, require certin evaluation
-%                                                                               method name defintion-- check problems
-%                                                                               folder
-%        num_pop                                    : DE parameter
-%        num_gen                                     : DE parameter
-%        init_size                                        : surrogate parameter: number of initiliazation samples
-%        iter_size                                        : surrogate parameter: number of iterations
-%        llfit_hn                                          :  str, lower level  seach fitness 
-%        Believer_next
+%        xu:  upper level variable, to be matched
+%        prob: problem instance, require certin evaluation
+%                      method name defintion-- check problems
+%                      folder
+%        num_pop: DE parameter
+%        num_gen : DE parameter
+%        propose_nextx  : str, function handle to generate next x
+%        iter_size : surrogate parameter: number of iterations
+%        llfit_hn :  str, lower level seach fitness for next x method
 %
 % output: 
-%        matching_xl                                : found xl for xu 
-%         n_fev                                            : total number of function evaluation on lower
-%                                                                                 level
-%         flag                                              : whether xl is a feasible solution(true/false)
+%        matching_xl : found xl for xu 
+%         n_fev : total number of function evaluation on lower level
+%         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
@@ -42,11 +40,14 @@ end
 
 % call EIM/Ehv to expand train xl one by one
 fithn = str2func(llfit_hn);
+nextx_hn = str2func(propose_nextx);
 for iter = 1:iter_size
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
-    [new_xl, ~] = EIMnext_znorm(train_xl, train_fl, upper_bound, lower_bound, ...
+    tic;
+    [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
+    toc;
     
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);

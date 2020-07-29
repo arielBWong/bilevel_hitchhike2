@@ -3,6 +3,8 @@ function [best_x, info] = Believer_next(train_x, train_y, xu_bound, xl_bound, ..
 % This function is also a surrogate assisted method, but it does not
 % consider variances in prediction
 % normalization is zscore on all variables
+% this believer only works for single objective purpose on lower level
+% update can be done for multiple objective
 % usage:
 %
 % input:
@@ -33,6 +35,7 @@ function [best_x, info] = Believer_next(train_x, train_y, xu_bound, xl_bound, ..
 %                                   - info.train_ystd
 %                                   - info.info.eim_normf
 %--------------------------------------------------------------------------
+
 
 % number of objective
 info = struct();
@@ -102,7 +105,7 @@ if ~isempty(train_c)
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end
-    fitness_val = @(x)fitnesshn(x,f_best, kriging_obj, kriging_con);
+    fitness_val = @(x)fitnesshn(x, f_best, kriging_obj, kriging_con);
 else
     fitness_val = @(x)fitnesshn(x, f_best, kriging_obj);
 end
@@ -114,10 +117,13 @@ if ~isempty(train_c)
 else
     funh_con = @(x)con(x, []);
 end
+
+
 param = struct();
 param.gen= num_gen;
 param.popsize = num_pop;
 [best_x, best_f, ~, ~] = gsolver(funh_obj, num_vari, lb, ub, [], funh_con, param);
+
 
 % convert best_x to denormalized value
 best_x = best_x .* x_std + x_mean;  % commit for test

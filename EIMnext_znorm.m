@@ -106,6 +106,7 @@ else
     fitness_val = @(x)fitnesshn(x, f_best, kriging_obj);
 end
 
+
 % call DE evolution
 [best_x, eim_f] = DE(fitness_val, num_vari, lb, ub, num_pop, num_gen);
 

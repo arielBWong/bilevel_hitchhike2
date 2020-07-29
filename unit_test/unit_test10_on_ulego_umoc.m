@@ -11,13 +11,22 @@ workdir = pwd;
 idcs = strfind(workdir, '\');
 upperfolder = workdir(1: idcs(end)-1);
 problem_folder = strcat(upperfolder,'\problems\MOBP');
+solver_folder = strcat(upperfolder,'\globalsolver');
+sort_folder = strcat(upperfolder,'\ND_Sort');
+
 addpath(problem_folder);
 addpath(upperfolder);
+addpath(solver_folder);
+addpath(sort_folder);
 
 
+tic;
 prob = 'mobp5()';
-ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd');
-% ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval');
+ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval', 'normalization_nd', 'EIMnext_znorm');
+% ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd', 'Believer_next');
 
+toc
 rmpath(problem_folder); 
 rmpath(upperfolder);
+rmpath(solver_folder);
+rmpath(sort_folder);
