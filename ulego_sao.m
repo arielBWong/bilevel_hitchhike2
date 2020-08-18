@@ -20,11 +20,11 @@ function ulego_sao(prob_str, seed, normhn)
 rng(seed, 'twister');
 % algorithm parameter
 num_popu = 20;
-num_genu  =200;
+num_genu  =150;
 iter_frequ = 50;
 
 num_popl = 20;
-num_genl = 120;
+num_genl = 80;
 iter_freql =40;
 
 %--------

@@ -51,6 +51,12 @@ for g = 1: n
     funh_obj = @(x) llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
     
+    if g==1
+        param.gen=iter_freq;
+    else
+        param.gen=iter_freq + 1;
+    end
+    
     param.gen=iter_freq;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
@@ -66,7 +72,6 @@ for g = 1: n
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
     initmatrix = new_xl;
 end
-
 
 % local search for best xl
 % connect a local search to sao
@@ -105,7 +110,7 @@ else % sao did not find feasible
 end
 
 % count number of function evaluation
-n_fev = n * num_pop + output.funcCount;
+n_fev =(n+1) * num_pop + output.funcCount;
 
 
 end
