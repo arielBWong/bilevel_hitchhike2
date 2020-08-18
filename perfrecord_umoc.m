@@ -6,7 +6,8 @@ function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
 % nxl: number of function evaluation lower
 
 num = length(prob.xl_bl);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)
