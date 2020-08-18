@@ -9,7 +9,7 @@ seedmax = 5;
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 % problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = {'sao', 'EIM_eval'};
+methods = {'sao'}; %, 'EIM_eval'};
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -97,8 +97,8 @@ for ii = 1:np
         % median function evaluation
         prob = eval(problems{ii});
         method = methods{jj};
-        % savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+       %  savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
         savename_nn = strcat(savepath, '\nn_', num2str(ids(middle)),'.csv');
         nn = csvread(savename_nn);
         statistic_matrix(5, (ii-1) * nm + jj)  =  sum(nn);
@@ -109,7 +109,7 @@ end
 
 % save into csv
 % savepath = strcat(pwd, '\result_folder\mobp_res.csv');
-savepath = strcat(pwd, '\result_folder\mobp9_res.csv');
+savepath = strcat(pwd, '\result_folder\mobpsao_res.csv');
 fp=fopen(savepath,'w');
 fprintf(fp, 'seed,');
 % format header

@@ -8,7 +8,7 @@ clearvars;
 close all;
 
 
-seedmax = 4;
+seedmax =3;
 % read a seed and
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 problem_folder = strcat(pwd,'\problems\MOBP');
@@ -19,10 +19,13 @@ np = length(problems);
 for ii = 1:np
     prob = eval(problems{ii});
     fu = [];
+    if  strcmp(prob.name, 'mobp11')
+        seedmax = 2;
+    end
     for jj = 1:seedmax
         % extract nd front from each seed
         savename =  strcat(pwd, '\result_folder\', prob.name, '_emp_pf');
-        empf_filename = strcat(savename, '\fu_', str(jj), '.csv');
+        empf_filename = strcat(savename, '\fu_', num2str(jj), '.csv')
         nd_front = csvread(empf_filename);
         fu = [nd_front; fu];
     end
@@ -33,7 +36,7 @@ for ii = 1:np
     
     % save empf to nd_front
     outname =  strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
-    csvread(outname, nd_front);
+    csvwrite(outname, nd_front);
 end
 for ii = 1: np
     prob = eval(problems{ii});

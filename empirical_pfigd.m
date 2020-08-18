@@ -9,10 +9,12 @@ clearvars;
 close all;
 
 
-seedmax = 15;
+seedmax = 5;
 % read a seed and
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
+problems = { 'mobp11(6)' };
+% methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
+methods = {'sao'};
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -25,7 +27,7 @@ for ii = 1: np
     prob = eval(problems{ii});
     % compare results by problem
     % (1) for each problem, load empirical pf
-    empfsave = strcat(pwd, '\result_folder\', prob.name, '_empf.csv');
+    empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
     empf = csvread(empfsave);
     igd_fu = cell(seedmax, nm);
     
@@ -50,7 +52,7 @@ statistic_matrix = zeros(5, nm * np); %(mean, std, median, median_id, nn)
 for ii = 1 : np
     % plot across problems
     % (1) read in empf
-    empfsave = strcat(pwd, '\result_folder\', prob.name, '_empf.csv');
+    empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
     empf = csvread(empfsave);
     % (2) read median of three different methods
     medianlist = [];
@@ -92,11 +94,11 @@ for ii = 1 : np
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
         savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
         nd_front = csvread(savename_fu);
-        scatter(nd_front(:,1), nd_front(:,2),pattern{kk}); drawnow;     
+        scatter(nd_front(:,1), nd_front(:,2),pattern{kk}, 'b'); drawnow;     
     end
     t = [prob.name,' ',' igd median compare'];
     title(t);
-    legend('empirical pf', methods{1}, methods{2},methods{3});
+    % legend('empirical pf', methods{1}, methods{2},methods{3});
     
     savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
     savefig(savename);
