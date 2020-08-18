@@ -63,7 +63,6 @@ end
 num_con = size(fc, 2);
 scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
 
-
 %--fu adjust
 for i=1:inisize_u
     fu = llfeasi_modify(fu, llfeasi_flag, i);

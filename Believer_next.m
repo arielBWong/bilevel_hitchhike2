@@ -36,6 +36,10 @@ function [best_x, info] = Believer_next(train_x, train_y, xu_bound, xl_bound, ..
 %                                   - info.info.eim_normf
 %--------------------------------------------------------------------------
 
+if size(train_y, 2) > 1
+    error('Believer only works in lower level matching and only for single objective problem');
+end
+
 
 % number of objective
 info = struct();

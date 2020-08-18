@@ -20,6 +20,10 @@ for ii = 1 : num_obj
     [u(:, ii),mse(:, ii)] = predictor(x, kriging_obj{ii});
 end
 s = sqrt(max(0,mse));
+
+% csvwrite('mu.csv', u);
+% csvwrite('sig.csv', s);
+% csvwrite('nd.csv', f);
 %-----------------------------------------------------
 for ii = 1 : num_x
     u_matrix = repmat(u(ii,:),num_pareto,1);

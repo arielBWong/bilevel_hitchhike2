@@ -44,6 +44,9 @@ while gen<= param.gen
     % disp(gen);
 end
 
+% use archive to save last pop_x
+archive.pop_last =pop;
+
 num_obj = size(pop.F, 2);
 num_con = size(pop.C, 2);
 
@@ -87,4 +90,7 @@ else
     bestx = pop.X(id(1),  :);
     bestc = pop.C(id(1),  :);
 end
+
+
+
 end

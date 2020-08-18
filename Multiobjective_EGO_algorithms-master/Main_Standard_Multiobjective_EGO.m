@@ -35,17 +35,17 @@ function Main_Standard_Multiobjective_EGO(fun_name)
 % clearvars;close all;
 tic
 hseed = [];
-for seed = 1: 29
+for seed = 2: 29
     rng(seed, 'twister');
     % settings of the problem
     % for ZDT test problems, the number of objectives should be 2
-    % fun_name = 'ZDT1';
+     fun_name = 'ZDT1';
     % number of objectives
     num_obj = 2;
     % number of design variables
     num_vari = 6;
     % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
-    infill_name= 'EIM_Hypervolume';
+    infill_name= 'EIM_Maximin';
     % number of initial design points
     num_initial = 65;
     % the maximum allowed evaluations

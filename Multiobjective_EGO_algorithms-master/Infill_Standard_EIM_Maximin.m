@@ -21,6 +21,11 @@ for ii = 1:num_obj
 end
 s=sqrt(max(0,mse));
 %-----------------------------------------------------
+% 
+%  csvwrite('mu.csv', u);
+%  csvwrite('sig.csv', s);
+%  csvwrite('nd.csv', f);
+
 for ii = 1 : num_x
     u_matrix = repmat(u(ii,:),num_pareto,1);
     s_matrix = repmat(s(ii,:),num_pareto,1);

@@ -1,7 +1,7 @@
 function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn)
 % method of searching for a match xl for xu. 
-% Problem(Prob) definition needs 
-% evaluation method of the form 'evaluation_l(xu, xl)'
+% Problem(Prob) definition require certain formation for bilevel problems
+% evaluation method should be of  form 'evaluation_l(xu, xl)'
 % usage
 % input: 
 %        xu:  upper level variable, to be matched
@@ -12,7 +12,8 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %        num_gen : DE parameter
 %        propose_nextx  : str, function handle to generate next x
 %        iter_size : surrogate parameter: number of iterations
-%        llfit_hn :  str, lower level seach fitness for next x method
+%        llfit_hn :  str, lower level seach fitness for next x method, used
+%                          by proposed_nextx method 
 %
 % output: 
 %        matching_xl : found xl for xu 

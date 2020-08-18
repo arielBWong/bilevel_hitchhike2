@@ -1,10 +1,8 @@
-function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
+function  perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl)
 % save nd front
 %
-
-% nxu: number of function evaluation upper
-% nxl: number of function evaluation lower
-
+% nxu number of function evaluation upper
+% nxl number of function evaluation lower
 num = length(prob.xl_bl);
 savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
 n = exist(savepath);

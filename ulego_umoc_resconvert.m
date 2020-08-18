@@ -6,10 +6,10 @@ close all;
 
 seedmax = 5;
 % read a seed and
-% problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
+problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+% problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = {'Ehv_eval', 'EIM_eval'};
+methods = {'sao', 'EIM_eval'};
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -30,7 +30,7 @@ for ii = 1: np
             method = methods{jj};
             num = length(prob.xl_bl);
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
-            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
+            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
                    
             % --- save plots----
              nd_front = csvread(savename_fu);
