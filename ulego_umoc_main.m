@@ -15,7 +15,7 @@ addpath(dace_folder);
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
 algs = {'EIM_eval'};  %  'Ehv_eval', 
 
-seeds = linspace(1, 5, 5);
+seeds = linspace(1, 11,11);
 
 np = length(problems);
 ns = length(seeds);
@@ -31,7 +31,6 @@ for i = 1:np
         end
     end
 end
-
 
 nrun = length(paras);
 parfor i = 1:nrun

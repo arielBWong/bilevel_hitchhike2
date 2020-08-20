@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch_sao(xu, prob, num_pop, num_gen, iter_freq)
+function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, num_gen, iter_freq)
 % this lower level matching method uses population based sao to find a
 % matching xl for upper level xu
 % input:
@@ -47,16 +47,9 @@ param = struct();
 initmatrix =train_xl;
 n = floor(num_gen/iter_freq);
 for g = 1: n
-    
     funh_obj = @(x) llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
-    
-    if g==1
-        param.gen=iter_freq;
-    else
-        param.gen=iter_freq + 1;
-    end
-    
+
     param.gen=iter_freq;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
@@ -72,8 +65,8 @@ for g = 1: n
     train_fc = [train_fc; new_fc];
     
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-    % initmatrix = new_xl;
-    initmatrix = archive.pop_last.X;      
+    [sf, sx, sc] = initmatrix_pick(train_xl, train_fl, train_fc);
+    initmatrix = sx(1:num_pop, :);     
 end
 
 % local search for best xl

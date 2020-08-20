@@ -1,4 +1,4 @@
-function ulego_sao(prob_str, seed, normhn)
+function ulego_sao_archiveinsert(prob_str, seed, normhn)
 % this function implements the sabla like ego method
 % instead of one by one propose next x
 % use population based krg to accumulate xu and return nd front from xu
@@ -118,6 +118,8 @@ for g=1:n
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
     % initmatrix = new_xu;
     initmatrix = archive.pop_last.X;
+    [sf, sx, sc] = initmatrix_pick(train_xl, train_fl, train_fc);
+    initmatrix = sx(1:num_pop, :);  
     
 end
 % plot nd front

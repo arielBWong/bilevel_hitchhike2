@@ -1,4 +1,4 @@
-%% this test is single run of the main process, 
+ %% this test is single run of the main process, 
 % this test is to confirm the process and 
 % result of bilevel optimization on upper level moc lower level soc
 % round 1: to be passed
@@ -21,7 +21,7 @@ addpath(sort_folder);
 
 tic;
 prob = 'mobp7()';
-ulego_sao(prob, seed, 'normalization_nd');
+ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
 
 toc
 rmpath(problem_folder); 

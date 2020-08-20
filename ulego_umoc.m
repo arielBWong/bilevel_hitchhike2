@@ -25,12 +25,14 @@ function ulego_umoc(prob, seed, str_nextxhn, fitnesshandle, normhn, llmatch_next
 rng(seed, 'twister');
 
 % algo parameter
-numiter_l               = 20;
-numiter_u             = 50;
-num_pop              = 100;
-num_gen              = 100;
+numiter_l               = 30;
+initsize_l              = 30;
+numiter_u               = 50;
+inisize_u               = 30;
+num_pop                 = 100;
+num_gen                 = 100;
 hy_pop                  = 20;
-hy_gen                   = 50;
+hy_gen                  = 50;
 
 % parallel compatible setting
 prob = eval(prob);
@@ -43,7 +45,7 @@ n_feval = 0;
 u_nvar = prob.n_uvar;
 upper_bound = prob.xu_bu;
 lower_bound = prob.xu_bl;
-inisize_u = 11 * u_nvar - 1;
+% inisize_u = 11 * u_nvar - 1;
 
 %-xu initialization
 xu = lhsdesign(inisize_u,u_nvar,'criterion','maximin','iterations',1000);

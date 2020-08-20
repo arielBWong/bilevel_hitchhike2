@@ -30,7 +30,7 @@ for ii = 1: np
             method = methods{jj};
             num = length(prob.xl_bl);
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
-            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
+            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
                    
             % --- save plots----
              nd_front = csvread(savename_fu);
