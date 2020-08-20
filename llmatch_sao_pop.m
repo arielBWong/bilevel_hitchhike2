@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, num_gen, iter_freq)
+function[match_xl, n_fev, flag] = llmatch_sao_pop(xu, prob, num_pop, num_gen, iter_freq)
 % this lower level matching method uses population based sao to find a
 % matching xl for upper level xu
 % input:
@@ -47,10 +47,16 @@ param = struct();
 initmatrix =train_xl;
 n = floor(num_gen/iter_freq);
 for g = 1: n
-    % fprintf('lower gen %d\n', g);
+    
     funh_obj = @(x) llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
-
+    
+    if g==1
+        param.gen=iter_freq;
+    else
+        param.gen=iter_freq + 1;
+    end
+    
     param.gen=iter_freq;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
@@ -58,17 +64,16 @@ for g = 1: n
     
     % last population is re-evaluated with real evaluation
     new_xl = archive.pop_last.X;                     % this is to evaluate whole population
-    new_xl = new_xl(1, :);                           % this is to evaluate only best in the population 
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);  % evaluate one 
-    % [new_fl, new_fc] = prob.evaluate_l(xu_init, new_xl);
+    % new_xl = new_xl(1, :);                           % this is to evaluate only best in the population 
+    % [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);  % evaluate one 
+    [new_fl, new_fc] = prob.evaluate_l(xu_init, new_xl);
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
     train_fc = [train_fc; new_fc];
     
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-    [sf, sx, sc] = initmatrix_pick(train_xl, train_fl, train_fc);
-    initmatrix = sx(1:num_pop, :);  
-    [initmatrix, ~] = unique(initmatrix,'rows','stable');
+    % initmatrix = new_xl;
+    initmatrix = archive.pop_last.X;      
 end
 
 % local search for best xl
@@ -109,7 +114,7 @@ end
 
 % count number of function evaluation
 % n_fev =(n+1) * num_pop + output.funcCount;  % population evaluation
-n_fev = num_pop + n + output.funcCount;       % one in a population is evaluated
+n_fev = num_pop * (n+1) + output.funcCount;       % one in a population is evaluated
 
 
 end

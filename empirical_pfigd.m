@@ -14,7 +14,7 @@ seedmax = 5;
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 % problems = { 'mobp11(6)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = {'sao', 'EIM_eval', 'ea_ea'};
+methods = {'sao', 'sao_popinsert', 'EIM_eval', 'ea_ea'};
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -88,11 +88,13 @@ for ii = 1 : np
     pattern{1} = '^';
     pattern{2} = '*';
     pattern{3} = '+';
+    pattern{4} = 'o';
     
     pattern = cell(1, nm);
     color{1} = 'b';
     color{2} = 'k';
     color{3} = 'y';
+    color{4} = 'g';
 
     for kk = 1:nm
         seed = medianlist(kk);
@@ -104,7 +106,7 @@ for ii = 1 : np
     end
     t = [prob.name,' ',' igd median compare'];
     title(t);
-    legend('empirical pf', methods{1}, methods{2},  methods{3});
+    legend('empirical pf', methods{1}, methods{2},  methods{3}, methods{4});
     
     savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
     savefig(savename);

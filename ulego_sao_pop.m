@@ -1,6 +1,7 @@
-function ulego_sao(prob_str, seed, normhn)
+function ulego_sao_pop(prob_str, seed, normhn)
 % this function implements the sabla like ego method
 % instead of one by one propose next x
+% a whole population is evaluated periodically
 % use population based krg to accumulate xu and return nd front from xu
 % input
 %   prob_str: problem instance
@@ -19,16 +20,16 @@ function ulego_sao(prob_str, seed, normhn)
 
 rng(seed, 'twister');
 % algorithm parameter
-evaln = 1;
+
 
 num_popu    = 20;   % 80 in total
-num_genu    = 1200;
-iter_frequ  = 20;
+num_genu    = 120;
+iter_frequ  = 40;
 
 num_popl    = 20;   % 60 in total
-num_genl    = 800;
-iter_freql  = 20;
-
+num_genl    = 80;
+iter_freql  = 40;
+evaln = num_popu;
 %--------
 prob = eval(prob_str);
 normhn= str2func(normhn);
@@ -46,7 +47,7 @@ xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
 for i=1:num_popu
-    [xl_single, nl, flag]  = llmatch_sao(xu(i, :), prob, num_popl, num_genl, iter_freql);
+    [xl_single, nl, flag]  = llmatch_sao_pop(xu(i, :), prob, num_popl, num_genl, iter_freql);
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + nl;           %record lowerlevel nfeval
@@ -97,7 +98,7 @@ for g=1:n
     for i=1:evaln
     % for i=1:num_popu
         % match new_xl for new_xu
-        [xl_single, nl, flag]  = llmatch_sao(new_xu(i, :), prob, num_popl, num_genl, iter_freql);        
+        [xl_single, nl, flag]  = llmatch_sao_pop(new_xu(i, :), prob, num_popl, num_genl, iter_freql);        
         new_xl = [new_xl; xl_single];
         llfeasi_flag = [llfeasi_flag, flag];
         n_feval = n_feval + nl;           %record lowerlevel nfeval
@@ -155,12 +156,12 @@ end
     end
     %-plot ----
 % save data 
-nxu = n + num_popu;  % first generation and then every freq generations
+nxu = (n+1) * num_popu;  % first generation and then every freq generations
 nxl = n_feval;
 
 disp(nxu);
 disp(nxl);
-method = 'sao_oneinsert';
+method = 'sao_popinsert';
 perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl);
 end
 

@@ -46,7 +46,7 @@ xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
 for i=1:num_popu
-    [xl_single, nl, flag]  = llmatch_sao(xu(i, :), prob, num_popl, num_genl, iter_freql);
+    [xl_single, nl, flag]  = llmatch_sao_archiveinsert(xu(i, :), prob, num_popl, num_genl, iter_freql);
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + nl;           %record lowerlevel nfeval
@@ -155,7 +155,7 @@ nxl = n_feval;
 
 disp(nxu);
 disp(nxl);
-method = 'sao';
+method = 'sao_archiveinsert';
 perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl);
 end
 
