@@ -47,6 +47,7 @@ param = struct();
 initmatrix =train_xl;
 n = floor(num_gen/iter_freq);
 for g = 1: n
+    fprintf('lower gen %d\n', g);
     funh_obj = @(x) llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
 
@@ -66,7 +67,8 @@ for g = 1: n
     
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
     [sf, sx, sc] = initmatrix_pick(train_xl, train_fl, train_fc);
-    initmatrix = sx(1:num_pop, :);     
+    initmatrix = sx(1:num_pop, :);  
+    [initmatrix, ~] = unique(initmatrix,'rows','stable');
 end
 
 % local search for best xl
