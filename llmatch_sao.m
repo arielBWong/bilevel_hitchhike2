@@ -1,6 +1,8 @@
 function[match_xl, n_fev, flag] = llmatch_sao(xu, prob, num_pop, num_gen, iter_freq)
-% this lower level matching method uses population based sao to find a
-% matching xl for upper level xu
+% This lower level matching method uses population based sao to find a
+% matching xl for upper level xu. Specifically, over the population based 
+% selection of training data is one by one style. Restart of surrogate
+% assisted evolution is from random initial generation
 % input:
 %   xu: upper level variable to be matched
 %   prob: real problem instance for true evaluation
@@ -51,36 +53,25 @@ for g = 1: n
     funh_obj = @(x) llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
     
-    if g==1
-        param.gen=iter_freq;
-    else
-        param.gen=iter_freq + 1;
-    end
-    
     param.gen=iter_freq;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
     [~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, initmatrix, funh_con, param);
     
-    % last population is re-evaluated with real evaluation
-    new_xl = archive.pop_last.X;                     % this is to evaluate whole population
-    new_xl = new_xl(1, :);                           % this is to evaluate only best in the population 
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);  % evaluate one 
-    % [new_fl, new_fc] = prob.evaluate_l(xu_init, new_xl);
-    train_xl = [train_xl; new_xl];
-    train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];
+   % last population is re-evaluated with real evaluation, only those
+    % unseen in archive (training data)
+    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, true);    
     
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-    % initmatrix = new_xl;
-    initmatrix = archive.pop_last.X;      
+    initmatrix = [];
+   
 end
 
 % local search for best xl
 % connect a local search to sao
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
-
+n_global = size(train_xl, 1);
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);
 fmin_con = @(x)llconstraint(x, xu, prob);

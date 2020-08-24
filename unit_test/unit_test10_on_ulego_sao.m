@@ -22,7 +22,8 @@ addpath(sort_folder);
 tic;
 prob = 'mobp7()';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
-ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
+% ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
+ulego_sao(prob, seed, 'normalization_nd');
 
 toc
 rmpath(problem_folder); 
