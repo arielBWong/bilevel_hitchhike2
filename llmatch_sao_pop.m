@@ -1,6 +1,9 @@
 function[match_xl, n_fev, flag] = llmatch_sao_pop(xu, prob, num_pop, num_gen, iter_freq)
 % this lower level matching method uses population based sao to find a
-% matching xl for upper level xu
+% matching xl for upper level xu, periodically evaluated population
+% for periodically evaluated population, 
+% training data (i.e. archive) is compared to decide whether one individual
+% in one population deserves a true evaluation (no repeated evaluation)
 % input:
 %   xu: upper level variable to be matched
 %   prob: real problem instance for true evaluation
@@ -62,24 +65,23 @@ for g = 1: n
     % (4) continue to evolve xl population, until num_gen is met
     [~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, initmatrix, funh_con, param);
     
-    % last population is re-evaluated with real evaluation
-    new_xl = archive.pop_last.X;                     % this is to evaluate whole population
-    % new_xl = new_xl(1, :);                           % this is to evaluate only best in the population 
-    % [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);  % evaluate one 
-    [new_fl, new_fc] = prob.evaluate_l(xu_init, new_xl);
-    train_xl = [train_xl; new_xl];
-    train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];
-    
-    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-    % initmatrix = new_xl;
-    initmatrix = archive.pop_last.X;      
+    % last population is re-evaluated with real evaluation, only those
+    % unseen in archive (training data)
+    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, false);    
+    if growflag   % new xl exist, update krg and continue 
+        [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
+        initmatrix = archive.pop_last.X;  
+    else                  %  population converged, restart with random initialization
+        initmatrix = [];
+    end
 end
 
 % local search for best xl
 % connect a local search to sao
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
+n_global = size(train_xl, 1);
+%fprintf('ego believer use evaluation %d\n', n_global);
 
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);
@@ -114,7 +116,7 @@ end
 
 % count number of function evaluation
 % n_fev =(n+1) * num_pop + output.funcCount;  % population evaluation
-n_fev = num_pop * (n+1) + output.funcCount;       % one in a population is evaluated
+n_fev = n_global + output.funcCount;       % one in a population is evaluated
 
 
 end

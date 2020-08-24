@@ -68,7 +68,7 @@ end
 
 %--main population based optimization  routine
 n = round(num_genu/iter_frequ);       % how many  evolution  subroutine
-initmatrix = xu;                      % no normalization on x
+initmatrix = xu;                                            % no normalization on x
 for g=1:n
     disp(g);
      param.gen=iter_frequ;
@@ -79,26 +79,37 @@ for g=1:n
     
     [~,~,~, archive] = gsolver(funh_obj, u_nvar,  prob.xu_bl, prob.xu_bu, initmatrix, funh_con, param);
     
-    new_xu = archive.pop_last.X(1:evaln, :);
-    new_xl = [];
-    disp('population based lower xl math'); 
+    new_xu = archive.pop_last.X;
     
+    % replace with checking whether new xu exists in archive
+    repeat_index = ismember(new_xu, xu, 'row');
+    new_index = ~repeat_index;
+    num_new =  sum(new_index);
+    new_xl  = [];
+    new_xu = new_xu(new_index, :);
+    % if new point does not exist 
+    % continue evolution with re-start evolution with random initialization
+    if num_new ==0
+        fprintf('evolution converge and no new point is found\n');
+        initmatrix = [];
+        continue;
+    end
+
     % --add new_xu to xu
     for i=1:evaln
-    % for i=1:num_popu
         % match new_xl for new_xu
-        tic;
+        % tic;
         [xl_single, nl, flag]  = llmatch_sao_archiveinsert(new_xu(i, :), prob, num_popl, num_genl, iter_freql);  
-        toc;
+        % toc;
         new_xl = [new_xl; xl_single];
         llfeasi_flag = [llfeasi_flag, flag];
         n_feval = n_feval + nl;           %record lowerlevel nfeval
     end
-    [newfu, newfc] =  prob. evaluate_u(new_xu, new_xl);
+    [newfu, newfc] =  prob. evaluate_u(new_xu(1:evaln, :), new_xl);
     
     % add to training
-    xu = [xu; new_xu];  xl = [xl; new_xl];
-    fu = [fu; newfu];   fc = [fc; newfc];
+    xu = [xu; new_xu(1:evaln, :)];  xl = [xl; new_xl];
+    fu = [fu; newfu];      fc = [fc; newfc];
     
     % adjust fu according to lower flag
     tr_size = size(xu, 1);

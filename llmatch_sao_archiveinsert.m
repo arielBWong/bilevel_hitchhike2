@@ -16,7 +16,7 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, n
 %    (1) initialize xl population, evaluate and train kriging
 %    (2) use kriging as objective function, evolve xl population
 %    (3) when update frequence is met, evaluate current population,
-%       expand krg training data, update gsolver objective function
+%       expand krg training data with UNSEEN data, update gsolver objective function
 %    (4) continue to evolve xl population, until num_gen is met
 %-----------------------------------------------------------------
 
@@ -55,26 +55,29 @@ for g = 1: n
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
     [~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, initmatrix, funh_con, param);
+       
+    % last population is re-evaluated with real evaluation, only those
+    % unseen in archive (training data)
+    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, true);    
     
-    % last population is re-evaluated with real evaluation
-    new_xl = archive.pop_last.X;                     % this is to evaluate whole population
-    new_xl = new_xl(1, :);                           % this is to evaluate only best in the population 
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);  % evaluate one 
-    % [new_fl, new_fc] = prob.evaluate_l(xu_init, new_xl);
-    train_xl = [train_xl; new_xl];
-    train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];
-    
-    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-    [sf, sx, sc] = initmatrix_pick(train_xl, train_fl, train_fc);
-    initmatrix = sx(1:num_pop, :);  
-    [initmatrix, ~] = unique(initmatrix,'rows','stable');
+    if growflag % there is unseen data in evolution
+        [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
+        [~, sx, ~] = initmatrix_pick(train_xl, train_fl, train_fc);
+        initmatrix = sx(1:num_pop, :);
+        [initmatrix, ~] = unique(initmatrix,'rows','stable');
+    else % there is no unseen data in evolution
+            % re-introduce random individual 
+            fprintf('no unseen data in last population, introduce randomness');
+            initmatrix = [];
+    end
 end
 
 % local search for best xl
 % connect a local search to sao
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
+n_global = size(train_xl, 1);
+% fprintf('ego believer use evaluation %d\n', n_global);
 
 % give starting point to local search
 fmin_obj = @(x)llobjective(x, xu, prob);
@@ -109,7 +112,7 @@ end
 
 % count number of function evaluation
 % n_fev =(n+1) * num_pop + output.funcCount;  % population evaluation
-n_fev = num_pop + n + output.funcCount;       % one in a population is evaluated
+n_fev = n_global + output.funcCount;       % one in a population is evaluated
 
 
 end

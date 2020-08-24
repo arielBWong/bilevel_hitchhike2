@@ -90,18 +90,28 @@ for g=1:n
     
     [~,~,~, archive] = gsolver(funh_obj, u_nvar,  prob.xu_bl, prob.xu_bu, initmatrix, funh_con, param);
     
-    new_xu = archive.pop_last.X(1:evaln, :);
-    new_xl = [];
-    disp('population based lower xl math');
+    new_xu = archive.pop_last.X(1:evaln, :);    
+    % replace evaluate whole population with evaluate unseen data
+    repeat_index = ismember(new_xu, xu, 'row');
+    new_index = ~repeat_index;
+    num_new =  sum(new_index);
+    new_xl  = [];
+    new_xu = new_xu(new_index, :);
+     % if new point does not exist 
+    % continue evolution with re-start evolution with random initialization
+    if num_new ==0
+        fprintf('evolution converge and no new point is found');
+        initmatrix = [];
+        continue;
+    end
     
     % --add new_xu to xu
-    for i=1:evaln
-    % for i=1:num_popu
+    for i=1:num_new
         % match new_xl for new_xu
         [xl_single, nl, flag]  = llmatch_sao_pop(new_xu(i, :), prob, num_popl, num_genl, iter_freql);        
         new_xl = [new_xl; xl_single];
         llfeasi_flag = [llfeasi_flag, flag];
-        n_feval = n_feval + nl;           %record lowerlevel nfeval
+        n_feval = n_feval + nl;                         %record lowerlevel nfeval
     end
     [newfu, newfc] =  prob. evaluate_u(new_xu, new_xl);
     
@@ -111,7 +121,7 @@ for g=1:n
     
     % adjust fu according to lower flag
     tr_size = size(xu, 1);
-    for i = tr_size - evaln + 1: tr_size
+    for i = tr_size - num_new + 1: tr_size
          fu = llfeasi_modify(fu, llfeasi_flag, i);
     end
     
@@ -156,7 +166,7 @@ end
     end
     %-plot ----
 % save data 
-nxu = (n+1) * num_popu;  % first generation and then every freq generations
+nxu = size(xu, 1);  % first generation and then every freq generations
 nxl = n_feval;
 
 disp(nxu);

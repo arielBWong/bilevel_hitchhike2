@@ -46,10 +46,10 @@ nextx_hn = str2func(propose_nextx);
 for iter = 1:iter_size
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
-    tic;
+    % tic;
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
-    toc;
+   %  toc;
     
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
