@@ -14,7 +14,7 @@ addpath(gsolver);
 addpath(dace_folder);
 problems = { 'mobp5()', 'mobp7()', 'mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
 
-seeds = linspace(1, 5, 5);
+seeds = linspace(6, 19, 14);
 
 np = length(problems);
 ns = length(seeds);

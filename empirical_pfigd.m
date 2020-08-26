@@ -9,12 +9,12 @@ clearvars;
 close all;
 
 
-seedmax = 5;
+seedmax = 19;
 % read a seed and
 problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 % problems = { 'mobp11(6)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = {'sao', 'sao_popinsert', 'EIM_eval', 'ea_ea'};
+methods = {'sao_onerand','sao_archiveinsert', 'sao_popinsert', 'EIM_eval'}; %, 'ea_ea'
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
