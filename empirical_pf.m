@@ -12,8 +12,9 @@ addpath(problem_folder);
 addpath(solver_folder);
 addpath(sort_folder);
 
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-seeds = linspace(1, 5, 5);
+% problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+problems = { 'mobp11(6)' };
+seeds = linspace(3, 5, 3);
 np = length(problems);
 ns = length(seeds);
 

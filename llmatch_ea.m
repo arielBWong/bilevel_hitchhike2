@@ -73,7 +73,8 @@ for i = 2:n
         % add current x to bestxs, after round to 10 digs
         % if they are all different then, this x is a new minimum
         % steps of the following line: stack -round-unique-size
-        if size(unique(round([bestxs; popx(i,:)], ndig), 1)==size(bestxs, 1) + 1
+        stack = round([bestxs; popx(i,:)], ndig);
+        if size(unique(stack, 'row'), 1)== size(bestxs, 1) + 1
             bestxs= [bestxs; popx(i, :)];
             bestfs = [bestfs; popf(i, :)];
             if ~isempty(popc)
