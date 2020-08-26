@@ -6,7 +6,7 @@ fmin_con = @(x)llconstraint(x, xu, prob);
 opts = optimset('fmincon');
 opts.Algorithm = 'sqp';
 opts.Display = 'off';
-opts.MaxFunctionEvaluations = 100;
+opts.MaxFunctionEvaluations = 1000;
 [newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
     prob.xl_bl, prob.xl_bu, fmin_con,opts);
 

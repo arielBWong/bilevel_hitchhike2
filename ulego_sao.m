@@ -109,8 +109,8 @@ for g=1:n
     [newfu, newfc] =  prob. evaluate_u(new_xu(1:evaln, :), new_xl);
     
     % add to training
-    xu = [xu; new_xu(1:evaln, :)];  xl = [xl; new_xl];
-    fu = [fu; newfu];      fc = [fc; newfc];
+    xu = [xu; new_xu(1:evaln, :)];      xl = [xl; new_xl];
+    fu = [fu; newfu];                              fc = [fc; newfc];
     
     % adjust fu according to lower flag
     tr_size = size(xu, 1);
@@ -118,7 +118,7 @@ for g=1:n
          fu = llfeasi_modify(fu, llfeasi_flag, i);
     end
     
-    % update krg  and initmatrix, continue to evolve
+    % update krg  and initmgggggatrix, continue to evolve
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
     initmatrix = [];
     
