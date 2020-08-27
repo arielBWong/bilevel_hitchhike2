@@ -38,7 +38,7 @@ s = sum(bestc, 2) == 0;
 
 
 % follow with local solver
-[match_xl, n_fev] = losolver(bestx, s, bestf, prob,  xu);
+[match_xl, n_fev] = losolver(bestx, s, bestf, bestc, prob,  xu);
 
 end
 

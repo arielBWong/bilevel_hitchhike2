@@ -98,9 +98,12 @@ else
     
     if sum(ind)>0           % should be only 1, if exists
         % fprintf('found xu in global save %d\n', sum(ind));
-        xl = xl_g(ind, :);
+        
         if sum(ind)>1
-            error('there cannot be repeat x more than once')
+            xl = xl_g(ind(1), :);
+            fprintf('there is repeated x more than once');
+        else
+            xl = xl_g(ind, :);
         end
     else
         xl = [];

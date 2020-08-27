@@ -11,10 +11,15 @@ sort_folder = strcat(pwd,'\ND_Sort');
 addpath(problem_folder);
 addpath(solver_folder);
 addpath(sort_folder);
+problem_folder = strcat(pwd,'\problems\TP');
+addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\DS');
+addpath(problem_folder);
+
 
 % problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-problems = { 'mobp11(6)' };
-seeds = linspace(3, 5, 3);
+problems = { 'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)'};
+seeds = linspace(1, 5, 5);
 np = length(problems);
 ns = length(seeds);
 
