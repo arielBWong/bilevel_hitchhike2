@@ -9,7 +9,8 @@ xl_g =[];
 ll_ln = 0;
 
 
-
+tic;
+fprintf(problem);
 
 prob = eval(problem);
 lnumgen =50;

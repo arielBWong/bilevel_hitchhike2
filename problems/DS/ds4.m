@@ -50,7 +50,7 @@ classdef ds4
         
         function [f, c] = evaluate_l(obj, xu, xl)
           
-           pL =  xl(:, obj.k+1 + 1, obj.k +obj.L + 1) .^2;
+           pL =  xl(:, obj.k+1 + 1: obj.k +obj.L + 1) .^2;
            f(:, 1) =  (1 - xl(:, 1)) .* (1+ sum(pL, 2)) .* xu(:, 1);  
             f(:, 2) = xl(:, 1)  .* (1 + sum(pL, 2)) .* xu(:, 1);
            

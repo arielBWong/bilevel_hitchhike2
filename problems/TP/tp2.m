@@ -34,7 +34,7 @@ classdef tp2
             %-obj
            f(:, 1) = (xl(:, 1) - 1) .^ 2 + sum(xl(:, 2: obj.q) .^ 2, 2) + xu.^2;
            f(:, 2) = (xl(:, 1) - 1) .^ 2 +  sum(xl(:, 2: obj.q) .^ 2, 2) + (xu - 1).^2;
-           f = sum(f, 2);
+          
                  
             %-cie
             c= [];            
