@@ -10,7 +10,10 @@ addpath(problem_folder);
 addpath(solver_folder);
 addpath(sort_folder);
 
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+problem_folder = strcat(pwd,'\problems\DSM');
+addpath(problem_folder);
+
+% problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 seeds = linspace(1, 5, 5);
 
 np = length(problems);

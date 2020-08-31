@@ -9,16 +9,18 @@ clearvars;
 close all;
 
 
-seedmax = 19;
+seedmax = 5;
 % read a seed and
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-% problems = { 'mobp11(6)'};
+problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)', ...
+    'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = {'sao_onerand','sao_archiveinsert', 'sao_popinsert', 'EIM_eval'}; %, 'ea_ea'
+methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand',
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
-
+problem_folder = strcat(pwd,'\problems\DSM');
+addpath(problem_folder);
 np = length(problems);
 nm = length(methods);
 
@@ -27,8 +29,14 @@ for ii = 1: np
     prob = eval(problems{ii});
     % compare results by problem
     % (1) for each problem, load empirical pf
-    empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
-    empf = csvread(empfsave);
+    if strcmp(prob.name(1:end-1), 'dsm')
+        empf = prob.upper_pf(100);
+    else
+        empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
+        empf = csvread(empfsave);
+    end
+    
+    
     igd_fu = cell(seedmax, nm);
     
     for seed = 1: seedmax
@@ -36,7 +44,7 @@ for ii = 1: np
             
             method = methods{jj};
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
-            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
+            savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
             nd_front = csvread(savename_fu);
             
             % (3) calculate igd for this seed
@@ -53,8 +61,12 @@ for ii = 1 : np
     % plot across problems
     % (1) read in empf
     prob = eval(problems{ii});
-    empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
-    empf = csvread(empfsave);
+    if strcmp(prob.name(1:end-1), 'dsm')
+        empf = prob.upper_pf(100);
+    else
+        empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
+        empf = csvread(empfsave);
+    end
     % (2) read median of three different methods
     medianlist = [];
     for jj = 1: nm
@@ -95,22 +107,22 @@ for ii = 1 : np
     color{2} = 'k';
     color{3} = 'y';
     color{4} = 'g';
-
+    
     for kk = 1:nm
         seed = medianlist(kk);
         method = methods{kk};
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
         savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
         nd_front = csvread(savename_fu);
-        scatter(nd_front(:,1), nd_front(:,2),pattern{kk}, color{kk}); drawnow;     
+        scatter(nd_front(:,1), nd_front(:,2),pattern{kk}, color{kk}); drawnow;
     end
     t = [prob.name,' ',' igd median compare'];
     title(t);
-    legend('empirical pf', methods{1}, methods{2},  methods{3}, methods{4});
+    legend('empirical pf', methods{1}, methods{2},  methods{3}); % methods{4}
     
     savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
     savefig(savename);
-    savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.png');  
+    savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.png');
     saveas(fig1, savename);
     close(fig1);
     
@@ -124,7 +136,8 @@ fprintf(fp, 'seed,');
 % format header
 for ii = 1:np
     for jj = 1:nm
-        single_header = strcat(problems{ii}, '_', methods{jj});
+        prob = eval(problems{ii});
+        single_header = strcat(prob.name, '_', methods{jj});
         fprintf(fp, '%s,', single_header);
     end
 end

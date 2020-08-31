@@ -8,11 +8,21 @@ clearvars;
 close all;
 
 
-seedmax =3;
+seedmax =5;
 % read a seed and
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+% problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+% problems = { 'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)'};
+problems = { 'dsm1(2)'};
+
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\DSM');
+addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\TP');
+addpath(problem_folder);
+problem_folder = strcat(pwd,'\evenpf');
+addpath(problem_folder);
+
 
 np = length(problems);
 
@@ -33,6 +43,14 @@ for ii = 1:np
     % reconduct pareto front on this collected results
     nd_index = Paretoset(fu);
     nd_front = fu(nd_index, :);
+    
+    % select evenly 100 points
+    if size(nd_front,1) > 200
+        guarantee = 100;
+         [id_fronts,f_fronts,NumComp,NumFronts] = E_NDSort_c(nd_front);
+         updated_order=Sparse_selection(id_fronts,f_fronts,guarantee);
+         nd_front = nd_front(updated_order(1:100, :));
+    end
     
     % save empf to nd_front
     outname =  strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');

@@ -1,4 +1,4 @@
-classdef ds1
+classdef dsm1
     properties
         p ;
         q;
@@ -8,12 +8,12 @@ classdef ds1
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'ds1';
+        name = 'dsm1';
         uopt = NaN;
         lopt = NaN; % double check needed
     end
     methods
-        function obj = ds1(k)
+        function obj = dsm1(k)
             obj.p = k;
             obj.q = k;
             
@@ -35,8 +35,6 @@ classdef ds1
         function [f, c] = evaluate_u(obj, xu, xl)
             %-obj
             r = 0.1;
-            alpha = 1;
-            gamma = 1;
             tao = 1;
             
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
@@ -44,9 +42,8 @@ classdef ds1
             p2 = 2: obj.n_lvar;
             p2 =( p2 - 1) /2;
             p2 =  sum((xu(:, 2:obj.n_lvar) - p2) .^2 , 2);
-            f(:, 1) = (1+ r -cos(alpha * pi * xu(:, 1))) + p2 + p3 - r * cos(gamma * pi/2 * xl(:, 1) ./ xu(:, 1)) ;
-            
-            f(:, 2) =  (1+ r - sin(alpha * pi * xu(:, 1))) + p2 + p3 - r * sin(gamma * pi/2 * xl(:, 1) ./ xu(:, 1)) ;
+            f(:, 1) = (1+ r -cos(pi * xu(:, 1))) + p2 + p3 - r * cos(pi * xu(:, 1)) ;
+            f(:, 2) =  (1+ r - sin(pi * xu(:, 1))) + p2 + p3 - r * sin( pi * xu(:, 1)) ;
             
             
             %-cie
@@ -54,21 +51,29 @@ classdef ds1
             
         end
         
-        
         function [f, c] = evaluate_l(obj, xu, xl)
-            p2 = sum(( xl(:, 2: obj.n_lvar) - xu(:, 2: obj.n_uvar)) .^2, 2);
             
-            %-obj
-            p3 = 10 * (1 - cos(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
-            f(:, 1) = xl(:, 1) .^2 + p2 + sum(p3  ,2);
-            
-            p3 = abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
             p2 = sum(( xl - xu) .^2, 2);
-            f(:, 2) =  p2 + sum(p3, 2);
-            f = sum(f, 2);
+            %-obj
+            p3 = 10 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
             c = [];
+            
+        end
+        
+        function pf = upper_pf(obj, num_point)
+            r = 0.1;
+            sep = pi/(2 *(num_point-1));
+            pf = [0,  (1+r)];
+            
+            deg = 0;
+            for i = 1:num_point-1
+                one = [(1+r) *(1- cos(deg + i * sep)), (1+r) * (1-sin(deg + i * sep))];
+                pf = [pf; one];
+            end
+            
             
         end
     end

@@ -3,19 +3,36 @@
 clearvars;
 close all;
 problem_folder = strcat(pwd,'\problems\MOBP');
-dace_folder = strcat(pwd,'\dace');
 addpath(problem_folder);
+
+dace_folder = strcat(pwd,'\dace');
+addpath(dace_folder);
+
+problem_folder = strcat(pwd,'\problems\DS');
+addpath(problem_folder);
+
+gsolver = strcat(pwd,'\globalsolver');
+addpath(gsolver);
+
+problem_folder = strcat(pwd,'\problems\DSM');
+addpath(problem_folder);
+
+
 
 solver_folder = strcat(pwd,'\globalsolver');
 addpath(solver_folder);
 
 % problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
 % problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
-addpath(dace_folder);
-problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
-algs = {'EIM_eval'};  %  'Ehv_eval', 
 
-seeds = linspace(1, 11,11);
+% problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
+% problems = {'tp1()',  'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)',  'mobp5()', 'mobp7()', 'mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
+
+
+algs = {'EIM_eval'};  %  'Ehv_eval', 
+problems = { 'dsm1(2)' };
+
+seeds = linspace(1, 5, 5);
 
 np = length(problems);
 ns = length(seeds);
