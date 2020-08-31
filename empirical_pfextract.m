@@ -8,11 +8,11 @@ clearvars;
 close all;
 
 
-seedmax =5;
+seedmax =3;
 % read a seed and
 % problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-% problems = { 'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)'};
-problems = { 'dsm1(2)'};
+ problems = { 'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)'};
+% problems = { 'mobp7()'};
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -30,7 +30,7 @@ for ii = 1:np
     prob = eval(problems{ii});
     fu = [];
     if  strcmp(prob.name, 'mobp11')
-        seedmax = 2;
+        seedmax =3;
     end
     for jj = 1:seedmax
         % extract nd front from each seed
@@ -49,13 +49,15 @@ for ii = 1:np
         guarantee = 100;
          [id_fronts,f_fronts,NumComp,NumFronts] = E_NDSort_c(nd_front);
          updated_order=Sparse_selection(id_fronts,f_fronts,guarantee);
-         nd_front = nd_front(updated_order(1:100, :));
+         nd_front = nd_front(updated_order(1:100), :);
     end
     
     % save empf to nd_front
     outname =  strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
     csvwrite(outname, nd_front);
 end
+
+% plot nd and count number of nd save it in the file name
 for ii = 1: np
     prob = eval(problems{ii});
     allnds = [];

@@ -9,23 +9,29 @@ clearvars;
 close all;
 
 
-seedmax = 5;
+seedmax = 11;
 % read a seed and
-problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)', ...
+problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
-problems ={ 'dsm1(2)'};
+% problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
 methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand',
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
-problem_folder = strcat(pwd,'\problems\DSM');
+problem_folder = strcat(pwd,'\problems\DS');
+addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\TP');
 addpath(problem_folder);
 np = length(problems);
 nm = length(methods);
 
 ndmatrix_problems = zeros(seedmax, nm * np);
 for ii = 1: np
+    if ii == 9
+        a = 0;
+    end
+    
     prob = eval(problems{ii});
     % compare results by problem
     % (1) for each problem, load empirical pf
@@ -46,7 +52,8 @@ for ii = 1: np
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
             savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
             nd_front = csvread(savename_fu);
-            
+            size(empf)
+            size(nd_front)
             % (3) calculate igd for this seed
             igd_fu{seed, jj} = mean(min(pdist2(empf,nd_front),[],2));
             ndmatrix_problems(seed, (ii -1) *nm +jj)= igd_fu{seed, jj};
@@ -163,4 +170,25 @@ for s = 1:length(st)
     fprintf(fp, '\n');
 end
 fclose(fp);
-rmpath(problem_folder);
+
+
+
+% save to csv with problem row wise
+savepath = strcat(pwd, '\result_folder\mo_so_igdmedian.csv');
+fp=fopen(savepath,'w');
+fprintf(fp, 'problem,');
+for jj = 1:nm
+    fprintf(fp, '%s,', methods{jj}  );
+end
+fprintf(fp, '\n');
+
+
+for ii = 1:np
+    prob = eval(problems{ii});
+     fprintf(fp, '%s,', prob.name);
+     for jj = 1:length(methods)
+        fprintf(fp, '%f,',  statistic_matrix(3, (ii-1) * length(methods)+jj));
+     end
+     fprintf(fp, '\n');
+end
+fclose(fp);

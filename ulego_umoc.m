@@ -33,6 +33,7 @@ num_pop                 = 100;
 num_gen                 = 100;
 hy_pop                  = 20;
 hy_gen                  = 50;
+max_nl                  = 6000;
 
 % parallel compatible setting
 prob = eval(prob);
@@ -91,6 +92,10 @@ for i = 1:numiter_u
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
+    
+    if n_feval > max_nl
+        break;
+    end
     
     %-plot ----
     num_obj = size(fu, 2);
