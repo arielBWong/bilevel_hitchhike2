@@ -22,10 +22,12 @@ addpath(solver_folder);
 addpath(sort_folder);
 
 tic;
-prob = 'tp2(3)';
+prob = 'ds1(6)';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
-ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
-% ulego_sao_pop(prob, seed, 'normalization_nd');
+% ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
+fprintf('pop');
+ulego_sao_pop(prob, seed, 'normalization_nd');
+
 
 prob = eval(prob);
 savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert' );

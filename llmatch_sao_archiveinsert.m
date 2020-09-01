@@ -113,6 +113,7 @@ end
 % count number of function evaluation
 % n_fev =(n+1) * num_pop + output.funcCount;  % population evaluation
 n_fev = n_global + output.funcCount;       % one in a population is evaluated
+% fprintf('lower eval:  ego %d, local: %d\n', n_global, output.funcCount);
 
 
 end

@@ -52,12 +52,6 @@ classdef tp2
         
         end
          
-        
-         function pf = upper_pf(obj, num_point)
-             y   = linspace(0.5,1, num_point);
-            F1 = y.^2;
-            F2 = (y-1).^2;
-            pf = [F1', F2'];
             
             % make sure folder evenpf is placed under main project root
 %             workdir = pwd;
@@ -74,6 +68,6 @@ classdef tp2
 %             updated_order=Sparse_selection(id_fronts,f_fronts,num_point);
 %             pf = PF(updated_order(1:num_point), :);
            
-         end
+         
     end
 end

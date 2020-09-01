@@ -30,7 +30,7 @@ num_popl  = 20;   % 60 in total
 num_genl = 80;
 iter_freql = 40;
 evaln = num_popu;
-max_nl = 6000;   % control on max
+max_nl = 15000;   % control on max
 %--------
 prob = eval(prob_str);
 normhn= str2func(normhn);
@@ -57,7 +57,7 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
-% scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
+scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
 
 
 %--fu adjust
@@ -126,18 +126,9 @@ for g=1:n
          fu = llfeasi_modify(fu, llfeasi_flag, i);
     end
     
-    % check under level number of evaluation 
-     if n_feval > max_nl
-        break;
-    end
     
-    % update krg  and initmatrix, continue to evolve
-    [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
-    % initmatrix = new_xu;
-    initmatrix = archive.pop_last.X;
     
-end
-% plot nd front
+    % plot nd front
  %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;
@@ -160,8 +151,8 @@ end
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-        f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        % f2 =scatter(newfu(1), newfu(2), 'go', 'filled');drawnow;
+       %  f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+       %  f2 =scatter(newfu(:, 1), newfu(:, 2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1
@@ -171,6 +162,20 @@ end
         end
     end
     %-plot ----
+    
+    
+    % check under level number of evaluation 
+     if n_feval > max_nl
+        break;
+    end
+    
+    % update krg  and initmatrix, continue to evolve
+    [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
+    % initmatrix = new_xu;
+    initmatrix = archive.pop_last.X;
+    
+end
+
 % save data 
 nxu = size(xu, 1);  % first generation and then every freq generations
 nxl = n_feval;

@@ -28,12 +28,17 @@ numiter =100;
 
 
 %----smd test---
-problem = smd3();
-xu = [0, 0];       %smd1,2, 3, 4, 5, 6, 7, 8
+% problem = smd3();
+% xu = [0, 0];       %smd1,2, 3, 4, 5, 6, 7, 8
 % xu = [0, 0];  %smd9
 % xu = [1, 1];  %smd10
 % xu = [0, 0];  %smd11
 %xu = [1, 1];  %smd12
+
+
+
+problem = tp2(6);
+xu = [0.5];
 
 rng(seed, 'twister');
 [xl, n, flag] = llmatch(xu, problem, 200, 200,'EIMnext_znorm', numiter, 'EIM_eval');
@@ -41,8 +46,11 @@ rng(seed, 'twister');
 disp(xl);
 [f,c] = problem.evaluate_u(xu, xl);
 disp(f);
-acc = abs(f-problem.uopt);
-disp(acc);
+
+[f,c] = problem.evaluate_l(xu, xl);
+disp(f);
+% acc = abs(f-problem.uopt);
+% disp(acc);
 
 
 rmpath(problem_folder);

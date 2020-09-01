@@ -33,7 +33,7 @@ num_pop                 = 100;
 num_gen                 = 100;
 hy_pop                  = 20;
 hy_gen                  = 50;
-max_nl                  = 6000;
+max_nl                  = 15000;
 
 % parallel compatible setting
 prob = eval(prob);
@@ -64,7 +64,7 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
-scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
+% scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
 
 %--fu adjust
 for i=1:inisize_u
@@ -94,9 +94,10 @@ for i = 1:numiter_u
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
     
     if n_feval > max_nl
+        fprintf(num2str(n_feval));
         break;
     end
-    
+%     
     %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;
@@ -106,8 +107,8 @@ for i = 1:numiter_u
             feasible_y = fu(index_c, :);
             nd_index = Paretoset(feasible_y);
             nd_front = feasible_y(nd_index, :);
-            % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
-            % f2 =scatter(newfu(1), newfu(2), 'go', 'filled');
+            f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+            f2 =scatter(newfu(1), newfu(2), 'go', 'filled');
             num_nd = size(nd_front, 1);
             if num_nd > 1
                 nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
@@ -119,8 +120,8 @@ for i = 1:numiter_u
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-        % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        % f2 =scatter(newfu(1), newfu(2), 'go', 'filled');drawnow;
+        %  f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+         % f2 =scatter(newfu(1), newfu(2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1
