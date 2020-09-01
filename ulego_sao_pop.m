@@ -22,14 +22,15 @@ rng(seed, 'twister');
 % algorithm parameter
 
 
-num_popu    = 20;   % 80 in total
-num_genu    = 120;
-iter_frequ  = 40;
+num_popu = 20;   % 80 in total
+num_genu = 120;
+iter_frequ = 40;
 
-num_popl    = 20;   % 60 in total
-num_genl    = 80;
-iter_freql  = 40;
+num_popl  = 20;   % 60 in total
+num_genl = 80;
+iter_freql = 40;
 evaln = num_popu;
+max_nl = 6000;   % control on max
 %--------
 prob = eval(prob_str);
 normhn= str2func(normhn);
@@ -123,6 +124,11 @@ for g=1:n
     tr_size = size(xu, 1);
     for i = tr_size - num_new + 1: tr_size
          fu = llfeasi_modify(fu, llfeasi_flag, i);
+    end
+    
+    % check under level number of evaluation 
+     if n_feval > max_nl
+        break;
     end
     
     % update krg  and initmatrix, continue to evolve

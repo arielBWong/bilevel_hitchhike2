@@ -50,6 +50,30 @@ classdef tp2
             %-cie
            c=[];
         
+        end
+         
+        
+         function pf = upper_pf(obj, num_point)
+             y   = linspace(0.5,1, num_point);
+            F1 = y.^2;
+            F2 = (y-1).^2;
+            pf = [F1', F2'];
+            
+            % make sure folder evenpf is placed under main project root
+%             workdir = pwd;
+%             idcs = strfind(workdir, '\');
+%             upperfolder = workdir(1: idcs(end)-1);
+%             
+%             idcs = strfind(upperfolder, '\');
+%             uupfolder = upperfolder(1: idcs(end)-1);
+%             
+%             method_folder = strcat(uupfolder,'\ND_Sort');
+%             addpath(method_folder);
+% 
+%             [id_fronts,f_fronts,~,~] = E_NDSort_c(PF);
+%             updated_order=Sparse_selection(id_fronts,f_fronts,num_point);
+%             pf = PF(updated_order(1:num_point), :);
+           
          end
     end
 end

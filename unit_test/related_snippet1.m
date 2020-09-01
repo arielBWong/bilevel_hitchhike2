@@ -1,17 +1,7 @@
 
 %%
-% this snappet shows how dace internally deal with 
-% repeated x value
-num_xu = size(xu, 1);
-      dismatrix = zeros(num_xu);
-      for ii = 1:num_xu
-          for jj = 1:num_xu
-              if ii==jj
-                  dismatrix(ii, jj) = 10;
-              else
-                  dismatrix(ii, jj) = sum(abs(xu(ii, :)-xu(jj, :)), 2);
-              end
-          end
-      end
-      min_d = min(dismatrix(:));
-      disp(min_d);
+y   = linspace(-1,2, 100);
+f1 = y.^2;
+f2 = (y-1).^2;
+
+scatter(f1, f2); drawnow;

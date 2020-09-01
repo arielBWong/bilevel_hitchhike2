@@ -22,13 +22,13 @@ addpath(solver_folder);
 addpath(sort_folder);
 
 tic;
-prob = 'dsm1(2)';
+prob = 'tp2(3)';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
-% ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
-ulego_sao(prob, seed, 'normalization_nd');
+ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
+% ulego_sao_pop(prob, seed, 'normalization_nd');
 
 prob = eval(prob);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao' );
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert' );
 savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
 nd_front = csvread(savename_fu);
 scatter(nd_front(:,1), nd_front(:,2)); drawnow;
