@@ -165,10 +165,10 @@ for g=1:n
     
     
     % check under level number of evaluation 
-     if n_feval > max_nl
-        break;
-    end
-    
+%      if n_feval > max_nl
+%         break;
+%     end
+%     
     % update krg  and initmatrix, continue to evolve
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
     % initmatrix = new_xu;

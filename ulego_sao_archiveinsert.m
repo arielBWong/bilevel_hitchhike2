@@ -120,10 +120,10 @@ for g=1:n
     end
     
     % check under level number of evaluation 
-     if n_feval > max_nl
-        break;
-    end
-    
+%      if n_feval > max_nl
+%         break;
+%     end
+%     
     %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;

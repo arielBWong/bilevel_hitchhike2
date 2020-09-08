@@ -8,7 +8,7 @@ classdef dsm1
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'dsm1';
+        name = 'dsm1_d';
         uopt = NaN;
         lopt = NaN; % double check needed
     end
@@ -35,7 +35,7 @@ classdef dsm1
         function [f, c] = evaluate_u(obj, xu, xl)
             %-obj
             r = 0.1;
-            tao = 1;
+            tao = -1;
             
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
             

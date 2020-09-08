@@ -26,13 +26,13 @@ addpath(solver_folder);
 % problems = { 'mobp9(6)','mobp9(7)','mobp9(8)','mobp9(9)','mobp9(10)','mobp9(11)','mobp9(12)','mobp9(13)','mobp9(14)'};
 
 % problems = { 'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()', 'mobp11(6)' };
-problems = {'tp1()',  'tp2(3)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)',  'mobp5()', 'mobp7()', 'mobp8()','mobp9(6)','mobp10()', 'mobp11(6)',  'dsm1(3)'  };
+% problems = {'tp1()',  'tp2(3)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)', 'ds5(3, 2)',  'mobp5()', 'mobp7()', 'mobp8()','mobp9(6)','mobp10()', 'mobp11(6)',  'dsm1(3)'  };
 
 
 algs = {'EIM_eval'};  %  'Ehv_eval', 
-problems = { 'dsm1(2)' };
+problems = { 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
 
-seeds = linspace(1, 5, 5);
+seeds = linspace(1, 11, 11);
 
 np = length(problems);
 ns = length(seeds);

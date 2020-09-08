@@ -11,8 +11,9 @@ close all;
 
 seedmax = 11;
 % read a seed and
-problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
-    'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' };
+% problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
+%     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' , 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
+problems = {'dsm1(3)', 'dsm2(3)','dsm3(3)'};
 % problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
 methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand',
@@ -20,6 +21,8 @@ methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_o
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
 problem_folder = strcat(pwd,'\problems\DS');
+addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\DSM');
 addpath(problem_folder);
 problem_folder = strcat(pwd,'\problems\TP');
 addpath(problem_folder);
@@ -35,7 +38,7 @@ for ii = 1: np
     prob = eval(problems{ii});
     % compare results by problem
     % (1) for each problem, load empirical pf
-    if strcmp(prob.name(1:end-1), 'dsm')
+    if strcmp(prob.name(1:3), 'dsm')
         empf = prob.upper_pf(100);
     else
         empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');
@@ -68,7 +71,7 @@ for ii = 1 : np
     % plot across problems
     % (1) read in empf
     prob = eval(problems{ii});
-    if strcmp(prob.name(1:end-1), 'dsm')
+    if strcmp(prob.name(1:3), 'dsm')
         empf = prob.upper_pf(100);
     else
         empfsave = strcat(pwd, '\result_folder\', prob.name, '_emp_pf.csv');

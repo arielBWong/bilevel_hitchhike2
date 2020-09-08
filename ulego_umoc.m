@@ -93,10 +93,10 @@ for i = 1:numiter_u
     %--adjust fu by lower feasibility
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);                    % upper mo compatible
     
-    if n_feval > max_nl
-        fprintf(num2str(n_feval));
-        break;
-    end
+%     if n_feval > max_nl
+%         fprintf(num2str(n_feval));
+%         break;
+%     end
 %     
     %-plot ----
     num_obj = size(fu, 2);
