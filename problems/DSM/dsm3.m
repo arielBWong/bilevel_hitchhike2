@@ -8,7 +8,7 @@ classdef dsm3
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'dsm3_d';
+        name = 'dsm3';
         uopt = NaN;
         lopt = NaN; % double check needed
     end
@@ -35,15 +35,18 @@ classdef dsm3
         function [f, c] = evaluate_u(obj, xu, xl)
             %-obj
             r = 0.1;
-            tao = -1;
+            tao = 1;
             
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
             
             p2 = 2: obj.n_lvar;
             p2 =( p2 - 1) /2;
             p2 =  sum((xu(:, 2:obj.n_lvar) - p2) .^2 , 2);
-            f(:, 1) = cos(pi * xu(:, 1)) + p2 + p3;
-            f(:, 2) = sin(pi * xu(:, 1)) + p2 + p3;
+            
+            p1 = pfshape_line(xu, r);
+             
+            f(:, 1) = p1(:, 1) + p2 + p3 ;
+            f(:, 2) = p1(:, 1) + p2 + p3;
             
             
             %-cie

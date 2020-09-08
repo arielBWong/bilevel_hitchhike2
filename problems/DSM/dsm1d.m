@@ -1,4 +1,4 @@
-classdef dsm1
+classdef dsm1d
     properties
         p ;
         q;
@@ -8,12 +8,12 @@ classdef dsm1
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'dsm1';
+        name = 'dsm1d'; % deceptive
         uopt = NaN;
         lopt = NaN; % double check needed
     end
     methods
-        function obj = dsm1(k)
+        function obj = dsm1d(k)
             obj.p = k;
             obj.q = k;
             
@@ -35,8 +35,7 @@ classdef dsm1
         function [f, c] = evaluate_u(obj, xu, xl)
             %-obj
             r = 0.1;
-            tao = 1;
-            
+            tao = -1;
             p1 = pfshape_convex(xu, r);
             
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
@@ -46,7 +45,7 @@ classdef dsm1
             p2 =  sum((xu(:, 2:obj.n_lvar) - p2) .^2 , 2);
             
             f(:, 1) = p1(:, 1) + p2 + p3 ;
-            f(:, 2) = p1(:, 2) + p2 + p3  ;
+            f(:, 2) = p1(:, 2) + p2 + p3 ;
             
             
             %-cie

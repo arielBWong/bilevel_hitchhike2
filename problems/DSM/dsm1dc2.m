@@ -1,4 +1,4 @@
-classdef dsm1
+classdef dsm1dc2
     properties
         p ;
         q;
@@ -8,12 +8,12 @@ classdef dsm1
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'dsm1';
+        name = 'dsm1dc2';   % deceptive
         uopt = NaN;
-        lopt = NaN; % double check needed
+        lopt = NaN;         % double check needed
     end
     methods
-        function obj = dsm1(k)
+        function obj = dsm1dc2(k)
             obj.p = k;
             obj.q = k;
             
@@ -37,20 +37,19 @@ classdef dsm1
             r = 0.1;
             tao = 1;
             
-            p1 = pfshape_convex(xu, r);
-            
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
             
             p2 = 2: obj.n_lvar;
             p2 =( p2 - 1) /2;
             p2 =  sum((xu(:, 2:obj.n_lvar) - p2) .^2 , 2);
             
+            p1 = pfshape_convex(xu, r);
             f(:, 1) = p1(:, 1) + p2 + p3 ;
             f(:, 2) = p1(:, 2) + p2 + p3  ;
             
             
             %-cie
-            c = [];
+            c =  constraint2_u(xu);
             
         end
         
@@ -62,7 +61,7 @@ classdef dsm1
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
-            c = [];
+            c = constraint2_l(xu, xl);
             
         end
         
