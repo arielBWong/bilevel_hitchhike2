@@ -58,7 +58,7 @@ classdef dsm3
             
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
-            p3 = 10 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            p3 = 10 * abs(sin(pi .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
@@ -68,14 +68,7 @@ classdef dsm3
         
         function pf = upper_pf(obj, num_point)
            
-            sep = pi/(2 *(num_point-1));
-            pf = [1, 0];
-            
-            deg = 0;
-            for i = 1:num_point-1
-                one = [cos(deg + i * sep), sin(deg + i * sep)];
-                pf = [pf; one];
-            end
+           [pf, ~] = UniformPoint(num_point,2);
             
             
         end

@@ -13,7 +13,7 @@ seedmax = 11;
 % read a seed and
 % problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
 %     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' , 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
-problems = {'dsm1(3)', 'dsm2(3)','dsm3(3)'};
+problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)'};
 % problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
 methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand',
@@ -31,10 +31,7 @@ nm = length(methods);
 
 ndmatrix_problems = zeros(seedmax, nm * np);
 for ii = 1: np
-    if ii == 9
-        a = 0;
-    end
-    
+ 
     prob = eval(problems{ii});
     % compare results by problem
     % (1) for each problem, load empirical pf
@@ -140,7 +137,7 @@ end
 
 
 % save into csv
-savepath = strcat(pwd, '\result_folder\mobp_igdres.csv');
+savepath = strcat(pwd, '\result_folder\dsm_igdres.csv');
 fp=fopen(savepath,'w');
 fprintf(fp, 'seed,');
 % format header
@@ -177,7 +174,7 @@ fclose(fp);
 
 
 % save to csv with problem row wise
-savepath = strcat(pwd, '\result_folder\mo_so_igdmedian.csv');
+savepath = strcat(pwd, '\result_folder\mo_sodsm_igdmedian.csv');
 fp=fopen(savepath,'w');
 fprintf(fp, 'problem,');
 for jj = 1:nm

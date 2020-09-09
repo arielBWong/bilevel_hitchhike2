@@ -24,7 +24,7 @@ addpath(sort_folder);
 
 
 tic;
-prob = 'dsm1(3)';
+prob = 'dsm2dc1(3)';
 ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval', 'normalization_nd', 'EIMnext_znorm');
 % ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd', 'Believer_next');
 

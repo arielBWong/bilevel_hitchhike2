@@ -39,7 +39,7 @@ if numcon>0
     
     % seperate feasible and infeasible
     % sort two subset seperately
-    fy_F = f(fy_ind, :); cv_F = f(cv_ind, :);         % operation should be valid when no feasible solutions
+    fy_F = f(fy_ind, :); cv_F = f(cv_ind, :);                % operation should be valid when no feasible solutions
     fy_C = c(fy_ind, :); cv_C = c(cv_ind, :);
     fy_X = x(fy_ind, :); cv_X = x(cv_ind, :);
     
