@@ -120,8 +120,8 @@ for i = 1:numiter_u
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-        f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        f2 =scatter(newfu(1), newfu(2), 'go', 'filled');drawnow;
+        % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+        % sf2 =scatter(newfu(1), newfu(2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1

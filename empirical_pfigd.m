@@ -16,7 +16,7 @@ seedmax = 11;
 problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)'};
 % problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand',
+methods = { 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand',
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -125,7 +125,7 @@ for ii = 1 : np
     end
     t = [prob.name,' ',' igd median compare'];
     title(t);
-    legend('empirical pf', methods{1}, methods{2},  methods{3}); % methods{4}
+    legend('empirical pf', methods{1}, methods{2}); % methods{4}
     
     savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
     savefig(savename);

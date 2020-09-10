@@ -121,10 +121,10 @@ for g=1:n
         fu = llfeasi_modify(fu, llfeasi_flag, i);
     end
     
-       check under level number of evaluation
-         if n_feval > max_nl
-            break;
-        end
+    % check under level number of evaluation
+    if n_feval > max_nl
+        break;
+    end
     %
     %-plot ----
     num_obj = size(fu, 2);
@@ -148,8 +148,8 @@ for g=1:n
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-        f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        f2 =scatter(newfu(:, 1), newfu(:,2), 'go', 'filled');drawnow;
+        % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+        % f2 =scatter(newfu(:, 1), newfu(:,2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1
@@ -163,10 +163,11 @@ for g=1:n
     % update krg  and initmatrix, continue to evolve
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
     % initmatrix = new_xu;
-    initmatrix = archive.pop_last.X;
-    [sf, sx, sc] = initmatrix_pick(xu,fu, fc);
-    initmatrix = sx(1:num_popu, :);
-    [initmatrix, ~] = unique(initmatrix,'rows','stable');
+    % initmatrix = archive.pop_last.X;
+    % [sf, sx, sc] = initmatrix_pick(xu,fu, fc);
+    % initmatrix = sx(1:num_popu, :);
+    % [initmatrix, ~] = unique(initmatrix,'rows','stable');
+    initmatrix = [];
     
 end
 % plot nd fronts
@@ -192,7 +193,7 @@ if ~isempty(fc)     % constraint problems
         nd_index = Paretoset(feasible_y);
         nd_frontnorm = feasible_y(nd_index, :);
     else
-        nd_frontnorm = [];      
+        nd_frontnorm = [];
     end
 else                % unconstraint problems
     nd_index = Paretoset(fu_norm);

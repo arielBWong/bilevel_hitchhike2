@@ -30,7 +30,7 @@ num_popl  = 20;   % 60 in total
 num_genl = 80;
 iter_freql = 40;
 evaln = num_popu;
-max_nl = 15000;   % control on max
+max_nl = 20000;   % control on max
 %--------
 prob = eval(prob_str);
 normhn= str2func(normhn);
@@ -114,7 +114,7 @@ for g=1:n
         llfeasi_flag = [llfeasi_flag, flag];
         n_feval = n_feval + nl;                         %record lowerlevel nfeval
     end
-    [newfu, newfc] =  prob. evaluate_u(new_xu, new_xl);
+    [newfu, newfc] =  prob.evaluate_u(new_xu, new_xl);
     
     % add to training
     xu = [xu; new_xu];  xl = [xl; new_xl];
@@ -128,7 +128,7 @@ for g=1:n
     
     
     
-    % plot nd front
+ % plot nd front
  %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;

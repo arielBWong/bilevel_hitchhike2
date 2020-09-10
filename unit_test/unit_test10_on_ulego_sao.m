@@ -22,7 +22,7 @@ addpath(solver_folder);
 addpath(sort_folder);
 
 tic;
-prob = 'dsm1(3)';
+prob = 'dsm1dc1(3)';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
 ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
 % fprintf('pop');

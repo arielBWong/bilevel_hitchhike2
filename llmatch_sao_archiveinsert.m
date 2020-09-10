@@ -62,9 +62,10 @@ for g = 1: n
     
     if growflag % there is unseen data in evolution
         [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-        [~, sx, ~] = initmatrix_pick(train_xl, train_fl, train_fc);
-        initmatrix = sx(1:num_pop, :);
-        [initmatrix, ~] = unique(initmatrix,'rows','stable');
+        % [~, sx, ~] = initmatrix_pick(train_xl, train_fl, train_fc);
+        % initmatrix = sx(1:num_pop, :);
+        % [initmatrix, ~] = unique(initmatrix,'rows','stable');
+        initmatrix = [];
     else % there is no unseen data in evolution
             % re-introduce random individual 
             fprintf('no unseen data in last population, introduce randomness');
