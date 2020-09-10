@@ -4,7 +4,7 @@
 % round 1: to be passed
 % -----------------------
 seed = 1;
-rng(seed, 'twister');
+
 
 
 workdir = pwd;
@@ -22,15 +22,15 @@ addpath(solver_folder);
 addpath(sort_folder);
 
 tic;
-prob = 'ds1(6)';
+prob = 'dsm1(3)';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
-% ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
-fprintf('pop');
-ulego_sao_pop(prob, seed, 'normalization_nd');
+ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
+% fprintf('pop');
+% ulego_sao_pop(prob, seed, 'normalization_nd');
 
 
 prob = eval(prob);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert' );
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert' );
 savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
 nd_front = csvread(savename_fu);
 scatter(nd_front(:,1), nd_front(:,2)); drawnow;

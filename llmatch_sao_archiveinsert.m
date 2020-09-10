@@ -48,7 +48,7 @@ initmatrix =train_xl;
 n = floor(num_gen/iter_freq);
 for g = 1: n
     % fprintf('lower gen %d\n', g);
-    funh_obj = @(x) llobj(x, krg_obj);
+    funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
 
     param.gen=iter_freq;

@@ -4,7 +4,7 @@
 % round 1: to be passed
 % -----------------------
 seed = 1;
-rng(seed, 'twister');
+
 
 
 workdir = pwd;
@@ -24,7 +24,7 @@ addpath(sort_folder);
 
 
 tic;
-prob = 'dsm2dc1(3)';
+prob = 'dsm1(3)';
 ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval', 'normalization_nd', 'EIMnext_znorm');
 % ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd', 'Believer_next');
 

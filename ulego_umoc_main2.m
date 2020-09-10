@@ -30,10 +30,11 @@ addpath(solver_folder);
 
 
 algs = {'EIM_eval'};  %  'Ehv_eval', 
-problems = { 
-     'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)' ,...
-      'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)' };
-
+% problems = { 
+%      'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)' ,...
+%       'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)' };
+% 
+problems = {'dsm1(3)'};
 seeds = linspace(1, 11, 11);
 
 np = length(problems);
@@ -56,7 +57,7 @@ parfor i = 1:nrun
     ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext_znorm' , paras{i}{3}, 'normalization_nd',  'EIMnext_znorm');
     % ulego_umoc(prob, seed, 'EIMnext_znorm', 'Ehv_eval', 'normalization_nd', 'Believer_next');
     ulego_sao_archiveinsert(paras{i}{1}, paras{i}{2}, 'normalization_nd');
-    ulego_sao_pop(paras{i}{1}, paras{i}{2}, 'normalization_nd');
+    % ulego_sao_pop(paras{i}{1}, paras{i}{2}, 'normalization_nd');
 end
 
 rmpath(problem_folder);

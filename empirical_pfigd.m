@@ -101,7 +101,7 @@ for ii = 1 : np
     
     % plot three of them
     fig1 = gcf;
-    scatter(empf(:,1), empf(:,2),'ro'); hold on;
+    plot(empf(:,1), empf(:,2)); hold on;
     
     pattern = cell(1, nm);
     pattern{1} = '^';
@@ -109,10 +109,10 @@ for ii = 1 : np
     pattern{3} = '+';
     pattern{4} = 'o';
     
-    pattern = cell(1, nm);
+
     color{1} = 'b';
     color{2} = 'k';
-    color{3} = 'y';
+    color{3} = 'r';
     color{4} = 'g';
     
     for kk = 1:nm
