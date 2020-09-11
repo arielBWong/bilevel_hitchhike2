@@ -11,9 +11,11 @@ classdef dsm3
         name = 'dsm3';
         uopt = NaN;
         lopt = NaN; % double check needed
+        r;
     end
     methods
         function obj = dsm3(k)
+            obj.r = 0.1;
             obj.p = k;
             obj.q = k;
             
@@ -34,7 +36,8 @@ classdef dsm3
         
         function [f, c] = evaluate_u(obj, xu, xl)
             %-obj
-            r = 0.1;
+            obj.r = 0.1;
+            
             tao = 1;
             
             p3 = tao* sum((xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar)) .^ 2, 2);
@@ -43,10 +46,10 @@ classdef dsm3
             p2 =( p2 - 1) /2;
             p2 =  sum((xu(:, 2:obj.n_lvar) - p2) .^2 , 2);
             
-            p1 = pfshape_line(xu, r);
+            p1 = pfshape_line(xu, obj.r);
              
             f(:, 1) = p1(:, 1) + p2 + p3 ;
-            f(:, 2) = p1(:, 1) + p2 + p3;
+            f(:, 2) = p1(:, 2) + p2 + p3;
             
             
             %-cie
@@ -58,7 +61,7 @@ classdef dsm3
             
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
-            p3 = 10 * abs(sin(pi .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
@@ -69,6 +72,8 @@ classdef dsm3
         function pf = upper_pf(obj, num_point)
            
            [pf, ~] = UniformPoint(num_point,2);
+           pf = pf * 0.5  - [0, 0.4] ;
+           
             
             
         end

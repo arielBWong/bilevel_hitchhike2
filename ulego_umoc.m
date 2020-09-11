@@ -23,6 +23,14 @@ function ulego_umoc(prob, seed, str_nextxhn, fitnesshandle, normhn, llmatch_next
 %--------------------------------------------------------------------------
 
 rng(seed, 'twister');
+prob = eval(prob);
+
+% save some runs
+savepath = strcat('C:\Users\z3276872\matlab_scripts\bilevel_hitchhike2\result_folder\', prob.name, '_EIM_eval');
+file = strcat(savepath, '\fu_', num2str(seed),'.csv');
+if exist(file,'file') == 2  % ignore existing runs 
+    return;
+end
 
 % algo parameter
 numiter_l               = 30;
@@ -36,7 +44,7 @@ hy_gen                  = 50;
 max_nl                  = 20000;
 
 % parallel compatible setting
-prob = eval(prob);
+
 nextxhn = str2func(str_nextxhn);
 fithn = str2func(fitnesshandle);
 normhn = str2func(normhn);

@@ -21,6 +21,14 @@ function ulego_sao_pop(prob_str, seed, normhn)
 rng(seed, 'twister');
 % algorithm parameter
 
+prob = eval(prob_str);
+% save some runs
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert');
+file = strcat(savepath, '\fu_', num2str(seed),'.csv');
+if exist(file,'file') == 2  % ignore existing runs 
+    return;
+end
+
 
 num_popu = 20;   % 80 in total
 num_genu = 120;
@@ -32,7 +40,7 @@ iter_freql = 40;
 evaln = num_popu;
 max_nl = 20000;   % control on max
 %--------
-prob = eval(prob_str);
+% 
 normhn= str2func(normhn);
 n_feval = 0;
 %--upper problem variable

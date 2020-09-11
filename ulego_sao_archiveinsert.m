@@ -18,6 +18,18 @@ function ulego_sao_archiveinsert(prob_str, seed, normhn)
 %--------------------------------
 
 rng(seed);
+prob = eval(prob_str);
+
+
+% save some runs
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert');
+filename = strcat(savepath, '\fu_', num2str(seed),'.csv');
+if exist(filename,'file') == 2  % ignore existing runs 
+    disp(filename);
+    fprintf('exist');
+    return;
+end
+
 % algorithm parameter
 evaln = 1;
 
@@ -32,7 +44,7 @@ iter_freql  = 20;
 
 max_nl = 20000;
 %--------
-prob = eval(prob_str);
+
 normhn= str2func(normhn);
 n_feval = 0;
 %--upper problem variable

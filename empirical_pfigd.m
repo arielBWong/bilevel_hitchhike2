@@ -13,10 +13,14 @@ seedmax = 11;
 % read a seed and
 % problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
 %     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' , 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
-problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)'};
+problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)',...
+    'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)',...
+    'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)'};
+
+
 % problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = { 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand',
+methods = { 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);

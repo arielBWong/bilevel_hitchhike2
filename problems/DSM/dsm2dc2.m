@@ -14,6 +14,7 @@ classdef dsm2dc2
     end
     methods
         function obj = dsm2dc2(k)
+
             obj.p = k;
             obj.q = k;
             
@@ -46,7 +47,7 @@ classdef dsm2dc2
             p1 = pfshape_concave(xu, r);
              
             f(:, 1) = p1(:, 1) + p2 + p3 ;
-            f(:, 2) = p1(:, 1) + p2 + p3;
+            f(:, 2) = p1(:, 2) + p2 + p3;
             
             
             %-cie
@@ -58,7 +59,7 @@ classdef dsm2dc2
             
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
-            p3 = 10 * abs(sin(pi .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
@@ -77,6 +78,7 @@ classdef dsm2dc2
                 one = [(1+r) *sin(deg + i * sep), (1+r) * cos(deg + i * sep)];
                 pf = [pf; one];
             end
+            pf = pf + 1;
             
             
         end
