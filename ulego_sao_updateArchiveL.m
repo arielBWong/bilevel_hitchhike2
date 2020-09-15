@@ -27,6 +27,31 @@ if evalOne  % acommodate one by one add
     [new_fl, new_fc] = prob.evaluate_l(xu_expand(1, :), new_xl(1,:));
     trainx = [trainx; new_xl(1, :)];
 else
+    %------if new_xl is less than population size, add more random unseen  ones --
+    num_new = sum(newindex);
+    num_pop = size(popx, 1);
+    k = num_new + 1;
+    lower_bound = prob.xl_bl;
+    upper_bound = prob.xl_bu;
+    n_var = prob.n_lvar;
+    while k <= num_pop
+        xl_add = lhsdesign(1, n_var,'criterion','maximin','iterations',1000);
+        xl_add = lower_bound +(upper_bound - lower_bound) .* xl_add;
+        if ~ismember(xl_add, trainx, 'row')
+            new_xl = [new_xl; xl_add];
+            k = k + 1;
+        else
+            fprintf('added lower level to evaluation is seen one');
+        end
+    end
+    %-------------------------------------------------------   
+    % --add new_xl to xu
+    num_new = size(new_xl, 1);
+    xu_expand =  repmat(xu, num_new, 1);
+    if num_new ~= num_pop
+        error('something wrong with adding random xl to evaluation, should be the same size as population');
+    end
+    
     [new_fl, new_fc] = prob.evaluate_l(xu_expand, new_xl);
     trainx = [trainx; new_xl];
 end

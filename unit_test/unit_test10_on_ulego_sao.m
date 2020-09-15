@@ -26,11 +26,12 @@ prob = 'dsm3(3)';
 % ulego_sao_pop(prob, seed, 'normalization_nd');
 % ulego_sao_archiveinsert(prob, seed, 'normalization_nd');
 % fprintf('pop');
-% ulego_sao_pop(prob, seed, 'normalization_nd');
-ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval', 'normalization_nd', 'EIMnext_znorm');
+ulego_sao_pop(prob, seed, 'normalization_nd');
+% ulego_umoc(prob, seed, 'EIMnext_znorm', 'EIM_eval', 'normalization_nd', 'EIMnext_znorm');
 
 prob = eval(prob);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert' );
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert' );
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert' );
 savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
 nd_front = csvread(savename_fu);
 scatter(nd_front(:,1), nd_front(:,2)); drawnow;

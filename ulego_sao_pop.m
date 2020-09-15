@@ -15,7 +15,7 @@ function ulego_sao_pop(prob_str, seed, normhn)
 % (3) train krg for ul problem
 % (4) use krg and ea to search xu that maximize predicted fu
 % (5) after iter_frequ generations, evaluate population with real problem
-% evaluation. update krg and continue evolving on krg 
+% evaluation. update krg and continue evolving on krg
 %--------------------------------
 
 rng(seed, 'twister');
@@ -23,24 +23,24 @@ rng(seed, 'twister');
 
 prob = eval(prob_str);
 % save some runs
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert');
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert');
 file = strcat(savepath, '\fu_', num2str(seed),'.csv');
-if exist(file,'file') == 2  % ignore existing runs 
+if exist(file,'file') == 2  % ignore existing runs
     return;
 end
 
 
-num_popu = 20;   % 80 in total
-num_genu = 120;
-iter_frequ = 40;
+num_popu   =   20;   % 80 in total
+num_genu   =   120;
+iter_frequ =   40;
 
-num_popl  = 20;   % 60 in total
-num_genl = 80;
-iter_freql = 40;
-evaln = num_popu;
-max_nl = 20000;   % control on max
+num_popl   =   20;   % 60 in total
+num_genl   =   80;
+iter_freql =   40;
+evaln      =   num_popu;
+max_nl     =   20000;   % control on max
 %--------
-% 
+%
 normhn= str2func(normhn);
 n_feval = 0;
 %--upper problem variable
@@ -54,7 +54,7 @@ xu = repmat(lower_bound, num_popu, 1) + repmat((upper_bound - lower_bound), num_
 
 xl = [];
 llfeasi_flag = [];
-% -xu match its xl and evaluate fu
+% - xu match its xl and evaluate fu
 for i=1:num_popu
     [xl_single, nl, flag]  = llmatch_sao_pop(xu(i, :), prob, num_popl, num_genl, iter_freql);
     xl = [xl; xl_single];
@@ -74,17 +74,17 @@ for i=1:num_popu
 end
 
 % -- create surrogate for first round evolution
- [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
+[krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
 
 %--main population based optimization  routine
 n = round(num_genu/iter_frequ);       % how many  evolution  subroutine
 initmatrix = xu;                      % no normalization on x
 for g=1:n
     disp(g);
-     % first subroutine has first population evaluated, and last generation
-     % evaluated
-     % (krg prediction is exactly corresponding f value)
-    if g==1 
+    % first subroutine has first population evaluated, and last generation
+    % evaluated
+    % (krg prediction is exactly corresponding f value)
+    if g==1
         param.gen=iter_frequ;
     else
         % for other subroutines, its previous subroutine's last population is
@@ -94,19 +94,20 @@ for g=1:n
     end
     param.popsize= num_popu;
     
-    funh_obj = @(x)ulobj(x, krg_obj);
+    ndnorm = get_ndfront(fu, fc, normhn);    
+    funh_obj = @(x)ulobj(x, krg_obj, ndnorm);
     funh_con = @(x)ulcon(x, krg_con);
     
     [~,~,~, archive] = gsolver(funh_obj, u_nvar,  prob.xu_bl, prob.xu_bu, initmatrix, funh_con, param);
     
-    new_xu = archive.pop_last.X(1:evaln, :);    
+    new_xu = archive.pop_last.X(1:evaln, :);
     % replace evaluate whole population with evaluate unseen data
     repeat_index = ismember(new_xu, xu, 'row');
     new_index = ~repeat_index;
     num_new =  sum(new_index);
     new_xl  = [];
     new_xu = new_xu(new_index, :);
-     % if new point does not exist 
+    % if new point does not exist
     % continue evolution with re-start evolution with random initialization
     if num_new ==0
         fprintf('evolution converge and no new point is found');
@@ -114,10 +115,27 @@ for g=1:n
         continue;
     end
     
+    % number
+    %------determine whether need to add more member-------
+    k = num_new + 1;
+    while k <= param.popsize
+        xu_add = lhsdesign(1, u_nvar,'criterion','maximin','iterations',1000);
+        xu_add = repmat(lower_bound, 1, 1) + repmat((upper_bound - lower_bound), 1, 1) .* xu;
+        if ~ismember(xu_add, xu, 'row')
+            new_xu = [new_xu; xu_add];
+            k = k + 1;
+            fprintf('new member')
+        else
+            fprintf('added xu to evaluation is seen one');
+        end
+    end
+    %-------------------------------------------------------
+    
     % --add new_xu to xu
+    num_new = size(new_xu, 1);
     for i=1:num_new
         % match new_xl for new_xu
-        [xl_single, nl, flag]  = llmatch_sao_pop(new_xu(i, :), prob, num_popl, num_genl, iter_freql);        
+        [xl_single, nl, flag]  = llmatch_sao_pop(new_xu(i, :), prob, num_popl, num_genl, iter_freql);
         new_xl = [new_xl; xl_single];
         llfeasi_flag = [llfeasi_flag, flag];
         n_feval = n_feval + nl;                         %record lowerlevel nfeval
@@ -131,13 +149,11 @@ for g=1:n
     % adjust fu according to lower flag
     tr_size = size(xu, 1);
     for i = tr_size - num_new + 1: tr_size
-         fu = llfeasi_modify(fu, llfeasi_flag, i);
+        fu = llfeasi_modify(fu, llfeasi_flag, i);
     end
     
-    
-    
- % plot nd front
- %-plot ----
+    %-plot nd front
+    %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;
     if ~isempty(fc) % constraint problems
@@ -146,45 +162,45 @@ for g=1:n
             feasible_y = fu(index_c, :);
             nd_index = Paretoset(feasible_y);
             nd_front = feasible_y(nd_index, :);
-            % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
-            % f2 =scatter(newfu(1), newfu(2), 'go', 'filled');
+            f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
+            f2 = scatter(newfu(1), newfu(2), 'go', 'filled');
             num_nd = size(nd_front, 1);
             if num_nd > 1
                 nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
                 h = Hypervolume(nd_front,ref_point);
-               % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
+                % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
             end
         end
     else  % unconstraint problems
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-       %  f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-       %  f2 =scatter(newfu(:, 1), newfu(:, 2), 'go', 'filled');drawnow;
+        f1 =  scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+        f2 =  scatter(newfu(:, 1), newfu(:, 2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
         num_nd = size(nd_front, 1);
         if num_nd >1
             nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
             h = Hypervolume(nd_front,ref_point);
-           %  fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
+            %  fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
         end
     end
     %-plot ----
     
     
-    % check under level number of evaluation 
-%      if n_feval > max_nl
-%         break;
-%     end
-%     
+    % check under level number of evaluation
+    %      if n_feval > max_nl
+    %         break;
+    %     end
+    %
     % update krg  and initmatrix, continue to evolve
-    [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn); 
+    [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
     % initmatrix = new_xu;
     initmatrix = archive.pop_last.X;
     
 end
 
-% save data 
+% save data
 nxu = size(xu, 1);  % first generation and then every freq generations
 nxl = n_feval;
 
@@ -194,18 +210,47 @@ method = 'sao_popinsert';
 perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl);
 end
 
+function nd_frontnorm = get_ndfront(fu, fc, normhn)
+% find nd front from fu, compatible with constraint problem
+fu_norm = normhn(fu);
+num_con = size(fc, 2);
+if ~isempty(fc)     % constraint problems
+    index_c = sum(fc <= 0, 2) == num_con;
+    if sum(index_c) ~=0
+        feasible_y = fu_norm(index_c, :);
+        nd_index = Paretoset(feasible_y);
+        nd_frontnorm = feasible_y(nd_index, :);
+    else
+        nd_frontnorm = [];
+    end
+else                % unconstraint problems
+    nd_index = Paretoset(fu_norm);
+    nd_frontnorm = fu_norm(nd_index, :);
+end
+end
 
 function [sf, sx, sc] = initmatrix_pick(x, f, c)
-    [sf, sx, sc] = pop_sort(f, x, c);
+[sf, sx, sc] = pop_sort(f, x, c);
 end
 
 
-function  f = ulobj(x, kriging_obj)
+function  f = ulobj(x, kriging_obj, nd_front)
 num_obj = length(kriging_obj);   % krg cell array?
 num_x = size(x, 1);
-f = zeros(num_x, num_obj);
+obj = zeros(num_x, num_obj);
 for ii =1:num_obj
-    [f(:, ii), ~] = dace_predict(x, kriging_obj{ii});
+    [obj(:, ii), ~] = dace_predict(x, kriging_obj{ii});
+end
+
+% convert to hv contribution
+ref_point = [1.1, 1.1];
+basehv = Hypervolume(nd_front, ref_point);
+f = zeros(num_x, 1);                                          % contribution of each x-f to existing nd front
+
+for ii = 1:num_x                                              % population size
+    extendf = [nd_front; obj(ii, :)];
+    extendedhv = Hypervolume(extendf, ref_point);
+    f(ii) = -(extendedhv - basehv);
 end
 end
 
@@ -241,7 +286,7 @@ info = struct();
 if ~isempty(trainc)
     num_con = size(trainc, 2);
     krg_con = cell(1, num_con);
-   
+    
     % constraints should not be normalized
     for ii = 1:num_con
         krg_con{ii} = dacefit(trainx, trainc(:,ii),...
