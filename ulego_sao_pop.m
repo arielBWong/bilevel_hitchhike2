@@ -23,12 +23,12 @@ rng(seed, 'twister');
 
 prob = eval(prob_str);
 % save some runs
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert');
-file = strcat(savepath, '\fu_', num2str(seed),'.csv');
-if exist(file,'file') == 2  % ignore existing runs
-    return;
-end
-
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert');
+% file = strcat(savepath, '\fu_', num2str(seed),'.csv');
+% if exist(file,'file') == 2  % ignore existing runs
+%     return;
+% end
+% 
 
 num_popu   =   20;   % 80 in total
 num_genu   =   120;

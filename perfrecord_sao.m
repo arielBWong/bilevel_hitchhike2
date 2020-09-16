@@ -3,7 +3,15 @@ function  perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl)
 %
 % nxu number of function evaluation upper
 % nxl number of function evaluation lower
+
 num = length(prob.xl_bl);
+
+% compatible for saving lower level
+if strcmp(method(1:7), 'llmatch') % for paper deceptive analysis
+    lowersave(xu, fu, fc, prob, seed, method);
+    return 
+end
+
 savepath = strcat(pwd, '\result_folder\', prob.name,'_',method);
 n = exist(savepath);
 if n ~= 7

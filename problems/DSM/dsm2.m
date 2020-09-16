@@ -13,9 +13,9 @@ classdef dsm2
         lopt = NaN; % double check needed
     end
     methods
-        function obj = dsm2(k)
-            obj.p = k;
-            obj.q = k;
+        function obj = dsm2(k1, k2)
+            obj.p = k1;
+            obj.q = k2;
             
             % level variables
             obj.n_lvar = obj.q;
@@ -23,13 +23,13 @@ classdef dsm2
             
             % bounds
             % init bound upper level
-            obj.xu_bl = [0, ones(1, k-1) * (-k)];
-            obj.xu_bu = [0.5, ones(1, k-1) * k];
+            obj.xu_bl = [0, ones(1, obj.p-1) * (-obj.p)];
+            obj.xu_bu = [0.5, ones(1, obj.p-1) * obj.p];
             
             
             % init bound lower level
-            obj.xl_bl = ones(1, obj.q) * (-k);
-            obj.xl_bu = ones(1, obj.q) * k;
+            obj.xl_bl = ones(1, obj.q) * (-obj.q);
+            obj.xl_bu = ones(1, obj.q) * obj.q;
         end
         
         function [f, c] = evaluate_u(obj, xu, xl)

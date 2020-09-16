@@ -6,16 +6,21 @@ function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
 % nxl: number of function evaluation lower
 
 num = length(prob.xl_bl);
-% savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)
 end
 
+% compatible for saving lower level
+if strcmp(method(1:7), 'llmatch') % for paper deceptive analysis
+    lowersave(xu, fu, fc, prob, seed, method);
+    return 
+end
+
 % extract nd front
 num_con = size(fc, 2);
-
 if ~isempty(fc) % constraint problems
     index_c = sum(fc <= 0, 2) == num_con;
     if sum(index_c) ~=0  % exist feasible,

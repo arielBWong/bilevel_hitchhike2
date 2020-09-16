@@ -22,13 +22,13 @@ prob = eval(prob_str);
 
 
 % save some runs
-savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert');
-filename = strcat(savepath, '\fu_', num2str(seed),'.csv');
-if exist(filename,'file') == 2  % ignore existing runs 
-    disp(filename);
-    fprintf('exist');
-    return;
-end
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_archiveinsert');
+% filename = strcat(savepath, '\fu_', num2str(seed),'.csv');
+% if exist(filename,'file') == 2  % ignore existing runs 
+%     disp(filename);
+%     fprintf('exist');
+%     return;
+% end
 
 % algorithm parameter
 evaln = 1;
