@@ -23,8 +23,10 @@ classdef dsm1dc2
             
             % bounds
             % init bound upper level
-            obj.xu_bl = [0, ones(1, obj.p-1) * (-obj.p)];
-            obj.xu_bu = [0.5, ones(1, obj.p-1) * obj.p];
+            % obj.xu_bl = [0, ones(1, obj.p-1) * (-obj.p)];
+            % obj.xu_bu = [0.5, ones(1, obj.p-1) * obj.p];
+            obj.xu_bl = [-k1, ones(1, obj.p-1) * (-obj.p)];
+            obj.xu_bu = [k2, ones(1, obj.p-1) * obj.p];
             
             
             % init bound lower level
@@ -57,7 +59,8 @@ classdef dsm1dc2
             
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
-            p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            %p3 = 1 * abs(sin(pi/obj.n_lvar.* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            p3  = ll_p3(xu, xl);
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie

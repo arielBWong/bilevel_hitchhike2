@@ -57,7 +57,8 @@ classdef dsm1d
             
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
-            p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            %p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
+            p3  = ll_p3(xu, xl);
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie

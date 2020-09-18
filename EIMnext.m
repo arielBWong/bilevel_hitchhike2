@@ -1,5 +1,5 @@
 function[best_x, info] = EIMnext(train_x, train_y, xu_bound, xl_bound, ...
-                                 num_pop, num_gen, train_c)
+                                 num_pop, num_gen, train_c, fitnesshn, normhn)
 % method of using EIM to generate next point
 % usage:
 %
@@ -54,8 +54,10 @@ x_std = NaN;
 
 % train objective kriging model
 if num_obj > 1
-    train_y_norm = (train_y -repmat(min(train_y),num_x,1))./...
-         repmat(max(train_y)-min(train_y),num_x,1);
+    %     train_y_norm = (train_y -repmat(min(train_y),num_x,1))./...
+     %     repmat(max(train_y)-min(train_y),num_x,1);
+
+   train_y_norm = normhn(train_y);
     y_mean = NaN;
     y_std = NaN;
     % [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1); 
@@ -103,13 +105,18 @@ if ~isempty(train_c)
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end   
-    fitness_val = @(x)EIM_evalor(x,f_best, kriging_obj, kriging_con); % paper version
+    fitness_val = @(x)fitnesshn(x,f_best, kriging_obj, kriging_con); % paper version
 else
-    fitness_val = @(x)EIM_evalor(x, f_best, kriging_obj);
+    fitness_val = @(x)fitnesshn(x, f_best, kriging_obj);
 end
 
 % call DE evolution
-[best_x, eim_f] = DE(fitness_val, num_vari,lb, ub, num_pop, num_gen);
+%  [best_x, eim_f] = DE(fitness_val, num_vari,lb, ub, num_pop, num_gen);
+funh_con = @(x) con(x);
+ param.gen=num_gen;
+ param.popsize = num_pop;
+
+  [best_x, eim_f, bestc, archive] = gsolver(fitness_val, num_vari,  lb,ub, [], funh_con, param);
 
 % convert best_x to denormalized value
 % best_x = best_x .* x_std + x_mean;  % commit for test
@@ -127,6 +134,12 @@ if  ~isempty(train_c)
 end
 
 end
+
+function c = con(x)
+c=[];
+end
+
+
 
 
 

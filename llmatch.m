@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn)
+function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
 % method of searching for a match xl for xu. 
 % Problem(Prob) definition require certain formation for bilevel problems
 % evaluation method should be of  form 'evaluation_l(xu, xl)'
@@ -23,7 +23,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 
 l_nvar = prob.n_lvar;
 % init_size = 11 * l_nvar -1;
-init_size = 30;
+init_size = 20;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
@@ -97,6 +97,21 @@ end
 
 % count local search number
 n_fev = init_size + iter_size + output.funcCount;
+
+% save lower level
+llcmp = true;
+if llcmp
+    method = 'llmatcheim';
+    seed = varargin{1};
+    % add local search result
+    train_xl = [train_xl; match_xl];
+    [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
+    train_fl = [train_fl; local_fl];
+    train_fc = [train_fc; local_fc];
+    
+    perfrecord_umoc(train_xl, train_fl, train_fc, prob, seed, method, 0, 0)
+end
+
 end
 
 %objective wrapper

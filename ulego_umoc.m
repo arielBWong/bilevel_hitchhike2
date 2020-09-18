@@ -35,7 +35,7 @@ prob = eval(prob);
 
 % algo parameter
 numiter_l               = 30;
-initsize_l              = 30;
+initsize_l                 = 30;
 numiter_u               = 50;
 inisize_u               = 30;
 num_pop                 = 100;
