@@ -12,9 +12,9 @@ close all;
 %           
           
  % problems = { 'dsm1(4,4)', 'dsm1d(4,4)','dsm1dc1(4,4)','dsm1dc2(4,4)' }; % change p3 term back to scale 10
-  problems = { 'dsm1(5, 5)', 'dsm1d(5, 5)','dsm1dc1(5, 5)','dsm1dc2(5, 5)' };     
+  % problems = { 'dsm1(5, 5)', 'dsm1d(5, 5)','dsm1dc1(5, 5)','dsm1dc2(5, 5)' };     
   % problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)','dsm1dc2(3,3)' };   
- %  problems = { 'dsm1(2,2)', 'dsm1d(2,2)','dsm1dc1(2,2)','dsm1dc2(2,2)' }; 
+ problems = { 'dsm1(2,2)', 'dsm1d(2,2)','dsm1dc1(2,2)','dsm1dc2(2,2)' }; 
           
 seeds = linspace(1, 11, 11);
 

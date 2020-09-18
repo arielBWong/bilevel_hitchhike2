@@ -24,14 +24,16 @@ seedmax = 11;
 %          'dsm2(4,4)', 'dsm2d(4,4)','dsm2dc1(4,4)','dsm2dc2(4,4)',...
 %               'dsm3(4,4)', 'dsm3d(4,4)','dsm3dc1(4,4)','dsm3dc2(4,4)' }; % change p3 term back to scale 10
           
-  problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
+ problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
  %  problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)' };       
- % problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };        
+ %  problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };  
+ % problems = { 'dsm1(4, 4)', 'dsm1d(4, 4)','dsm1dc1(4, 4)' };  
                        
-methods = {'llmatcheim',  'llmatcharchive'};  % 'llmatchpop',
-
+methods = {'llmatcheim',  'llmatcharchive',  'llmatchpop'};  % 'llmatchpop',
+leg = {'EIM', 'ARC', 'GEN'};
 np= length(problems);
 nm = length(methods);
+
 
 % lower level has fixed number of true evaluation before local search
 % 60 (20, 30, 40, 50, 60)
@@ -41,6 +43,7 @@ collectmatrix = zeros(6, np*nm*2);
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
+    nv = prob.n_lvar;
     
     k = 2: prob.n_lvar;
     k = (k-1)/2;
@@ -90,7 +93,7 @@ for ii = 1:np
     bar(x, barplot, 'FaceColor','flat');  hold on;
    
     hBar = bar(barplot, 0.8);
-    colors = [[0.8500 0.3250 0.0980]; [0.9290 0.6940 0.1250]; [0 0.4470 0.7410] ];
+    colors = [[0.8500 0.3250 0.0980]; [0 0.4470 0.7410];  [0.9290 0.6940 0.1250] ];
     
     pause(2); % allow offset calculated
     for k1 = 1:size(barplot,2)
@@ -100,11 +103,12 @@ for ii = 1:np
     end
     errorbar(ctr, ydt, barplotdev', '.k');
 
-    xlabel('training data size', 'FontSize', 12);
-    ylabel('mean mse on gobal optimal solution', 'FontSize', 12);
-    title(prob.name,  'FontSize', 16);
-    set(gca, 'XTickLabel',{'20','30','40','50','60','local search'});
-    legend(hBar, methods{1}, methods{2},  'FontSize', 14); %methods{3},
+    xlabel('training data size', 'FontSize', 16);
+    ylabel('mean mse on gobal optimal solution', 'FontSize', 16);
+    t = strcat(prob.name, ' k ', num2str(nv)); 
+    title(t,  'FontSize', 16);
+    set(gca, 'XTickLabel',{'20','30','40','50','60','local search'}, 'FontSize', 12);
+    legend(hBar, leg{1}, leg{2}, leg{3},  'FontSize', 14); %methods{3},
     
     savename = strcat(pwd, '\result_folder\plots5_30scale\', prob.name, '_llmatchperformance.fig');
     savefig(savename);
@@ -179,7 +183,7 @@ else
     xl_prime=xu(1, :);
     % xl_prime(2) = -0.5;     % if the lower level equation term p3 is  multiplied by 1, then there are two lower level optimum exists
      %  xl_prime(2) = -1.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
-      xl_prime(2) = -0.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
+    xl_prime(2) = -0.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
     [fl_prime, ~] = prob.evaluate_l(xu(1, :), xl_prime);
     
     
