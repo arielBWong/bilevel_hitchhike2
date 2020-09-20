@@ -8,44 +8,44 @@ prob = dsm1dc2(k, k);
 % xl1 = linspace(-k, k, 100);
 
 xl2 = linspace(-k, k, 100);
-% xl3 = linspace(-k, k, 100); 
-%  [xl2, xl3] = meshgrid(xl2, xl3);
-%  f = zeros(100, 100);
-%  for i = 1:100
-%      for j = 1:100
-%          f2 = (xl2(i, j) - 0.5).^2 + 10 * abs(sin(pi/3*(xl2(i, j)- 0.5)));
-%          f3 =  (xl3(i, j) -1 ).^2 + 10 * abs(sin(pi/3*(xl3(i, j) - 0.5)));
-%          f (i, j)= f2 + f3;
-%      end
-%  end
-% min(f(:))
-% surf(xl2, xl3, f);
-% xlabel('xl2','FontSize', 16);
-% ylabel('xl3', 'FontSize', 16);
-% zlabel('fl', 'FontSize', 16);
-% colormap jet
-% shading interp
-% 
-% 
-k=2;
-xl1 = linspace(-k, k, 100);
-
-xl2 = linspace(-k, k, 100);
- [xl1, xl2] = meshgrid(xl1, xl2);
- 
-  f = zeros(100, 100);
-   for i = 1:100
+xl3 = linspace(-k, k, 100); 
+ [xl2, xl3] = meshgrid(xl2, xl3);
+ f = zeros(100, 100);
+ for i = 1:100
      for j = 1:100
-        
-         f (i, j)=(xl1(i, j)-0)^2 +  (xl2(i, j) - 0.5).^2 + 10 * abs(sin(pi/2*(xl2(i, j)- 0.5)));
-      end
-   end
-surf(xl1, xl2, f);
-xlabel('xl1','FontSize', 16);
-ylabel('xl2', 'FontSize', 16);
+         f2 = (xl2(i, j) + 3).^2 + 10 * abs(sin(pi/3*(xl2(i, j) + 3)));
+         f3 =  (xl3(i, j) + 3 ).^2 + 10 * abs(sin(pi/3*(xl3(i, j) +3)));
+         f (i, j)= f2 + f3;
+     end
+ end
+min(f(:))
+surf(xl2, xl3, f);
+xlabel('xl2','FontSize', 16);
+ylabel('xl3', 'FontSize', 16);
 zlabel('fl', 'FontSize', 16);
 colormap jet
 shading interp
+
+% 
+% k=2;
+% xl1 = linspace(-k, k, 100);
+% 
+% xl2 = linspace(-k, k, 100);
+%  [xl1, xl2] = meshgrid(xl1, xl2);
+%  
+%   f = zeros(100, 100);
+%    for i = 1:100
+%      for j = 1:100
+%         
+%          f (i, j)=(xl1(i, j)-0)^2 +  (xl2(i, j) - 0.5).^2 + 10 * abs(sin(pi/2*(xl2(i, j)- 0.5)));
+%       end
+%    end
+% surf(xl1, xl2, f);
+% xlabel('xl1','FontSize', 16);
+% ylabel('xl2', 'FontSize', 16);
+% zlabel('fl', 'FontSize', 16);
+% colormap jet
+% shading interp
 
 % 
 % f =  (xl2 - 0.5).^2 + 10 * abs(sin(pi/3*(xl2- 0.5)));
