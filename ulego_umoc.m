@@ -34,14 +34,12 @@ prob = eval(prob);
 % end
 
 % algo parameter
-numiter_l               = 30;
-initsize_l                 = 30;
-numiter_u               = 50;
-inisize_u               = 30;
-num_pop                 = 100;
-num_gen                 = 100;
-hy_pop                  = 20;
-hy_gen                  = 50;
+numiter_l               = 40;
+initsize_l              = 20;
+numiter_u               = 60;
+inisize_u               = 20;
+num_pop                 = 20;
+num_gen                 = 20;
 max_nl                  = 20000;
 
 % parallel compatible setting

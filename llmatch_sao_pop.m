@@ -121,7 +121,8 @@ n_fev = n_global + output.funcCount;       % one in a population is evaluated
 
 % external experiments purpose
 % save lower level
-llcmp = true;
+% llcmp = true;
+llcmp = false;
 if llcmp
     method = 'llmatchpop';
     seed = varargin{1};

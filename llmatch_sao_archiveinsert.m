@@ -118,7 +118,8 @@ n_fev = n_global + output.funcCount;       % one in a population is evaluated
 
 %----
 % save lower level
-llcmp = true;
+% llcmp = true;
+llcmp = false;
 if llcmp
     method = 'llmatcharchive';
     seed = varargin{1};

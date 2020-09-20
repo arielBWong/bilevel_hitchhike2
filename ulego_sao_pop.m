@@ -31,12 +31,12 @@ prob = eval(prob_str);
 % 
 
 num_popu   =   20;   % 80 in total
-num_genu   =   120;
-iter_frequ =   40;
+num_genu   =   60;
+iter_frequ =   20;
 
 num_popl   =   20;   % 60 in total
-num_genl   =   80;
-iter_freql =   40;
+num_genl   =   40;
+iter_freql =   20;
 evaln      =   num_popu;
 max_nl     =   20000;   % control on max
 %--------

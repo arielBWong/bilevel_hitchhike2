@@ -99,7 +99,8 @@ end
 n_fev = init_size + iter_size + output.funcCount;
 
 % save lower level
-llcmp = true;
+% llcmp = true;
+llcmp = false;
 if llcmp
     method = 'llmatcheim';
     seed = varargin{1};
