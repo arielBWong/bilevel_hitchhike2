@@ -59,8 +59,8 @@ end
 
 nrun = length(paras);
 parfor i = 1:nrun
-    ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext' , 'EIM_eval', 'normalization_nd',  'EIMnext');
-    ulego_sao_archiveinsert(paras{i}{1}, paras{i}{2}, 'normalization_nd');
+    % ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext' , 'EIM_eval', 'normalization_nd',  'EIMnext');
+    % ulego_sao_archiveinsert(paras{i}{1}, paras{i}{2}, 'normalization_nd');
     ulego_sao_pop(paras{i}{1}, paras{i}{2}, 'normalization_nd');
 end
 

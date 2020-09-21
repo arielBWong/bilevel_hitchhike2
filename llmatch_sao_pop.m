@@ -70,7 +70,9 @@ for g = 1: n
     [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, false);    
     if growflag   % new xl exist, update krg and continue 
         [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-        initmatrix = archive.pop_last.X;  
+        %initmatrix = archive.pop_last.X;  
+        initmatrix = [];
+        
     else                  %  population converged, restart with random initialization
         initmatrix = [];
     end

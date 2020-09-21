@@ -23,12 +23,12 @@ rng(seed, 'twister');
 
 prob = eval(prob_str);
 % save some runs
-% savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert');
-% file = strcat(savepath, '\fu_', num2str(seed),'.csv');
-% if exist(file,'file') == 2  % ignore existing runs
-%     return;
-% end
-% 
+savepath = strcat(pwd, '\result_folder\', prob.name, '_sao_popinsert');
+file = strcat(savepath, '\fu_', num2str(seed),'.csv');
+if exist(file,'file') == 2  % ignore existing runs
+    return;
+end
+
 
 num_popu   =   20;   % 80 in total
 num_genu   =   60;
@@ -120,7 +120,7 @@ for g=1:n
     k = num_new + 1;
     while k <= param.popsize
         xu_add = lhsdesign(1, u_nvar,'criterion','maximin','iterations',1000);
-        xu_add = repmat(lower_bound, 1, 1) + repmat((upper_bound - lower_bound), 1, 1) .* xu;
+        xu_add = repmat(lower_bound, 1, 1) + repmat((upper_bound - lower_bound), 1, 1) .* xu_add;
         if ~ismember(xu_add, xu, 'row')
             new_xu = [new_xu; xu_add];
             k = k + 1;
@@ -131,7 +131,7 @@ for g=1:n
     end
     %-------------------------------------------------------
     
-    % --add new_xu to xu
+    % --find xl for new_xu 
     num_new = size(new_xu, 1);
     for i=1:num_new
         % match new_xl for new_xu
@@ -196,7 +196,8 @@ for g=1:n
     % update krg  and initmatrix, continue to evolve
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
     % initmatrix = new_xu;
-    initmatrix = archive.pop_last.X;
+    % initmatrix = archive.pop_last.X;
+    initmatrix = [];
     
 end
 

@@ -13,14 +13,15 @@ seedmax = 11;
 % read a seed and
 % problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
 %     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' , 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
-problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)',...
-    'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)',...
-    'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)'};
+% problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)',...
+%     'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)',...
+%     'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)'};
+problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)'};
 
-
+met = {'EIM', 'BEL', 'GEN'};
 % problems ={ 'dsm1(2)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = { 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
+methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -105,12 +106,12 @@ for ii = 1 : np
     
     % plot three of them
     fig1 = gcf;
-    plot(empf(:,1), empf(:,2)); hold on;
+    plot(empf(:,1), empf(:,2),'Color',[0.4660 0.6740 0.1880], 'LineWidth', 2, 'LineStyle', ':'); hold on;
     
     pattern = cell(1, nm);
     pattern{1} = '^';
-    pattern{2} = '*';
-    pattern{3} = '+';
+    pattern{2} = 'o';
+    pattern{3} = 'd';
     pattern{4} = 'o';
     
 
@@ -125,11 +126,20 @@ for ii = 1 : np
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
         savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
         nd_front = csvread(savename_fu);
-        scatter(nd_front(:,1), nd_front(:,2),pattern{kk}, color{kk}); drawnow;
+        scatter(nd_front(:,1), nd_front(:,2), 80, pattern{kk}, color{kk},'filled'); drawnow;
     end
-    t = [prob.name,' ',' igd median compare'];
-    title(t);
-    legend('empirical pf', methods{1}, methods{2}); % methods{4}
+    t = [prob.name,' ',' IGD median compare'];
+    title(t,  'FontSize', 16);
+    legend('PF', met{1}, met{2},  met{3},  'FontSize', 14); % methods{4}
+    
+    xlabel('F1', 'FontSize', 14);
+    ylabel('F2', 'FontSize', 14);
+    
+    a = get(gca,'XTickLabel');
+    set(gca, 'XTickLabel',a, 'FontSize', 12);
+    a = get(gca,'YTickLabel');
+    set(gca, 'YTickLabel',a, 'FontSize', 12);
+    
     
     savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
     savefig(savename);
