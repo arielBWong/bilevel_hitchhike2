@@ -1,9 +1,9 @@
 function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
-% method of searching for a match xl for xu. 
+% method of searching for a match xl for xu.
 % Problem(Prob) definition require certain formation for bilevel problems
 % evaluation method should be of  form 'evaluation_l(xu, xl)'
 % usage
-% input: 
+% input:
 %        xu:  upper level variable, to be matched
 %        prob: problem instance, require certin evaluation
 %                      method name defintion-- check problems
@@ -13,10 +13,10 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %        propose_nextx  : str, function handle to generate next x
 %        iter_size : surrogate parameter: number of iterations
 %        llfit_hn :  str, lower level seach fitness for next x method, used
-%                          by proposed_nextx method 
+%                          by proposed_nextx method
 %
-% output: 
-%        matching_xl : found xl for xu 
+% output:
+%        matching_xl : found xl for xu
 %         n_fev : total number of function evaluation on lower level
 %         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
 train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
 train_xl = repmat(lower_bound, init_size, 1) ...
-                + repmat((upper_bound - lower_bound), init_size, 1) .* train_xl;
+    + repmat((upper_bound - lower_bound), init_size, 1) .* train_xl;
 
 % evaluate/get training fl from xu_init and train_xl
 % compatible with non-constriant problem
@@ -49,7 +49,7 @@ for iter = 1:iter_size
     % tic;
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
-   %  toc;
+    %  toc;
     
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -63,40 +63,19 @@ end
 % connect a local search to ego
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
-
-% give starting point to local search
-fmin_obj = @(x)llobjective(x, xu, prob);
-fmin_con = @(x)llconstraint(x, xu, prob);
-opts = optimset('fmincon');
-opts.Algorithm = 'sqp';
-opts.Display = 'off';
-opts.MaxFunctionEvaluations = 100;
-[newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
-    prob.xl_bl, prob.xl_bu, fmin_con,opts);
-
-% decide which xl to return back to upper level
-% compatible with unconstraint problem
-flag = true;
-if s  % ego return feasible or unconstraint problem
-    match_xl = newxl; 
-    if best_f < newfl % if local search performance is not as good as ego
-        match_xl = best_x;
-    end
-else % ego did not find feasible 
-    match_xl = newxl;
-    if output.constrviolation > 1e-6% local solver also fails
-        flag = false;
-        % neither ego or local search found feasible, return by smaller
-        % constraint
-        [~, newfc] = prob.evaluate_l(xu, newxl);
-        if sum(newfc) > sum(best_c)
-            match_xl = best_x;
-        end
-    end
+nolocalsearch = true;
+if nolocalsearch
+    match_xl = best_x;
+    n_fev = size(train_xl, 1);
+    flag = s;
+else
+    [match_xl, flag, num_eval] = ll_localsearch(best_x, best_f, best_c, s, xu, prob);
+    n_global = size(train_xl, 1);
+    n_fev = n_global +num_eval;       % one in a population is evaluated
 end
 
-% count local search number
-n_fev = init_size + iter_size + output.funcCount;
+
+
 
 % save lower level
 % llcmp = true;

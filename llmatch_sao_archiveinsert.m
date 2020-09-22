@@ -77,44 +77,17 @@ end
 % connect a local search to sao
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
-n_global = size(train_xl, 1);
-% fprintf('ego believer use evaluation %d\n', n_global);
-
-% give starting point to local search
-fmin_obj = @(x)llobjective(x, xu, prob);
-fmin_con = @(x)llconstraint(x, xu, prob);
-opts = optimset('fmincon');
-opts.Algorithm = 'sqp';
-opts.Display = 'off';
-opts.MaxFunctionEvaluations = 100;
-[newxl, newfl, ~, output] = fmincon(fmin_obj, best_x, [], [],[], [],  ...
-    prob.xl_bl, prob.xl_bu, fmin_con,opts);
-
-% decide which xl to return back to upper level
-% compatible with unconstraint problem
-flag = true;
-if s  % sao return feasible or unconstraint problem
-    match_xl = newxl;
-    if best_f < newfl % if local search performance is not as good as ego
-        match_xl = best_x;
-    end
-else % sao did not find feasible
-    match_xl = newxl;
-    if output.constrviolation > 1e-6% local solver also fails
-        flag = false;
-        % neither global search or local search found feasible, return by smaller
-        % constraint
-        [~, newfc] = prob.evaluate_l(xu, newxl);
-        if sum(newfc) > sum(best_c)
-            match_xl = best_x;
-        end
-    end
+nolocalsearch = true;
+if nolocalsearch
+    match_xl = best_x;
+    n_fev = size(train_xl, 1);
+    flag = s;
+else
+    [match_xl, flag, num_eval] = ll_localsearch(best_x, best_f, best_c, s, xu, prob);
+    n_global = size(train_xl, 1);
+    n_fev = n_global +num_eval;       % one in a population is evaluated
 end
 
-% count number of function evaluation
-% n_fev =(n+1) * num_pop + output.funcCount;  % population evaluation
-n_fev = n_global + output.funcCount;       % one in a population is evaluated
-% fprintf('lower eval:  ego %d, local: %d\n', n_global, output.funcCount);
 
 %----
 % save lower level
@@ -152,7 +125,7 @@ function c = llcon(x, krging_con)
 num_con = length(krging_con);
 num_x = size(x, 1);
 c = zeros(num_x, num_con);
-for ii =1:num_con
+for ii =1:num_con 
     [c(:, ii), ~] = dace_predict(x, krging_con{ii});
 end
 end

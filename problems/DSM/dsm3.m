@@ -62,7 +62,7 @@ classdef dsm3
             p2 = sum(( xl - xu) .^2, 2);
             %-obj
             % p3 = 1 * abs(sin(pi/obj.n_lvar .* (xl(:, 2:obj.n_lvar) - xu(:, 2:obj.n_uvar))));
-                   p3  = ll_p3(xu, xl);
+            p3  = ll_p3(xu, xl);
             f(:, 1) = p2 + sum(p3, 2);
             
             %-cie
@@ -73,6 +73,8 @@ classdef dsm3
         function pf = upper_pf(obj, num_point)
            
            [pf, ~] = UniformPoint(num_point,2);
+           % 0.5 is for range of xu
+           % [0, 0.4]  because of r =0.1
            pf = pf * 0.5  - [0, 0.4] ;
            
             

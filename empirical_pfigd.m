@@ -11,12 +11,9 @@ close all;
 
 seedmax = 11;
 % read a seed and
-% problems = {'tp1()' ,'tp2(6)' ,'tp3()' ,'tp4()' , 'ds1(6)', 'ds2(6)', 'ds3(6)', 'ds4(3,2)',  'ds5(3, 2)', ...
-%     'mobp5()', 'mobp7()','mobp8()','mobp9(6)','mobp10()','mobp11(6)' , 'dsm1(3)', 'dsm2(3)','dsm3(3)' };
-% problems = { 'dsm1(3)', 'dsm1d(3)','dsm1dc1(3)','dsm1dc2(3)',...
-%     'dsm2(3)', 'dsm2d(3)','dsm2dc1(3)','dsm2dc2(3)',...
-%     'dsm3(3)', 'dsm3d(3)','dsm3dc1(3)','dsm3dc2(3)'};
-problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)'};
+problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)',...
+             'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)', ...
+             'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)'};
 
 met = {'EIM', 'BEL', 'GEN'};
 % problems ={ 'dsm1(2)'};
@@ -128,7 +125,8 @@ for ii = 1 : np
         nd_front = csvread(savename_fu);
         scatter(nd_front(:,1), nd_front(:,2), 80, pattern{kk}, color{kk},'filled'); drawnow;
     end
-    t = [prob.name,' ',' IGD median compare'];
+    numk = prob.n_lvar;
+    t = [prob.name,' k', num2str(numk),' IGD median compare'];
     title(t,  'FontSize', 16);
     legend('PF', met{1}, met{2},  met{3},  'FontSize', 14); % methods{4}
     

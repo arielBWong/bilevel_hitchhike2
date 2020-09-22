@@ -1,11 +1,11 @@
-function ulego(prob, seed, eim, fitnesshandle, normhn)
+function ulego_coreeim(prob, seed, alg_next, fitnesshandle, normhn)
 % method of main optimization process of upper level ego
 % adapt to upper level problems of "single objective"
 % usage: 
 %     input
 %               prob                          : problem instance                  
 %               seed                          : random process seed
-%               eim                            : string, the name of eim function 
+%               alg_next                            : string, the name of eim function 
 %               fitnesshandle          : string, the function that eim use to
 %                                                                evaluate fitess in its ea process of proposing next point
 %               normhn                    : string, normalization function used in EIMnext_znorm
@@ -24,18 +24,32 @@ rng(seed, 'twister');
 % performance record variable
 n_feval = 0;
 
+
+
+
 % algo parameter
-inisize_l   = 30;
-numiter_l   = 20;
-numiter_u   = 50;
-num_pop     = 100;
-num_gen     = 100;
-hy_pop      = 20;
-hy_gen      = 50;
+inisize_l = 20;
+numiter_l = 40;
+numiter_u = 60;
+num_pop   = 20;
+num_gen   = 20;
+
 
 % parallel compatible setting
 prob = eval(prob);
-eim = str2func(eim);
+
+
+savepath = strcat(pwd, '\result_folder\', prob.name, '_eim');
+file = strcat(savepath, '\out_', num2str(seed),'.csv');
+if exist(file,'file') == 2  % ignore existing runs 
+    fprintf('skip');
+    return;
+end
+
+
+
+
+eim = str2func(alg_next);
 fithn = str2func(fitnesshandle);
 normhn = str2func(normhn);
 
@@ -43,7 +57,7 @@ normhn = str2func(normhn);
 u_nvar = prob.n_uvar;
 upper_bound = prob.xu_bu;
 lower_bound = prob.xu_bl;
-inisize_u = 11 * u_nvar - 1;
+inisize_u = 20;
 
 %-xu initialization
 xu = lhsdesign(inisize_u,u_nvar,'criterion','maximin','iterations',1000);
@@ -55,7 +69,8 @@ llfeasi_flag = [];
 disp('init');
 for i=1:inisize_u
     disp(i);
-    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,inisize_l, numiter_l);
+    [xl_single, n, flag] = llmatch(xu(i, :), prob,num_pop, num_gen,alg_next, numiter_l, fitnesshandle, seed);
+ 
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + n; %record lowerlevel nfeval
@@ -75,7 +90,8 @@ for i = 1:numiter_u
     %--search next xu
     [newxu, info] = eim(xu, fu, upper_bound, lower_bound,num_pop, num_gen, fc, fithn, normhn);
     %--get its xl
-    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,inisize_l, numiter_l);
+    [newxl, n, flag] = llmatch(newxu, prob,num_pop, num_gen,alg_next, numiter_l, fitnesshandle, seed);
+
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
@@ -91,41 +107,7 @@ for i = 1:numiter_u
     disp(i);
 end
 
-% performance investigate step, comment out when run experiment
-% save('vari.mat', 'xu', 'fu', 'xl');
-% save('info.mat', '-struct', 'info');
-
-
-%-bilevel local search
-[xu_start, ~, ~, ~] = localsolver_startselection(xu, fu, fc); 
-penaltyf =  max(fu, [], 1); % for lower problem being constraint
-[newxu, newxl, n_up, n_low] = blsovler(prob, xu_start, num_pop, num_gen, inisize_l, numiter_l, penaltyf);
-n_up = n_up + size(xu, 1);
-n_low = n_low + n_feval;
-
-
-%-final hybrid ll search
-%-- use newxu
-[newxl, feval, flag] = hybrid_llsearch(newxu, newxl, prob, hy_pop, hy_gen);
-n_low = n_low + feval;
-
-
-%-performance record
-%--constraints compatible
-[fu, cu] = prob.evaluate_u(newxu, newxl);
- 
-% scatter(newxu, fu, 'r'); drawnow;
-
-[fl, cl] = prob.evaluate_l(newxu, newxl);
-num_conu = size(cu, 2);
-num_conl = size(cl, 2);
-% contraint tolerance adjust
-cu(cu < 1e-6) = 0;
-cl(cl<1e-6) = 0;
-% check feasibility
-cu = sum(cu<=0, 2)==num_conu;
-cl = sum(cl<=0, 2)==num_conl;
-perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed);
-
-toc
+n_up =  size(xu, 1);
+n_low = n_feval;
+ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'eim');
 end

@@ -1,4 +1,4 @@
-function ulego_sao_archiveinsert(prob_str, seed, normhn)
+function ulego_coreble(prob_str, seed, normhn)
 % this function implements the sabla like ego method
 % instead of one by one propose next x
 % use population based krg to accumulate xu and return nd front from xu
@@ -61,7 +61,7 @@ llfeasi_flag = [];
 % -xu match its xl and evaluate fu
 for i=1:num_popu
     [xl_single, nl, flag] = llmatch_sao_archiveinsert(xu(i, :), prob, num_popl, num_genl, iter_freql);
-    xl = [xl; xl_single];
+     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + nl;           %record lowerlevel nfeval
 end
@@ -69,8 +69,6 @@ end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
 num_con = size(fc, 2);
-scatter(fu(:, 1), fu(:, 2), 'ro', 'filled');
-
 
 %--fu adjust
 for i=1:num_popu
@@ -87,11 +85,8 @@ for g=1:n
     disp(g);
     param.gen = iter_frequ;
     param.popsize = num_popu;
-    
-    ndnorm = get_ndfront(fu, fc, normhn);
-    
-    
-    funh_obj = @(x)ulobj(x, krg_obj, ndnorm);
+        
+    funh_obj = @(x)ulobj(x, krg_obj);
     funh_con = @(x)ulcon(x, krg_con);
     
     [~,~,~, archive] = gsolver(funh_obj, u_nvar,  prob.xu_bl, prob.xu_bu, initmatrix, funh_con, param);
@@ -106,9 +101,8 @@ for g=1:n
     % if new point does not exist
     % continue evolution with re-start evolution with random initialization
     if num_new ==0
-        fprintf('evolution converge and no new point is found\n');
-        initmatrix = [];
-        continue;
+        fprintf('evolution converge and no new point is found, select a random new one \n');
+        new_xu = add_randompoints(prob.xu_bl,prob.xu_bu, prob.n_uvar, xu, evaln);
     end
     
     % --add new_xu to xu
@@ -134,107 +128,27 @@ for g=1:n
     end
     
     % check under level number of evaluation
-    if n_feval > max_nl
-        break;
-    end
-    %
-    %-plot ----
-    num_obj = size(fu, 2);
-    ref_point = ones(1, num_obj) * 1.1;
-    if ~isempty(fc) % constraint problems
-        index_c = sum(fc <= 0, 2) == num_con;
-        if sum(index_c) ~=0
-            feasible_y = fu(index_c, :);
-            nd_index = Paretoset(feasible_y);
-            nd_front = feasible_y(nd_index, :);
-            % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); drawnow;
-            % f2 = scatter(newfu(1), newfu(2), 'go', 'filled');
-            num_nd = size(nd_front, 1);
-            if num_nd > 1
-                nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
-                h = Hypervolume(nd_front,ref_point);
-                % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
-            end
-        end
-    else  % unconstraint problems
-        nd_index = Paretoset(fu);
-        nd_front = fu(nd_index, :);
-        clf('reset');
-        % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        % f2 =scatter(newfu(:, 1), newfu(:,2), 'go', 'filled');drawnow;
-        % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
-        num_nd = size(nd_front, 1);
-        if num_nd >1
-            nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
-            h = Hypervolume(nd_front,ref_point);
-            % fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
-        end
-    end
-    %-plot ----
-    
+%     if n_feval > max_nl
+%         break;
+%     end
     % update krg  and initmatrix, continue to evolve
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
-    % initmatrix = new_xu;
-    % initmatrix = archive.pop_last.X;
-    % [sf, sx, sc] = initmatrix_pick(xu,fu, fc);
-    % initmatrix = sx(1:num_popu, :);
-    % [initmatrix, ~] = unique(initmatrix,'rows','stable');
     initmatrix = [];
-    
-end
-% plot nd fronts
-
-% save data
-nxu = n + num_popu;  % first generation and then every freq generations
-nxl = n_feval;
-
-disp(nxu);
-disp(nxl);
-method = 'sao_archiveinsert';
-perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl);
 end
 
-function nd_frontnorm = get_ndfront(fu, fc, normhn)
-% find nd front from fu, compatible with constraint problem
-fu_norm = normhn(fu);
-num_con = size(fc, 2);
-if ~isempty(fc)     % constraint problems
-    index_c = sum(fc <= 0, 2) == num_con;
-    if sum(index_c) ~=0
-        feasible_y = fu_norm(index_c, :);
-        nd_index = Paretoset(feasible_y);
-        nd_frontnorm = feasible_y(nd_index, :);
-    else
-        nd_frontnorm = [];
-    end
-else                % unconstraint problems
-    nd_index = Paretoset(fu_norm);
-    nd_frontnorm = fu_norm(nd_index, :);
-end
-end
-
-function [sf, sx, sc] = initmatrix_pick(x, f, c)
-[sf, sx, sc] = pop_sort(f, x, c);
+n_up = size(xu, 1);
+n_low = n_feval;
+ulego_coreending(xu, fu, fc, xl, prob,  seed, n_up, n_low, 'bel');
 end
 
 
-function  f = ulobj(x, kriging_obj, nd_front)
+
+function  f = ulobj(x, kriging_obj)
 num_obj = length(kriging_obj);   % krg cell array?
 num_x = size(x, 1);
-obj = zeros(num_x, num_obj);
+f = zeros(num_x, num_obj);
 for ii =1:num_obj
-    [obj(:, ii), ~] = dace_predict(x, kriging_obj{ii});
-end
-
-% convert to hv contribution
-ref_point = [1.1, 1.1];
-basehv = Hypervolume(nd_front, ref_point);
-f = zeros(num_x, 1);                                        % contribution of each x-f to existing nd front
-
-for ii = 1:num_x                                              % population size
-    extendf = [nd_front; obj(ii, :)];
-    extendedhv = Hypervolume(extendf, ref_point);
-    f(ii) = -(extendedhv - basehv);
+    [f(:, ii), ~] = dace_predict(x, kriging_obj{ii});
 end
 end
 

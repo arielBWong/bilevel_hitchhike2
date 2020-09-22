@@ -14,6 +14,9 @@ addpath(problem_folder);
 gsolver = strcat(pwd,'\globalsolver');
 addpath(gsolver);
 
+gsolver = strcat(pwd,'\ND_Sort');
+addpath(gsolver);
+
 problem_folder = strcat(pwd,'\problems\DSM');
 addpath(problem_folder);
 
@@ -41,8 +44,13 @@ addpath(solver_folder);
 %              'dsm2(4, 4)', 'dsm2d(4, 4)','dsm2dc1(4, 4)','dsm2dc2(4, 4)',...
 %              'dsm3(4, 4)', 'dsm3d(4, 4)','dsm3dc1(4, 4)','dsm3dc2(4, 4)'};
          
-problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)'};
-seeds = linspace(1, 11, 11);
+% problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)'};
+% problems = {'dsm2(3, 3)', 'dsm2d(3, 3)','dsm1dc2(3, 3)', ...
+%             'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc2(3, 3)'};
+problems = {'dsm2dc1(3, 3)' }; %, ...
+           %  'dsm3dc1(3, 3)'};
+
+seeds = linspace(1, 1, 1);
 
 np = length(problems);
 ns = length(seeds);
@@ -58,10 +66,10 @@ for i = 1:np
 end
 
 nrun = length(paras);
-parfor i = 1:nrun
+for i = 1:nrun
     % ulego_umoc(paras{i}{1}, paras{i}{2},'EIMnext' , 'EIM_eval', 'normalization_nd',  'EIMnext');
-    % ulego_sao_archiveinsert(paras{i}{1}, paras{i}{2}, 'normalization_nd');
-    ulego_sao_pop(paras{i}{1}, paras{i}{2}, 'normalization_nd');
+    ulego_sao_archiveinsert(paras{i}{1}, paras{i}{2}, 'normalization_nd');
+   % ulego_sao_pop(paras{i}{1}, paras{i}{2}, 'normalization_nd');
 end
 
 rmpath(problem_folder);

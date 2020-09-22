@@ -1,4 +1,4 @@
-function [best_x,best_f, best_c, s] = localsolver_startselection(x,  ff, fc)
+function [best_x,best_f, best_c, s, index] = localsolver_startselection(x,  ff, fc)
 % this function select a starting point for a local search algorithm
 % usage
 % input:
@@ -8,6 +8,7 @@ function [best_x,best_f, best_c, s] = localsolver_startselection(x,  ff, fc)
 %                                              (original range)
 %           fc                      : constraint values of x
 %                                              (original range)
+%           
 % output:
 %           best_x                  : one x instance with smallest objective value
 %                                               or with smallest feasible objective value
@@ -16,6 +17,7 @@ function [best_x,best_f, best_c, s] = localsolver_startselection(x,  ff, fc)
 %           best_f                  : corresponding obj value of best_x
 %           best_c                  : corresponding con value of best_x
 %           s                       : flag indicate whether there is feasible solution
+%           index                   : index of output x in archive
 %--------------------------------------------------------------------------
 if size(ff, 2) == 1 % single objective
     if isempty(fc) % non constraint problem
@@ -23,6 +25,7 @@ if size(ff, 2) == 1 % single objective
         best_x = x(i, :);
         s = true;
         best_c = [];
+        index = i;
     else
         num_con = size(fc, 2);
         index_c = sum(fc <= 0, 2) == num_con;
@@ -33,6 +36,7 @@ if size(ff, 2) == 1 % single objective
             best_f = ff(i, :);
             best_c = fc(i, :);
             s = false;
+            index = i;
         else % has feasible, return feasible smallest f
             feasi_ff = ff(index_c, :);
             feasi_x = x(index_c, :);
@@ -42,6 +46,7 @@ if size(ff, 2) == 1 % single objective
             best_f = feasi_ff(i, :);
             best_c = feasi_fc(i, :);
             s = true;
+            index = i;
         end
     end
 else % multiple objective
