@@ -27,7 +27,7 @@ for i = 1:np
     savepath = strcat(pwd, '\result_folder\', problems{i}(1:end-2) );
     for j = 1:ns
         seed = seeds(j);
-        singlerun_file = strcat(savepath, '\acc_con_fea_', num2str(seed),'.csv');
+        singlerun_file = strcat(savepath, '\out_', num2str(seed),'.csv');
         smatrix = csvread(singlerun_file);                % performance records
         collectmatrix(j, (i-1)*2 + 1) = smatrix(1,1);     % upper accuracy
         collectmatrix(j, (i-1)*2 + 2) = smatrix(1,2);     % lower accuracy
@@ -67,7 +67,7 @@ for i =1: np
 end
 
 
-output_path = strcat(pwd, '\result_folder\blso_resconvert.csv');
+output_path = strcat(pwd, '\result_folder\smd_resconvert.csv');
 fp=fopen(output_path,'w');
 fprintf(fp, 'seed,');
 for i = 1:np
