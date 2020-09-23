@@ -25,15 +25,15 @@ if ~isempty(c)              % constraint problem
         if sum(index_c) == 0 % no feasible, return f with smallest constraints
             sum_c = sum(c, 2);
             [~, i] = min(sum_c);
-            best_x = x(i, :);
-            best_f = ff(i, :);
-            best_c = fc(i, :);
+            best_x = xu(i, :);
+            best_f = uf(i, :);
+            best_c = uc(i, :);
             s = false;
             index = i;
         else % has feasible, return feasible smallest f
-            feasi_ff = ff(index_c, :);
-            feasi_x = x(index_c, :);
-            feasi_fc = fc(index_c, :);
+            feasi_ff = uf(index_c, :);
+            feasi_x = xu(index_c, :);
+            feasi_fc = uc(index_c, :);
             [~, i] = min(feasi_ff);
             best_x = feasi_x(i, :);
             best_f = feasi_ff(i, :);
@@ -43,7 +43,7 @@ if ~isempty(c)              % constraint problem
         end
 else                        % unconstraint problem
        [best_f, i] = min(uf);
-        best_x = x(i, :);
+        best_x = xu(i, :);
         s = true;
         best_c = [];
         index = i;

@@ -12,11 +12,11 @@ num_conl = size(cl, 2);
 cu = sum(cu<=0, 2)==num_conu;
 cl = sum(cl<=0, 2)==num_conl;
 perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed, method);
-archive_record(xu, xl);
+archive_record(xu, xl, prob, method, seed);
 
 end
 
-function archive_record(xu, xl, prob)
+function archive_record(xu, xl, prob, method, seed)
 savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
 n = exist(savepath);
 if n ~= 7
