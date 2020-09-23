@@ -38,13 +38,13 @@ num_gen   = 20;
 % parallel compatible setting
 prob = eval(prob);
 
-
-savepath = strcat(pwd, '\result_folder\', prob.name, '_eim');
-file = strcat(savepath, '\out_', num2str(seed),'.csv');
-if exist(file,'file') == 2  % ignore existing runs 
-    fprintf('skip');
-    return;
-end
+% 
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_eim');
+% file = strcat(savepath, '\out_', num2str(seed),'.csv');
+% if exist(file,'file') == 2  % ignore existing runs 
+%     fprintf('skip');
+%     return;
+% end
 
 
 
@@ -77,6 +77,7 @@ for i=1:inisize_u
 end
 %--xu evaluation
 [fu, fc] = prob.evaluate_u(xu, xl);
+[lu, lc] = prob.evaluate_l(xu, xl);
 num_con = size(fc, 2);
 % scatter(xu, fu, 'b'); drawnow;
 
@@ -95,11 +96,14 @@ for i = 1:numiter_u
     n_feval = n_feval + n;
     %--evaluate xu
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
+    [newlu, newlc] =  prob.evaluate_l(newxu, newxl);
+    
     %--assemble xu fu fc
     xu = [xu; newxu];
     xl = [xl; newxl];
-    fu = [fu; newfu];
-    fc = [fc; newfc];
+    fu = [fu; newfu];  lu = [lu; newlu];
+    fc = [fc; newfc];    lc = [lc; newlc];
+    
     llfeasi_flag = [llfeasi_flag, flag];
     %--adjust fu by lower feasibility
     fu = llfeasi_modify(fu, llfeasi_flag, inisize_u+i);  % --?

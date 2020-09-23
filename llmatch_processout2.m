@@ -14,7 +14,7 @@ close all;
 
 
 
-seedmax = 11;
+seedmax = 1;
 % problems ={'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)','dsm1dc2(3, 3)', ...
 %                          'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)','dsm2dc2(3, 3)',...
 %                            'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)','dsm3dc2(3, 3)'};
@@ -29,12 +29,12 @@ seedmax = 11;
 %               'dsm3(4,4)', 'dsm3d(4,4)','dsm3dc1(4,4)','dsm3dc2(4,4)' }; % change p3 term back to scale 10
           
 % problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
-problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)' };       
+problems = { 'smd10(1,1,1)' };       
  %  problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };  
  % problems = { 'dsm1(4, 4)', 'dsm1d(4, 4)','dsm1dc1(4, 4)' };  
                        
-methods = {'llmatcheim',  'llmatcharchive',  'llmatchpop'};  % 'llmatchpop',
-leg = {'EIM', 'ARC', 'GEN'};
+methods = {'llmatcheim',  'llmatchble'};  % 'llmatchpop',
+leg = {'EIM', 'BEL'};
 np= length(problems);
 nm = length(methods);
 
@@ -57,9 +57,10 @@ for ii = 1:np
     
     nv = prob.n_lvar;
     
-    k = 2: prob.n_lvar;
-    k = (k-1)/2;
-    xu = [0, k];
+%     k = 2: prob.n_lvar;
+%     k = (k-1)/2;
+%     xu = [0, k];
+xu=[1,1];
     
     fig1 = gcf;
 
@@ -73,14 +74,14 @@ for ii = 1:np
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
         collectionpermethod= zeros( 6, seedmax);
         for kk = 1:seedmax
-            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' );
+            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' )
             xl = csvread(savename);
             
             % every 10 training data make a prediction
             for mm = 1:5
                 xl_sep = xl(1: (mm-1) * 10 + 20, :);
-                % mse = prediction(xu, xl_sep, prob);
-                mse = collection_prediction(sample_xl, xu, xl_sep, prob);
+                mse = prediction(xu, xl_sep, prob);
+                % mse = collection_prediction(sample_xl, xu, xl_sep, prob);
                 
                %  kend =  kendall(sample_xl, xu, xl_sep, prob);
                 collectionpermethod(mm, kk) = mse;
@@ -123,7 +124,7 @@ for ii = 1:np
     t = strcat(prob.name, ' k ', num2str(nv)); 
     title(t,  'FontSize', 16);
     set(gca, 'XTickLabel',{'20','30','40','50','60','local search'}, 'FontSize', 12);
-    legend(hBar, leg{1}, leg{2}, leg{3},  'FontSize', 14); %methods{3},
+    legend(hBar, leg{1}, leg{2}, 'FontSize', 14); %methods{3}, leg{3}, 
     
     savename = strcat(pwd, '\result_folder\plots3\', prob.name, '_llmatchperformance.fig');
     savefig(savename);
@@ -183,12 +184,13 @@ xu = repmat(xu, num_xl, 1);
 % first three problem lower value stays the same
 if ~contains(prob.name, 'c2' )
     xl_prime = xu(1,:);
+    xl_prime = [2, pi/4];
     [fl_prime, ~] = prob.evaluate_l(xu(1, :), xl_prime);
     
-    if abs(fl_prime) >0.001
-        error('lower f prime value is wrong');
-    end
-    
+%     if abs(fl_prime) >0.001
+%         error('lower f prime value is wrong');
+%     end
+%     
     % check prediction
     fpred = dace_predict(xl_prime, krg_obj{1});
     fpred = denormzscore( fl, fpred);
@@ -235,8 +237,8 @@ samplepred = dace_predict(xlsample, krg_obj{1});
 samplepred = denormzscore( fl, samplepred);
 
 % get kendall stat
-samplefl = sort(samplefl);
-samplepred = sort(samplepred);
+% samplefl = sort(samplefl);
+% samplepred = sort(samplepred);
 
 kendallstat = corr(samplefl, samplepred, 'type', 'Kendall');
 end

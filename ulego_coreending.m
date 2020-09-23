@@ -1,6 +1,6 @@
 function ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, method)
 % fu is converted to one from archive
-[xu_best, fu, cu, ~, index] = localsolver_startselection(xu, fu, fc);
+[xu_best, fu, cu, ~, index] =out_select(xu,  xl, prob);
 xl_best = xl(index, :);
 [fl, cl] = prob.evaluate_l(xu_best, xl_best);
 
@@ -12,5 +12,21 @@ num_conl = size(cl, 2);
 cu = sum(cu<=0, 2)==num_conu;
 cl = sum(cl<=0, 2)==num_conl;
 perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed, method);
+archive_record(xu, xl);
+
+end
+
+function archive_record(xu, xl, prob)
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+n = exist(savepath);
+if n ~= 7
+    mkdir(savepath)
+end
+
+savename = strcat(savepath, '\xu_', num2str(seed),'.csv');
+csvwrite(savename, xu);
+savename = strcat(savepath, '\xl_', num2str(seed),'.csv');
+csvwrite(savename, xl);
+
 
 end

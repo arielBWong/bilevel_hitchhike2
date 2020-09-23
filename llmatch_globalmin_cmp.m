@@ -7,9 +7,12 @@ function llmatch_globalmin_cmp(prob, match_method, seed)
 
 prob = eval(prob);
 
-k = 2: prob.n_lvar;
-k = (k-1)/2;
-xu = [0, k];
+% k = 2: prob.n_lvar;
+% k = (k-1)/2;
+% xu = [0, k];
+
+% smd10
+xu = [1, 1];
 
 rng(seed, 'twister');
 

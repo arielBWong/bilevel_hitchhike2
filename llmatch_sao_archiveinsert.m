@@ -94,7 +94,7 @@ end
 % llcmp = true;
 llcmp = false;
 if llcmp
-    method = 'llmatcharchive';
+    method = 'llmatchble';
     seed = varargin{1};
     % add local search result
     train_xl = [train_xl; match_xl];
