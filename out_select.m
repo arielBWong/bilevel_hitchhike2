@@ -39,7 +39,7 @@ if ~isempty(c)              % constraint problem
             best_f = feasi_ff(i, :);
             best_c = feasi_fc(i, :);
             s = true;
-            index = i;
+            [~, index] = ismember(best_x, xu);
         end
 else                        % unconstraint problem
        [best_f, i] = min(uf);

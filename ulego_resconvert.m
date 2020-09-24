@@ -5,11 +5,11 @@ close all;
 %problem_folder = strcat(pwd,'\problems\SMD');
 %addpath(problem_folder);
 
-problems = {'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
-   'smd8()',};
+% problems = {'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
+%    'smd8()',};
 
-% problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
- %    'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
+problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
+    'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
 
 
 s = 11;

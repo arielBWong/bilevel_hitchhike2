@@ -1,6 +1,6 @@
 function ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, method)
 % fu is converted to one from archive
-[xu_best, fu, cu, ~, index] =out_select(xu,  xl, prob);
+[xu_best, fu, cu, ~, index] = out_select(xu,  xl, prob);
 xl_best = xl(index, :);
 [fl, cl] = prob.evaluate_l(xu_best, xl_best);
 
