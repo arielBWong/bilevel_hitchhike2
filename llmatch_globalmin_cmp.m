@@ -12,7 +12,7 @@ prob = eval(prob);
 % xu = [0, k];
 
 % smd10
-xu = [1, 1];
+xu = [0, 0];
 
 rng(seed, 'twister');
 

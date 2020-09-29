@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
+function[match_xl, n_fev, flag] = llmatch_eimfix(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
 % method of searching for a match xl for xu.
 % Problem(Prob) definition require certain formation for bilevel problems
 % evaluation method should be of  form 'evaluation_l(xu, xl)'
@@ -60,6 +60,21 @@ for iter = 1:iter_size
     train_fc = [train_fc; new_fc];  %compatible with nonconstraint
 end
 
+
+% use believer to deal with the last one
+norm = str2func('normalization_z');
+[krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, norm);
+funh_obj = @(x)llobj(x, krg_obj);
+funh_con = @(x)llcon(x, krg_con);
+
+param.gen       = num_gen;
+param.popsize   = num_pop;
+[~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, [], funh_con, param);
+[train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, ...
+     prob, train_xl, train_fl, train_fc, true);    
+
+ 
+ 
 % connect a local search to ego
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
@@ -79,9 +94,9 @@ end
 
 % save lower level
 llcmp = true;
-% llcmp = false;
+%llcmp = false;
 if llcmp
-    method = 'llmatcheim';
+    method = 'llmatcheimfix';
     seed = varargin{1};
     % add local search result
     train_xl = [train_xl; match_xl];
@@ -103,6 +118,29 @@ end
 function [c, ceq]  = llconstraint(xl, xu, prob)
 [~, c] = prob.evaluate_l(xu, xl);
 ceq = [];
+end
+
+
+
+% believer objectives 
+function  f = llobj(x, kriging_obj)
+num_obj = length(kriging_obj);   % krg cell array?
+num_x = size(x, 1);
+f = zeros(num_x, num_obj);
+for ii =1:num_obj
+    [f(:, ii), ~] = dace_predict(x, kriging_obj{ii});
+end
+end
+
+
+% believer constraints
+function c = llcon(x, krging_con)
+num_con = length(krging_con);
+num_x = size(x, 1);
+c = zeros(num_x, num_con);
+for ii =1:num_con 
+    [c(:, ii), ~] = dace_predict(x, krging_con{ii});
+end
 end
 
 

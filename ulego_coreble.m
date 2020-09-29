@@ -21,14 +21,14 @@ rng(seed);
 prob = eval(prob_str);
 numl = prob.n_lvar;
 
-% save some runs
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(numl), '_ble_addon');
-filename = strcat(savepath, '\out_', num2str(seed),'.csv');
-if exist(filename,'file') == 2  % ignore existing runs 
-    disp(filename);
-    fprintf('exist');
-    return;
-end
+% % save some runs
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(numl), '_ble_addon');
+% filename = strcat(savepath, '\out_', num2str(seed),'.csv');
+% if exist(filename,'file') == 2  % ignore existing runs 
+%     disp(filename);
+%     fprintf('exist');
+%     return;
+% end
 
 % algorithm parameter
 evaln = 1;
@@ -139,7 +139,7 @@ end
 if coresteps
     n_up =  size(xu, 1);
     n_low = n_feval;
-    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'eim');
+    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'ble');
 else
     upper_localpostprocess(prob, xu, xl, fu, n_feval, seed, 'ble');
 end

@@ -7,7 +7,7 @@ function fu = llfeasi_modify(fu, feasi_list, ind)  % unit test needed
 % input 
 %   fu                                   : list of original fu values
 %                                                   1/2d column form
-%   feasi_list                      : list of flags refering whether
+%   feasi_list                          : list of flags refering whether
 %                                                   matching xl is feasible (true/false)
 %   ind                                : indicator(int) which row/instance we are  dealing with
 % ouput

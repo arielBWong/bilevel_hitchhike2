@@ -1,6 +1,9 @@
 %%
 clearvars;
 close all;
+problem_folder = strcat(pwd,'\ND_Sort');
+addpath(problem_folder);
+
 % problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)','dsm1dc2(3, 3)',...
 %          'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)','dsm2dc2(3, 3)',...
 %               'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)','dsm3dc2(3, 3)' };
@@ -16,10 +19,10 @@ close all;
   % problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)','dsm1dc2(3,3)' };   
  % problems = { 'dsm1(2,2)', 'dsm1d(2,2)','dsm1dc1(2,2)','dsm1dc2(2,2)' }; 
  
- problems = {'smd12()'};
+ problems = {'smd5'};
 seeds = linspace(1, 11, 11);
 
-match_methods = {'llmatch',  'llmatch_sao_archiveinsert'}; % 'llmatch_sao_pop', ,  'llmatch_sao_archiveinsert'
+match_methods = {'llmatch',  'llmatch_sao_archiveinsert', 'llmatch_sao_pop'}; % 'llmatch_sao_pop', ,  'llmatch_sao_archiveinsert'
 
 % llmatch_globalmin_cmp(problems{1}, match_methods{1}, 1);
 

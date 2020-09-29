@@ -24,12 +24,12 @@ seedmax = 11;
 %          'dsm2(4,4)', 'dsm2d(4,4)','dsm2dc1(4,4)','dsm2dc2(4,4)',...
 %               'dsm3(4,4)', 'dsm3d(4,4)','dsm3dc1(4,4)','dsm3dc2(4,4)' }; % change p3 term back to scale 10
           
- problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
+ problems = { 'dsm1(3,3)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
  %  problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)' };       
  %  problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };  
  % problems = { 'dsm1(4, 4)', 'dsm1d(4, 4)','dsm1dc1(4, 4)' };  
-                       
-methods = {'llmatcheim',  'llmatcharchive',  'llmatchpop'};  % 'llmatchpop',
+problems = { 'dsm1(3,3)'}    ;                
+methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 leg = {'EIM', 'ARC', 'GEN'};
 np= length(problems);
 nm = length(methods);
@@ -61,7 +61,7 @@ for ii = 1:np
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
         collectionpermethod= zeros( 6, seedmax);
         for kk = 1:seedmax
-            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' );
+            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' )
             xl = csvread(savename);
             
             % every 10 training data make a prediction
@@ -110,9 +110,9 @@ for ii = 1:np
     set(gca, 'XTickLabel',{'20','30','40','50','60','local search'}, 'FontSize', 12);
     legend(hBar, leg{1}, leg{2}, leg{3},  'FontSize', 14); %methods{3},
     
-    savename = strcat(pwd, '\result_folder\plots5_30scale\', prob.name, '_llmatchperformance.fig');
+    savename = strcat(pwd, '\result_folder\plots3\', prob.name, '_llmatchperformance.fig');
     savefig(savename);
-    savename = strcat(pwd, '\result_folder\plots5_30scale\', prob.name, '_llmatchperformance.png');
+    savename = strcat(pwd, '\result_folder\plots3\', prob.name, '_llmatchperformance.png');
     saveas(fig1, savename);
     close(fig1);
     %---------plots--
@@ -122,7 +122,7 @@ end
 
  % collection 
    % save into csv
-savepath = strcat(pwd, '\result_folder\plots5_30scale\dsm_llres5.csv');
+savepath = strcat(pwd, '\result_folder\plots3\dsm_llres3.csv');
 fp=fopen(savepath,'w');
 
 fprintf(fp, 'problem_method, ');

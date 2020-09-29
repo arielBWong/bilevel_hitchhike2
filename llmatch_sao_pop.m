@@ -83,7 +83,7 @@ end
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
 
-nolocalsearch = false;
+nolocalsearch = true;
 if nolocalsearch
     match_xl = best_x;
     n_fev = size(train_xl, 1);
@@ -97,8 +97,8 @@ end
 
 % external experiments purpose
 % save lower level
-% llcmp = true;
-llcmp = false;
+llcmp = true;
+% llcmp = false;
 if llcmp
     method = 'llmatchpop';
     seed = varargin{1};

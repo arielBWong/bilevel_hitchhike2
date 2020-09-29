@@ -15,17 +15,11 @@ close all;
 
 
 seedmax = 11;
-          
-%            problems = { 'dsm1(4,4)', 'dsm1d(4,4)','dsm1dc1(4,4)','dsm1dc2(4,4)',...
-%          'dsm2(4,4)', 'dsm2d(4,4)','dsm2dc1(4,4)','dsm2dc2(4,4)',...
-%               'dsm3(4,4)', 'dsm3d(4,4)','dsm3dc1(4,4)','dsm3dc2(4,4)' }; % change p3 term back to scale 10
-          
-% problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
-problems = { 'dsm1(3,3)', 'dsm1d(3,3)','dsm1dc1(3,3)' };       
- %  problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };  
- % problems = { 'dsm1(4, 4)', 'dsm1d(4, 4)','dsm1dc1(4, 4)' };  
+
+problems = { 'dsm1(3,3)'};       
+ 
                        
-methods = {'llmatcheim',  'llmatcharchive',  'llmatchpop'};  % 'llmatchpop',
+methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 leg = {'EIM', 'BEL', 'GEN'};
 np= length(problems);
 nm = length(methods);
@@ -72,10 +66,10 @@ for ii = 1:np
             for mm = 1:5
                 xl_sep = xl(1: (mm-1) * 10 + 20, :);
                 % mse = prediction(xu, xl_sep, prob);
-                % mse = collection_prediction(sample_xl, xu, xl_sep, prob);
+               %  mse = collection_prediction(sample_xl, xu, xl_sep, prob);
                 
-                kend =  kendall(sample_xl, xu, xl_sep, prob);
-                collectionpermethod(mm, kk) = kend;
+                mse =  kendall(sample_xl, xu, xl_sep, prob);
+                collectionpermethod(mm, kk) = mse;
             end
             
             % put the final result of search to the end
@@ -229,8 +223,8 @@ samplepred = dace_predict(xlsample, krg_obj{1});
 samplepred = denormzscore( fl, samplepred);
 
 % get kendall stat
-samplefl = sort(samplefl);
-samplepred = sort(samplepred);
+% samplefl = sort(samplefl);
+% samplepred = sort(samplepred);
 
 kendallstat = corr(samplefl, samplepred, 'type', 'Kendall');
 end
