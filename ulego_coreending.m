@@ -1,6 +1,10 @@
 function ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, method)
 % fu is converted to one from archive
 [xu_best, fu, cu, ~, index] = out_select(xu,  xl, prob);
+
+name = prob.name;
+fprintf('returned index %d for problem %s seed %d\n', index, name, seed);
+
 xl_best = xl(index, :);
 [fl, cl] = prob.evaluate_l(xu_best, xl_best);
 
@@ -17,7 +21,9 @@ archive_record(xu, xl, prob, method, seed);
 end
 
 function archive_record(xu, xl, prob, method, seed)
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+num = prob.n_lvar;
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
+
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)
@@ -27,6 +33,10 @@ savename = strcat(savepath, '\xu_', num2str(seed),'.csv');
 csvwrite(savename, xu);
 savename = strcat(savepath, '\xl_', num2str(seed),'.csv');
 csvwrite(savename, xl);
+
+[fu, ~] = prob.evaluate_u(xu, xl);
+savename = strcat(savepath, '\fu_', num2str(seed),'.csv');
+csvwrite(savename, fu);
 
 
 end

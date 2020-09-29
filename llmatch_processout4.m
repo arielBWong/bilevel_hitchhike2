@@ -10,30 +10,73 @@
 clearvars;
 close all;
 
-seedmax = 11;
-          
- problems ={'smd10(1,1,1)'};     
+seedmax = 12;
+problems ={'smd12()'};     
 
-                       
-methods = {'llmatcheim',  'llmatcharchive',  'llmatchpop'};  % 'llmatchpop',
-leg = {'EIM', 'BLE'};
+prob = eval(problems{1});                    
+methods = {'eim', 'bel'};  % 'llmatchpop',
+seed = [9,3];
 np= length(problems);
 nm = length(methods);
 
+filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{1});
+filename = strcat(filename, '\xu_', num2str(seed(1)), '.csv');
+xu = csvread(filename);
 
-% lower level has fixed number of true evaluation before local search
-% 60 (20, 30, 40, 50, 60)
-% last one saved for local search final results
-collectmatrix = zeros(, np*nm*2);
+filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{1});
+filename = strcat(filename, '\xl_', num2str(seed(1)), '.csv');
+xl = csvread(filename);
+%-----------------------
+[fu, cu] = prob.evaluate_u(xu, xl);
+cu(cu < 1e-6) = 0;
+numcon = size(cu, 2);
+index_c = sum(cu <= 0, 2) == numcon;
+xu_f = xu(index_c, :);
+xu_c = xu(~index_c, :);
 
-for ii = 1:np
-    prob = problems{ii};
-    prob = eval(prob);
-    nv = prob.n_lvar;
-    
-    xu = [1, 1];
-    
+scatter(xu_f(:, 1), xu_f(:, 2), 60, 'ro', 'filled'); hold on;
+scatter(xu_c(:, 1), xu_c(:, 2), 60, 'ro'); hold on;
 
-end
+%========================================================
 
+filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{2});
+filename = strcat(filename, '\xu_', num2str(seed(1)), '.csv');
+xu = csvread(filename);
+
+filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{2});
+filename = strcat(filename, '\xl_', num2str(seed(1)), '.csv');
+xl = csvread(filename);
+%-----------------------
+[fu, cu] = prob.evaluate_u(xu, xl);
+cu(cu < 1e-6) = 0;
+numcon = size(cu, 2);
+index_c = sum(cu <= 0, 2) == numcon;
+xu_f = xu(index_c, :);
+xu_c = xu(~index_c, :);
+
+scatter(xu_f(:, 1), xu_f(:, 2), 60, 'bo', 'filled'); hold on;
+scatter(xu_c(:, 1), xu_c(:, 2), 60, 'bo'); hold on;
  
+xu = [1, 1];
+scatter(xu(1), xu(2), 80, 'yd','filled'); hold on;
+
+
+legend('EIM feasible','EIM infeasible','BEL feasible','BEL infeasible','xu prime','FontSize', 16);
+xlabel('xu1', 'FontSize', 16);
+ylabel('xu2',  'FontSize', 16);
+t = prob.name;
+title(t,  'FontSize', 16);
+
+
+
+
+% filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{2});
+% filename = strcat(filename, '\xu_', num2str(seed(2)), '.csv');
+% xu = csvread(filename);
+% scatter(xu(:, 1), xu(:, 2), 80, 'bo'); 
+% legend('EIM','BEL','FontSize', 16);
+% xlabel('xu1', 'FontSize', 16);
+% ylabel('xu2',  'FontSize', 16);
+% t = prob.name;
+% title(t,  'FontSize', 16);
+

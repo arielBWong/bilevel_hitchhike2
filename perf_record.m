@@ -1,8 +1,15 @@
-function perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed, method)
+function perf_record(prob, fu, cu, fl, cl, n_up, n_low, seed, method, varargin)
 %
 %
 %-create save folder
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+num = prob.n_lvar;
+savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num), '_', method);
+
+if ~isempty(varargin)
+    savepath = strcat(pwd, '\result_folder\', prob.name, '_',...
+        num2str(num), '_', method, '_addon');
+end
+
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)

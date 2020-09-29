@@ -1,4 +1,4 @@
-function ulego_coregen(prob_str, seed, normhn)
+function ulego_coregen(prob_str, seed, normhn, coresteps)
 % this function implements the sabla like ego method
 % instead of one by one propose next x
 % a whole population is evaluated periodically
@@ -22,8 +22,9 @@ rng(seed, 'twister');
 % algorithm parameter
 
 prob = eval(prob_str);
+numl = prob.n_lvar;
 % save some runs
-savepath = strcat(pwd, '\result_folder\', prob.name, '_gen');
+savepath = strcat(pwd, '\result_folder\', prob.name, prob.name, '_', num2str(numl), '_gen_addon');
 file = strcat(savepath, '\out_', num2str(seed),'.csv');
 if exist(file,'file') == 2  % ignore existing runs
     return;
@@ -143,9 +144,15 @@ for g=1:n
     % initmatrix = archive.pop_last.X;
     initmatrix = [];
 end
-n_up  = size(xu, 1);
-n_low = n_feval;
-ulego_coreending(xu, fu, fc, xl, prob,  seed, n_up, n_low, 'gen');
+
+if coresteps
+    n_up =  size(xu, 1);
+    n_low = n_feval;
+    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'eim');
+else
+    upper_localpostprocess(prob, xu, xl, fu, n_feval , seed, 'gen');
+   
+end
 end
 
 

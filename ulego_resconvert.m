@@ -10,11 +10,13 @@ close all;
 
 problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
     'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
-
+% 
+% problems = {'smd1(1,1,1)','smd2(1,1,1)','smd3(1,1,1)','smd4(1,1,1)',...
+%     'smd9(1,1,1)', 'smd10(1,1,1)','smd11(1,1,1)','smd12(1,1,1)'};
 
 s = 11;
 seeds = linspace(1, s, s);
-algs = {'eim', 'bel', 'gen'};
+algs = {'eim', 'ble', 'gen'};
 
 np = length(problems);
 ns = length(seeds);
@@ -27,20 +29,24 @@ accuracyupper = zeros(ns, np * na);
 accuracylower = zeros(ns, np * na);
 feasiupper = zeros(ns, np * na);
 feasilower = zeros(ns, np * na);
+total_evals = zeros(ns, np * na);
 
 for i = 1:np
     prob = eval(problems{i});
-    savepath = strcat(pwd, '\result_folder\', prob.name );
+    numl = prob.n_lvar;
+    savepath = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numl));
+    % savepath = strcat(pwd, '\result_folder\', prob.name);
     for k = 1:na
-        filename = strcat(savepath, '_',  algs{k});
+        filename = strcat(savepath, '_',  algs{k}, '_addon');
         for j = 1:ns
             seed = seeds(j);
             singlerun_file = strcat(filename, '\out_', num2str(seed),'.csv')
             smatrix = csvread(singlerun_file);                           % performance records
-            accuracyupper(j, (i-1)*na + k) = smatrix(1,1);     % upper accuracy
-            accuracylower(j, (i-1)*na + k) = smatrix(1,2);     % lower accuracy
-            feasiupper(j, (i-1)*na + k)    = smatrix(3, 1);        % upper feasi
-            feasilower(j, (i-1)*na + k)   = smatrix(3, 2);             % lower feasi
+            accuracyupper(j, (i-1)*na + k) = smatrix(1,1);               % upper accuracy
+            accuracylower(j, (i-1)*na + k) = smatrix(1,2);               % lower accuracy
+            feasiupper(j, (i-1)*na + k)    = smatrix(3, 1);              % upper feasi
+            feasilower(j, (i-1)*na + k)    = smatrix(3, 2);               % lower feasi
+            total_evals(j, (i-1)*na + k)   = smatrix(2, 1)+ smatrix(2, 2); % total function evaluation
         end
     end
 end
@@ -101,8 +107,13 @@ for i = 1:na
     header = strcat(method,'_llfeasibility');
     fprintf(fp, '%s,', header);
     
+    header = strcat(method,'_totalevaluations');
+    fprintf(fp, '%s,', header);
+    
     header = strcat(method,'_medianseed');
     fprintf(fp, '%s,', header);
+    
+    
 end
 fprintf(fp, '\n');
 
@@ -136,6 +147,11 @@ for ii = 1: np
         one_column = feasilower(:, index);
         feasi = one_column(medseed);
         fprintf(fp, '%s,', num2str(feasi));
+        
+        %  number of function evaluations
+        one_column = total_evals(:, index);
+        num_eval = one_column(medseed);
+        fprintf(fp, '%s,', num2str(num_eval));
         
         % seed
         

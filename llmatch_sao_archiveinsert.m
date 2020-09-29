@@ -77,7 +77,7 @@ end
 % connect a local search to sao
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
-nolocalsearch = true;
+nolocalsearch = false;
 if nolocalsearch
     match_xl = best_x;
     n_fev = size(train_xl, 1);

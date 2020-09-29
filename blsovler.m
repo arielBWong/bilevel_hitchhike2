@@ -48,11 +48,11 @@ end
 
 function fu =  blobj(xu, prob, num_pop, num_gen, inisize_l, numiter_l, penaltyf)
 % to improve efficiency check existing match
-xl = check_exist(xu);
+xl = check_exist(xu, prob);
 
 if isempty(xl)
-    [xl, n, flag] = llmatch(xu, prob,num_pop, num_gen,inisize_l, numiter_l);
-    
+    [xl, n, flag] =  llmatch(xu, prob, num_pop, num_gen,'EIMnext',...
+    numiter_l, 'EIM_eval', 1);
 
     global xu_g
     global xl_g
@@ -74,7 +74,7 @@ end
 [~, lc] = prob.evaluate_l(xu, xl);
 global ll_n
 ll_n = ll_n + 1;
-lc(lc<1e-6) = 0;   % constraint tolerance
+lc(lc<1e-6) = 0;    % constraint tolerance
 if sum(lc)>0         % cope with infeasible lower  
     fu = penaltyf;
 end
@@ -83,10 +83,11 @@ end
 end
 
 function [c, ceq] = blcon(xu, prob,  num_pop, num_gen, inisize_l, numiter_l)
-xl = check_exist(xu);
+xl = check_exist(xu, prob);
 
 if isempty(xl)
-    [xl, n, ~] = llmatch(xu, prob,num_pop, num_gen,inisize_l, numiter_l);
+    [xl, n, ~] =  llmatch(xu, prob, num_pop, num_gen,'EIMnext',...
+    numiter_l, 'EIM_eval', 1);
     % fprintf('con llmatch is called %d\n', n);
     global xu_g
     global xl_g
@@ -99,7 +100,7 @@ end
 ceq = [];
 end
 
-function xl = check_exist(xu)
+function xl = check_exist(xu, prob)
 
 xu = round(xu, 10);
 
@@ -114,10 +115,15 @@ else
     
     if sum(ind)>0           % should be only 1, if exists
         % fprintf('found xu in global save %d\n', sum(ind));
-        xl = xl_g(ind, :);
+        
         if sum(ind)>1
-            error('there cannot be repeat x more than once')
+            name = prob.name;
+            fprintf('there cannot be repeat x more than once, prob, %s \n', name);
+            nn = 1:size(xu_g, 1);
+            archive_xug = nn(ind);
+            ind = archive_xug(1);
         end
+        xl = xl_g(ind, :);
     else
         xl = [];
     end

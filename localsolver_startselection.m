@@ -46,7 +46,7 @@ if size(ff, 2) == 1 % single objective
             best_f = feasi_ff(i, :);
             best_c = feasi_fc(i, :);
             s = true;
-            index = i;
+            [~, index] = ismember(best_x, x, 'row');
         end
     end
 else % multiple objective

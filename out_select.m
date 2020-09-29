@@ -15,8 +15,8 @@ function [best_x,best_f, best_c, s, index] = out_select(xu,  xl, prob)
 %           s                       : flag indicate whether there is feasible solution
 %           index                   : index of output x in archive
 %--------------------------------------------------------------------------
-[uf, uc] = prob.evaluate_u(xu, xl);
-[lf, lc]= prob.evaluate_l(xu, xl); 
+[uf, uc] = prob.evaluate_u(xu, xl); % lazy fix
+[lf, lc] = prob.evaluate_l(xu, xl); % lazy fix
 c = [uc, lc];
 
 if ~isempty(c)              % constraint problem
@@ -39,7 +39,8 @@ if ~isempty(c)              % constraint problem
             best_f = feasi_ff(i, :);
             best_c = feasi_fc(i, :);
             s = true;
-            [~, index] = ismember(best_x, xu);
+            [~, index] = ismember(best_x, xu, 'row');
+            
         end
 else                        % unconstraint problem
        [best_f, i] = min(uf);
@@ -49,5 +50,6 @@ else                        % unconstraint problem
         index = i;
     
 end
+
 
 end
