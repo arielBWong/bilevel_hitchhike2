@@ -12,6 +12,8 @@ classdef smd3
         name;
         uopt = 0;
         lopt = 0;
+        xu_prime = [0, 0];
+        xl_prime = [0, 0, 0];
     end
     methods
         function obj = smd3(p, q, r)

@@ -16,14 +16,19 @@ xu = [0, 0];
 
 rng(seed, 'twister');
 
-if ~contains(match_method, 'sao')  
+if ~contains(match_method, '_')  
     match_method =  str2func( match_method);
     match_method(xu, prob, 20, 20, 'EIMnext', 40, 'EIM_eval', seed);
+
+elseif contains(match_method, 'hyb')
+    match_method =  str2func( match_method);
+    match_method(xu, prob, 20, 20, 'EIMnext', 20, 'EIM_eval', seed);
 else    
     num_pop = 20;
     if contains(match_method, 'archive')
          num_gen =800;
          freq =20;
+   
     else
         num_gen =40;
          freq =20;

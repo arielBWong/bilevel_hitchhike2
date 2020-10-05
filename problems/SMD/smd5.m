@@ -12,6 +12,8 @@ classdef smd5
         name;
         uopt = 0;
         lopt = 0;
+        xu_prime = [0, 0];
+        xl_prime = [1, 1, 0];
     end
     methods
         function obj = smd5(p, q, r)
@@ -83,6 +85,13 @@ classdef smd5
             c = [];
             
             
+        end
+        
+        function xl = matchingxl(obj, xu)
+            xl1 = ones(1, obj.q);
+            xu2 = xu(1, obj.p + 1:end);
+            xl2 = sqrt(abs(xu2));
+            xl = [xl1, xl2];
         end
     end
 end

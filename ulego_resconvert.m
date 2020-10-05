@@ -10,13 +10,13 @@ close all;
 
 problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
     'smd8()','smd9()', 'smd10()','smd11()','smd12()'};
-% 
+%
 % problems = {'smd1(1,1,1)','smd2(1,1,1)','smd3(1,1,1)','smd4(1,1,1)',...
 %     'smd9(1,1,1)', 'smd10(1,1,1)','smd11(1,1,1)','smd12(1,1,1)'};
 
 s = 11;
 seeds = linspace(1, s, s);
-algs = {'eim', 'bel', 'gen'};
+algs = {'eim', 'ble', 'hyb'};
 
 np = length(problems);
 ns = length(seeds);
@@ -34,8 +34,8 @@ total_evals = zeros(ns, np * na);
 for i = 1:np
     prob = eval(problems{i});
     numl = prob.n_lvar;
-    % savepath = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numl));
-    savepath = strcat(pwd, '\result_folder\', prob.name);
+    savepath = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numl));
+    % savepath = strcat(pwd, '\result_folder\', prob.name);
     for k = 1:na
         filename = strcat(savepath, '_',  algs{k});
         for j = 1:ns
@@ -89,77 +89,106 @@ end
 fclose(fp);
 
 
-output_path = strcat(pwd, '\result_folder\smd_convertmedian.csv');
+%---------------
+output_path = strcat(pwd, '\result_folder\smd_summedian.csv');
 fp=fopen(output_path,'w');
 fprintf(fp, 'problem,');
 for i = 1:na
-
-    
     method = algs{i};
-    header = strcat(method,'_ul');
-    fprintf(fp, '%s,', header);
-    header = strcat(method,'_ll');
-    fprintf(fp, '%s,', header);
-    
-    header = strcat(method,'_ulfeasibility');
-    fprintf(fp, '%s,', header);
-    
-    header = strcat(method,'_llfeasibility');
-    fprintf(fp, '%s,', header);
-    
-    header = strcat(method,'_totalevaluations');
-    fprintf(fp, '%s,', header);
-    
-    header = strcat(method,'_medianseed');
-    fprintf(fp, '%s,', header);
-    
-    
+    fprintf(fp, '%s,', method);
 end
 fprintf(fp, '\n');
-
-%
-for ii = 1: np
+accuracysum = accuracyupper + accuracylower;
+middle = round(s/2);
+for ii = 1:np
     prob =  eval(problems{ii});
     fprintf(fp, '%s, ',  prob.name);
-    
-    middle = round(s/2);
     for jj = 1:na
         index =  (ii-1) * na + jj;
         
-        % calculate upper level median accuracy
-        one_column = accuracyupper(:, index);
+        % calculate median accuracy
+        one_column = accuracysum(:, index);
         [~, ids] = sort(one_column);
         med = one_column(ids(middle));
         medseed = ids(middle);
-        fprintf(fp, '%s,', num2str(med));
-        
-        % extract corresponding lower level accuracy
-        one_column = accuracylower(:, index);
-        med = one_column(medseed);
-        fprintf(fp, '%s,', num2str(med));
-        
-        %  feasibility ul
-        one_column = feasiupper(:, index);
-        feasi = one_column(medseed);
-        fprintf(fp, '%s,', num2str(feasi));
-        
-        %  feasibility ll
-        one_column = feasilower(:, index);
-        feasi = one_column(medseed);
-        fprintf(fp, '%s,', num2str(feasi));
-        
-        %  number of function evaluations
-        one_column = total_evals(:, index);
-        num_eval = one_column(medseed);
-        fprintf(fp, '%s,', num2str(num_eval));
-        
-        % seed
-        
-        fprintf(fp, '%s,', num2str(medseed));
+        fprintf(fp, '%f,', med);
     end
     fprintf(fp, '\n');
 end
 fclose(fp);
-
-%-----
-%rmpath(problem_folder);
+    %---------------
+    
+    output_path = strcat(pwd, '\result_folder\smd_oldmedian.csv');
+    fp=fopen(output_path,'w');
+    fprintf(fp, 'problem,');
+    for i = 1:na
+        
+        
+        method = algs{i};
+        
+        fprintf(fp, '%s,', method);
+        header = strcat(method,'_ll');
+        fprintf(fp, '%s,', header);
+        
+        header = strcat(method,'_ulfeasibility');
+        fprintf(fp, '%s,', header);
+        
+        header = strcat(method,'_llfeasibility');
+        fprintf(fp, '%s,', header);
+        
+        header = strcat(method,'_totalevaluations');
+        fprintf(fp, '%s,', header);
+        
+        header = strcat(method,'_medianseed');
+        fprintf(fp, '%s,', header);
+        
+        
+    end
+    fprintf(fp, '\n');
+    
+    %
+    for ii = 1: np
+        prob =  eval(problems{ii});
+        fprintf(fp, '%s, ',  prob.name);
+        
+        middle = round(s/2);
+        for jj = 1:na
+            index =  (ii-1) * na + jj;
+            
+            % calculate upper level median accuracy
+            one_column = accuracyupper(:, index);
+            [~, ids] = sort(one_column);
+            med = one_column(ids(middle));
+            medseed = ids(middle);
+            fprintf(fp, '%s,', num2str(med));
+            
+            % extract corresponding lower level accuracy
+            one_column = accuracylower(:, index);
+            med = one_column(medseed);
+            fprintf(fp, '%s,', num2str(med));
+            
+            %  feasibility ul
+            one_column = feasiupper(:, index);
+            feasi = one_column(medseed);
+            fprintf(fp, '%s,', num2str(feasi));
+            
+            %  feasibility ll
+            one_column = feasilower(:, index);
+            feasi = one_column(medseed);
+            fprintf(fp, '%s,', num2str(feasi));
+            
+            %  number of function evaluations
+            one_column = total_evals(:, index);
+            num_eval = one_column(medseed);
+            fprintf(fp, '%s,', num2str(num_eval));
+            
+            % seed
+            
+            fprintf(fp, '%s,', num2str(medseed));
+        end
+        fprintf(fp, '\n');
+    end
+    fclose(fp);
+    
+    %-----
+    %rmpath(problem_folder);

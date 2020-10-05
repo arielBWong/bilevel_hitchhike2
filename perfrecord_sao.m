@@ -7,12 +7,12 @@ function  perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl)
 num = length(prob.xl_bl);
 
 % compatible for saving lower level
-if strcmp(method(1:7), 'llmatch') % for paper deceptive analysis
+if strcmp(method(1:2), 'll') % for paper deceptive analysis
     lowersave(xu, fu, fc, prob, seed, method);
     return 
 end
 
-savepath = strcat(pwd, '\result_folder\', prob.name,'_',method);
+savepath = strcat(pwd, '\result_folder\', prob.name,'_',num2str(num),'_', method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)

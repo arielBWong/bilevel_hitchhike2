@@ -1,4 +1,4 @@
-%% evaluate 100 median prediction and real function 
+%% evaluate 100 median prediction and real function
 % conduct statistic analysis
 % corr(,,'type', 'kendall')
 %
@@ -12,32 +12,17 @@
 clearvars;
 close all;
 
+seedmax = 11;
+problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()'};
 
 
-seedmax = 1;
-% problems ={'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)','dsm1dc2(3, 3)', ...
-%                          'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)','dsm2dc2(3, 3)',...
-%                            'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)','dsm3dc2(3, 3)'};
+% methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
+% leg = {'EIM', 'BEL', 'GEN'};
 
-
-%           problems = { 'dsm1(2,2)', 'dsm1d(2,2)','dsm1dc1(2,2)','dsm1dc2(2,2)',...
-%          'dsm2(2,2)', 'dsm2d(2,2)','dsm2dc1(2,2)','dsm2dc2(2,2)',...
-%               'dsm3(2,2)', 'dsm3d(2,2)','dsm3dc1(2,2)','dsm3dc2(2,2)' }; % change p3 term back to scale 10
-          
-%            problems = { 'dsm1(4,4)', 'dsm1d(4,4)','dsm1dc1(4,4)','dsm1dc2(4,4)',...
-%          'dsm2(4,4)', 'dsm2d(4,4)','dsm2dc1(4,4)','dsm2dc2(4,4)',...
-%               'dsm3(4,4)', 'dsm3d(4,4)','dsm3dc1(4,4)','dsm3dc2(4,4)' }; % change p3 term back to scale 10
-          
-% problems = { 'dsm1(5,5)', 'dsm1d(5,5)','dsm1dc1(5,5)' };        % ,'dsm1dc2(5,5)'
-problems = { 'smd10(1,1,1)' };       
- %  problems = { 'dsm1(2, 2)', 'dsm1d(2, 2)','dsm1dc1(2, 2)' };  
- % problems = { 'dsm1(4, 4)', 'dsm1d(4, 4)','dsm1dc1(4, 4)' };  
-                       
-methods = {'llmatcheim',  'llmatchble'};  % 'llmatchpop',
-leg = {'EIM', 'BEL'};
-np= length(problems);
-nm = length(methods);
-
+methods = {'llmatcheim', 'llmatchble', 'llmatchhyb'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
+leg = {'EIM','BEL', 'HYB'};
+np  = length(problems);
+nm  = length(methods);
 
 % lower level has fixed number of true evaluation before local search
 % 60 (20, 30, 40, 50, 60)
@@ -48,34 +33,38 @@ for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
     
-   upper_bound = prob.xl_bu;
-   lower_bound = prob.xl_bl;
-   init_size = 100;
-   sample_xl = lhsdesign(init_size,prob.n_lvar,'criterion','maximin','iterations',1000);
-   sample_xl = repmat(lower_bound, init_size, 1) ...
-                + repmat((upper_bound - lower_bound), init_size, 1) .* sample_xl;
+    upper_bound = prob.xl_bu;
+    lower_bound = prob.xl_bl;
+    init_size = 100;
+    sample_xl = lhsdesign(init_size,prob.n_lvar,'criterion','maximin','iterations',1000);
+    sample_xl = repmat(lower_bound, init_size, 1) ...
+        + repmat((upper_bound - lower_bound), init_size, 1) .* sample_xl;
     
     nv = prob.n_lvar;
     
 %     k = 2: prob.n_lvar;
 %     k = (k-1)/2;
 %     xu = [0, k];
-xu=[1,1];
+    xu = [0, 0];
     
     fig1 = gcf;
-
-
+    
+    
     x = 1:6;
     barplot = [];
     barplotdev = [];
     for jj = 1:nm
         method = methods{jj};
         num = length(prob.xl_bl);
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method)
         collectionpermethod= zeros( 6, seedmax);
         for kk = 1:seedmax
-            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' )
+            savename = strcat(savepath, '\xl_', num2str(kk), '.csv' );
             xl = csvread(savename);
+             
+            
+            % dsm_rebuild(xu, xl, prob)
+            
             
             % every 10 training data make a prediction
             for mm = 1:5
@@ -83,7 +72,7 @@ xu=[1,1];
                 mse = prediction(xu, xl_sep, prob);
                 % mse = collection_prediction(sample_xl, xu, xl_sep, prob);
                 
-                %  kend =  kendall(sample_xl, xu, xl_sep, prob);
+                % mse =  kendall(sample_xl, xu, xl_sep, prob);
                 collectionpermethod(mm, kk) = mse;
             end
             
@@ -101,15 +90,17 @@ xu=[1,1];
         barplotdev = [barplotdev, std_permethod];
         
         collectmatrix(:, (ii-1)*nm*2 + (jj-1) * 2 + 1) = mean_permethod;
-        collectmatrix(:, (ii-1)*nm*2+ (jj-1) *2 + 2)  = std_permethod;
+        collectmatrix(:, (ii-1)*nm*2+ (jj-1) *2 + 2)    = std_permethod;
     end
     
-  %  ---------plots--
- % for each problem plot three methods with error bar
+    %  ---------plots--
+    % for each problem plot three methods with error bar
     bar(x, barplot, 'FaceColor','flat');  hold on;
-   
+    
+    %------------plot error bar------------
     hBar = bar(barplot, 0.8);
-    colors = [[0.8500 0.3250 0.0980]; [0 0.4470 0.7410];  [0.9290 0.6940 0.1250] ];
+    % colors = [[0.8500 0.3250 0.0980]; [0 0.4470 0.7410];  [0.9290 0.6940 0.1250] ];
+    colors= [[0.9290 0.6940 0.1250]; [0.4940 0.1840 0.5560]; [0.4660 0.6740 0.1880]];
     
     pause(2); % allow offset calculated
     for k1 = 1:size(barplot,2)
@@ -117,28 +108,48 @@ xu=[1,1];
         ydt(k1,:) = hBar(k1).YData;
         hBar(k1).FaceColor  =colors(k1, :);
     end
+    %clf('reset');
     errorbar(ctr, ydt, barplotdev', '.k');
-
-    xlabel('training data size', 'FontSize', 16);
-    ylabel('mean mse on gobal optimal solution', 'FontSize', 16);
-    t = strcat(prob.name, ' k ', num2str(nv)); 
-    title(t,  'FontSize', 16);
-    set(gca, 'XTickLabel',{'20','30','40','50','60','local search'}, 'FontSize', 12);
-    legend(hBar, leg{1}, leg{2}, 'FontSize', 14); %methods{3}, leg{3}, 
+    %------------plot error bar------------
     
-    savename = strcat(pwd, '\result_folder\plots3\', prob.name, '_llmatchperformance.fig');
+    
+    xlabel('training data size', 'FontSize', 16);
+    % ylabel('mean Kendall corr from 100 samples', 'FontSize', 16);
+    ylabel('absolute diff on global optimal prediction', 'FontSize', 16);
+    t = strcat(prob.name, ' k ', num2str(nv), ' absolute diff with global optimal');
+    title(t,  'FontSize', 16);
+    set(gca, 'XTickLabel',{'20','30','40','50','60','returned fl'}, 'FontSize', 12);
+    % legend(hBar, leg{1}, leg{2}, leg{3},  'FontSize', 14); %methods{3},
+    legend(hBar, leg{1}, leg{2}, leg{3},'FontSize', 14); %methods{3},
+    %legend( leg{1}, leg{2},  'FontSize', 14); %methods{3},
+    
+    
+    foldername = strcat(prob.name, '_', num2str(prob.n_lvar), '_llplot');
+    foldername = strcat(pwd, '\result_folder\', foldername);
+    n = exist(foldername);
+    if n ~= 7
+        mkdir(foldername)
+    end
+    
+    savename = strcat(foldername,'\', prob.name, '_llmatchperformance_globalopt.fig');
     savefig(savename);
-    savename = strcat(pwd, '\result_folder\plots3\', prob.name, '_llmatchperformance.png');
+    savename = strcat(foldername,'\', prob.name, '_llmatchperformance_globalopt.png');
     saveas(fig1, savename);
     close(fig1);
-    %---------plots--
-  
+    %---------plots-----
+    
     
 end
 
- % collection 
-   % save into csv
-savepath = strcat(pwd, '\result_folder\plots3\dsm_llres3.csv');
+% collection
+% save into csv
+foldername = strcat(prob.name, '_', num2str(prob.n_lvar), '_llplot');
+foldername = strcat(pwd, '\result_folder\', foldername);
+n = exist(foldername);
+if n ~= 7
+    mkdir(foldername)
+end
+savepath = strcat(foldername, '\dsm_llres3.csv');
 fp=fopen(savepath,'w');
 
 fprintf(fp, 'problem_method, ');
@@ -149,7 +160,7 @@ fprintf(fp, '50, ');
 fprintf(fp, '60, ');
 fprintf(fp, '61\n ');
 
-% construct index 
+% construct index
 index = cell(1,  np * nm * 2);
 nn = 1;
 for ii = 1:np
@@ -164,7 +175,7 @@ for ii = 1:np
 end
 % format header
 collectmatrix = collectmatrix';
-for  ii =1:  np * nm * 2    
+for  ii =1:  np * nm * 2
     fprintf(fp, '%s, ', index{ii} );
     for jj = 1: 6
         fprintf(fp, '%f, ', collectmatrix(ii, jj));
@@ -175,37 +186,41 @@ fclose(fp);
 
 function mse = prediction(xu, xl, prob)
 % re-train model to get prediction on global optimum
-
+% xl is for training
+% xl_prime is the real global optimal
 num_xl = size(xl, 1);
 xu = repmat(xu, num_xl, 1);
 [fl, fc] = prob.evaluate_l(xu, xl);
 [krg_obj, krg_con, info] = update_surrogate(xl, fl, fc);
-
 % first three problem lower value stays the same
 if ~contains(prob.name, 'c2' )
-    xl_prime = xu(1,:);
-    xl_prime = [2, pi/4];
+    if contains(prob.name, 'SMD')
+        xl_prime = prob.xl_prime;
+    else
+        xl_prime = xu(1,:);
+        
+    end
     [fl_prime, ~] = prob.evaluate_l(xu(1, :), xl_prime);
     
-%     if abs(fl_prime) >0.001
-%         error('lower f prime value is wrong');
-%     end
-%     
+    if abs(fl_prime) >0.001
+        error('lower f prime value is wrong');
+    end
+    
     % check prediction
     fpred = dace_predict(xl_prime, krg_obj{1});
     fpred = denormzscore( fl, fpred);
     
-    mse = (fpred - fl_prime)^2;
+    mse = abs(fpred - fl_prime);
 else
     xl_prime=xu(1, :);
     % xl_prime(2) = -0.5;     % if the lower level equation term p3 is  multiplied by 1, then there are two lower level optimum exists
-     %  xl_prime(2) = -1.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
+    %  xl_prime(2) = -1.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
     xl_prime(2) = -0.5;     % if the lower level equation term p3 is  multiplied by 10, then there are two lower level optimum exists
     [fl_prime, ~] = prob.evaluate_l(xu(1, :), xl_prime);
     
     
     % check prediction
-    fpred = dace_predict(xl_prime, krg_obj{1});
+    [fpred, ~] = dace_predict(xl_prime, krg_obj{1});
     fpred = denormzscore( fl, fpred);
     
     mse = (fpred - fl_prime)^2;
@@ -265,6 +280,66 @@ err = immse(samplepred, samplefl);
 end
 
 
+function dsm_rebuild(xu, xl_all, prob)
+% use post process to rebuild plot
+
+if prob.n_lvar > 2
+    error('process not compatible with more than 2 variables');
+end
+xl = xl_all(1:end-1, :); % last one is returned matching xl
+
+num_xl = size(xl, 1);
+xu = repmat(xu, num_xl, 1);
+[fl, fc] = prob.evaluate_l(xu, xl);
+[krg_obj, krg_con, info] = update_surrogate(xl, fl, fc);
+
+
+funh_obj = @(x)llobj(x, krg_obj);
+funh_con = @(x)llcon(x, krg_con);
+
+param.gen       = 100;
+param.popsize   = 100;
+[~,~,~, archive] = gsolver(funh_obj, prob.n_lvar,  prob.xl_bl, prob.xl_bu, [], funh_con, param);
+bestx = archive.pop_last.X(1, :);
+
+
+
+
+fig1 = gcf;
+
+k =2;
+xl1 = linspace(-k, k, 100);
+xl2 = linspace(-k, k, 100); 
+[xl1, xl2] = meshgrid(xl1, xl2);
+ f = zeros(100, 100);
+%  for i = 1:100
+%      for j = 1:100
+%          f (i, j) = (xl1(i, j) - 0 ).^2 + (xl2(i, j) - 0.5).^2 + 10 * abs(sin(pi/2*(xl2(i, j) - 0.5)));
+%      end
+%  end
+
+ for i = 1:100
+     for j = 1:100
+         [f(i, j), ~] = dace_predict([xl1(i, j), xl2(i, j)], krg_obj{1});
+         f(i, j) = denormzscore( fl, f(i, j)); 
+     end
+ end
+min(f(:))
+surf(xl1, xl2, f); hold on;
+xlabel('xl1', 'FontSize', 16);
+ylabel('xl2', 'FontSize', 16);
+zlabel('fl',  'FontSize', 16);
+colormap jet
+shading interp
+
+scatter3(xl(:, 1), xl(:, 2), fl(:, 1), 80,  'yx')
+[ret, ~] = prob.evaluate_l(xu(1, :), xl_all(end, :));
+scatter3(xl_all(end,1), xl_all(end, 2),ret, 80, 'ro', 'filled' );
+
+[surr_search, ~] = prob.evaluate_l(xu(1, :), bestx);
+scatter3(bestx(1), bestx(2),surr_search, 80, 'yo', 'filled' );
+end
+
 function f = denormzscore(trainy, fnorm)
 [train_y_norm, y_mean, y_std] = zscore(trainy, 1, 1);
 f = fnorm * y_std + y_mean;
@@ -311,3 +386,29 @@ else
 end
 
 end
+
+
+% believer objectives 
+function  f = llobj(x, kriging_obj)
+num_obj = length(kriging_obj);   % krg cell array?
+num_x = size(x, 1);
+f = zeros(num_x, num_obj);
+for ii =1:num_obj
+    [f(:, ii), ~] = dace_predict(x, kriging_obj{ii});
+end
+end
+
+
+% believer constraints
+function c = llcon(x, krging_con)
+num_con = length(krging_con);
+num_x = size(x, 1);
+c = zeros(num_x, num_con);
+for ii =1:num_con 
+    [c(:, ii), ~] = dace_predict(x, krging_con{ii});
+end
+end
+
+
+
+

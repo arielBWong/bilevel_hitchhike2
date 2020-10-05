@@ -12,6 +12,8 @@ classdef smd8
         name;
         uopt = 0;
         lopt = 0;
+        xu_prime = [0, 0];
+        xl_prime = [1, 1, 0];
     end
     methods
         function obj = smd8(p, q, r)

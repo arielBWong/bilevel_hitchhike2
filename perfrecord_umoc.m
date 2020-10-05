@@ -14,7 +14,7 @@ if n ~= 7
 end
 
 % compatible for saving lower level
-if strcmp(method(1:7), 'llmatch') % for paper deceptive analysis
+if strcmp(method(1:2), 'll') % for paper deceptive analysis
     lowersave(xu, fu, fc, prob, seed, method);
     return 
 end

@@ -91,8 +91,8 @@ end
 
 %----
 % save lower level
- llcmp = true;
-%  llcmp = false;
+% llcmp = true;
+llcmp = false;
 if llcmp
     method = 'llmatchble';
     seed = varargin{1};

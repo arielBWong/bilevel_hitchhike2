@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
+function[match_xl, n_fev, flag] = llmatch_hyb(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
 % method of searching for a match xl for xu.
 % Problem(Prob) definition require certain formation for bilevel problems
 % evaluation method should be of  form 'evaluation_l(xu, xl)'
@@ -44,12 +44,11 @@ end
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
 for iter = 1:iter_size
+    %--------------------------
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
-    % tic;
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
-    %  toc;
     
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -58,6 +57,26 @@ for iter = 1:iter_size
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
     train_fc = [train_fc; new_fc];  %compatible with nonconstraint
+    
+    % -------------------------------
+    % dual adding. believer search
+    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, str2func('normalization_z'));
+    funh_obj = @(x)llobj(x, krg_obj);
+    funh_con = @(x)llcon(x, krg_con);
+    
+    param.gen     = num_gen;
+    param.popsize = num_pop;
+    [~,~,~, archive] = gsolver(funh_obj, prob.n_lvar,  prob.xl_bl, prob.xl_bu, [], funh_con, param);
+    
+    [new_xlb, ~] = believer_select(archive.pop_last.X, train_xl, prob, false);
+    [new_fl, new_fc] = prob.evaluate_l(xu, new_xlb);
+    
+    % add to training
+    train_xl = [train_xl; new_xlb];
+    train_fl = [train_fl; new_fl];
+    train_fc = [train_fc; new_fc];  %compatible with nonconstraint   
+    %--------------------------------
+    
 end
 
 % connect a local search to ego
@@ -81,7 +100,7 @@ end
 % llcmp = true;
 llcmp = false;
 if llcmp
-    method = 'llmatcheim';
+    method = 'llmatchhyb';
     seed = varargin{1};
     % add local search result
     train_xl = [train_xl; match_xl];
@@ -104,6 +123,29 @@ function [c, ceq]  = llconstraint(xl, xu, prob)
 [~, c] = prob.evaluate_l(xu, xl);
 ceq = [];
 end
+
+
+%----------------------------------------------------
+%-- surrogate objective --
+function  f = llobj(x, kriging_obj)
+num_obj = length(kriging_obj);   % krg cell array?
+num_x = size(x, 1);
+f = zeros(num_x, num_obj);
+for ii =1:num_obj
+    [f(:, ii), ~] = dace_predict(x, kriging_obj{ii});
+end
+end
+
+function c = llcon(x, krging_con)
+num_con = length(krging_con);
+num_x = size(x, 1);
+c = zeros(num_x, num_con);
+for ii =1:num_con
+    [c(:, ii), ~] = dace_predict(x, krging_con{ii});
+end
+end
+
+
 
 
 

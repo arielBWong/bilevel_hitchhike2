@@ -39,12 +39,12 @@ num_gen   = 20;
 prob = eval(prob);
 numl = prob.n_lvar;
 
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(numl),'_eim_addon');
-file = strcat(savepath, '\out_', num2str(seed),'.csv');
-if exist(file,'file') == 2  % ignore existing runs
-    fprintf('skip');
-    return;
-end
+% savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(numl),'_eim_addon');
+% file = strcat(savepath, '\out_', num2str(seed),'.csv');
+% if exist(file,'file') == 2  % ignore existing runs
+%     fprintf('skip');
+%     return;
+% end
 
 
 

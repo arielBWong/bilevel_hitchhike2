@@ -16,9 +16,10 @@ problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)',...
              'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)'};
 
 met = {'EIM', 'BEL', 'GEN'};
-% problems ={ 'dsm1(2)'};
+met = {'HYB', 'EIM', 'BEL'};
+problems ={ 'dsm1(2, 2)',  'dsm1(3, 3)'};
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
-methods = { 'EIM_eval', 'sao_archiveinsert', 'sao_popinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
+methods = { 'hyb', 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
 
 problem_folder = strcat(pwd,'\problems\MOBP');
 addpath(problem_folder);
@@ -51,7 +52,8 @@ for ii = 1: np
         for jj = 1:nm
             
             method = methods{jj};
-            savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+            savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(prob.n_lvar), '_', method);
+            % savepath = strcat(pwd, '\result_folder\', prob.name,  '_', method);
             savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
             nd_front = csvread(savename_fu);
             size(empf)
@@ -95,8 +97,9 @@ for ii = 1 : np
         % median function evaluation
         prob = eval(problems{ii});
         method = methods{jj};
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
-        savename_nn = strcat(savepath, '\nn_', num2str(ids(middle)),'.csv');
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_',  num2str(prob.n_lvar), '_',method);
+        % savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+        savename_nn = strcat(savepath, '\nn_', num2str(ids(middle)),'.csv')
         nn = csvread(savename_nn);
         statistic_matrix(5, (ii-1) * nm + jj)  =  sum(nn);
     end
@@ -120,8 +123,9 @@ for ii = 1 : np
     for kk = 1:nm
         seed = medianlist(kk);
         method = methods{kk};
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
-        savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv');
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(prob.n_lvar), '_',method);
+        % savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
+        savename_fu = strcat(savepath, '\fu_', num2str(seed),'.csv')
         nd_front = csvread(savename_fu);
         scatter(nd_front(:,1), nd_front(:,2), 80, pattern{kk}, color{kk},'filled'); drawnow;
     end
@@ -139,9 +143,9 @@ for ii = 1 : np
     set(gca, 'YTickLabel',a, 'FontSize', 12);
     
     
-    savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.fig');
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_igdcompare.fig');
     savefig(savename);
-    savename = strcat(pwd, '\result_folder\', prob.name, '_igdcompare.png');
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_igdcompare.png');
     saveas(fig1, savename);
     close(fig1);
     
@@ -156,7 +160,7 @@ fprintf(fp, 'seed,');
 for ii = 1:np
     for jj = 1:nm
         prob = eval(problems{ii});
-        single_header = strcat(prob.name, '_', methods{jj});
+        single_header = strcat(prob.name, '_', methods{jj},'_', num2str(prob.n_lvar));
         fprintf(fp, '%s,', single_header);
     end
 end

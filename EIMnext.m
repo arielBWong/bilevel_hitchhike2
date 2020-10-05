@@ -113,10 +113,9 @@ end
 % call DE evolution
 %  [best_x, eim_f] = DE(fitness_val, num_vari,lb, ub, num_pop, num_gen);
 funh_con = @(x) con(x);
- param.gen=num_gen;
- param.popsize = num_pop;
-
-  [best_x, eim_f, bestc, archive] = gsolver(fitness_val, num_vari,  lb,ub, [], funh_con, param);
+param.gen=num_gen;
+param.popsize = num_pop;
+[best_x, eim_f, bestc, archive] = gsolver(fitness_val, num_vari,  lb,ub, [], funh_con, param);
 
 % convert best_x to denormalized value
 % best_x = best_x .* x_std + x_mean;  % commit for test

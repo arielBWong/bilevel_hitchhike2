@@ -46,6 +46,7 @@ xu = csvread(filename);
 filename = strcat(pwd, '\result_folder\', prob.name ,'_',methods{2});
 filename = strcat(filename, '\xl_', num2str(seed(1)), '.csv');
 xl = csvread(filename);
+
 %-----------------------
 [fu, cu] = prob.evaluate_u(xu, xl);
 cu(cu < 1e-6) = 0;
