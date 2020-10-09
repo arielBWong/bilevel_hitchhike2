@@ -5,16 +5,20 @@ clearvars;
 close all;
 
 seedmax = 11;
-problems = { 'smd1(1,1,1)','smd2(1,1,1)','smd5(1,1,1)'};
+problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
+    'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)'};
+% problems = {'dsm1(2,2)'};
 
 
 % methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 % leg = {'EIM', 'BEL', 'GEN'};
 
-methods = {'llmatcheim', 'llmatchble', 'llmatchhyb', 'llmatchswitch'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
-leg = {'EIM', 'BEL', 'HYB', 'SWI'};
+methods = {'llmatcheim', 'llmatchble', 'llmatchhyb'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
+leg = {'EIM', 'BEL', 'HYB'};
 np  = length(problems);
 nm  = length(methods);
+infill_size = 40;
+init_size = 21;
 
 % lower level has fixed number of true evaluation before local search
 % 60 (20, 30, 40, 50, 60)
@@ -27,13 +31,6 @@ end
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
-    
-    upper_bound = prob.xl_bu;
-    lower_bound = prob.xl_bl;
-    init_size = 100;
-    sample_xl = lhsdesign(init_size,prob.n_lvar,'criterion','maximin','iterations',1000);
-    sample_xl = repmat(lower_bound, init_size, 1) ...
-        + repmat((upper_bound - lower_bound), init_size, 1) .* sample_xl;
     
     nv = prob.n_lvar;
     if contains(prob.name, 'SMD')
@@ -53,11 +50,72 @@ for ii = 1:np
         collectionpermethod= zeros( 6, seedmax);
         for kk = 1:seedmax
             % put the final result of search to the end
-            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' )
+            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
             fl = csvread(savename);
             fl_collection{jj}(ii, kk) = fl(end, 1);
         end
     end
+    
+    
+    % ----
+    % problem wise plot
+    method_matrix = cell(1, nm);
+    
+    for jj = 1:nm
+        method_matrix{jj} = zeros(seedmax, infill_size);
+        method = methods{jj};
+        num = length(prob.xl_bl);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method)
+        
+        for kk = 1:seedmax
+            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
+            fl = csvread(savename);
+            method_matrix{jj}(kk, :) = fl(init_size:end-1)';
+        end
+    end
+    % ---save plot for each problem
+    
+    meanfl = zeros(nm, infill_size);
+    stdfl = zeros(nm, infill_size);
+    
+    for jj = 1:nm
+        meanfl(jj, :) = mean(method_matrix{jj}, 1);
+        stdfl(jj, :) = std(method_matrix{jj}, 1);
+    end
+    x = 21:60;
+    x = [x,  fliplr(x)];
+    
+     fig1 = gcf;
+    xbase = 21:60;
+    plot(xbase, meanfl(1, :), 'r'); hold on; 
+    plot(xbase, meanfl(2, :), 'k'); hold on;   
+    plot(xbase, meanfl(3, :), 'b');
+    
+     y1 = meanfl(1, :) + stdfl(1,:);
+    y2 = meanfl(1, :) - stdfl(1,:);
+    y = [y1, fliplr(y2)];
+    fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');
+    
+    y1 = meanfl(2, :) + stdfl(2,:);
+    y2 = meanfl(2, :) - stdfl(2,:);
+    y = [y1, fliplr(y2)];
+    fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
+    
+    y1 = meanfl(3, :) + stdfl(3,:);
+    y2 = meanfl(3, :) - stdfl(3,:);
+    y = [y1, fliplr(y2)];
+    fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
+    
+    legend( leg{1}, leg{2}, leg{3},'FontSize', 14);
+    t = strcat( prob.name , '  llower accuracy'  );
+    title(t,  'FontSize', 16);
+    
+    numk = prob.n_lvar;
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_lowerAcc.fig');
+    savefig(savename);
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_lowerAcc.png');
+    saveas(fig1, savename);
+    close(fig1);
     
     
 end
@@ -124,7 +182,8 @@ fprintf(fp,'\n');
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
-    fprintf(fp, '%s,', prob.name);
+    name = strcat( prob.name, '_', num2str(prob.n_lvar));
+    fprintf(fp, '%s,', name);
     for jj = 1:nm
         fprintf(fp, '%f,', medianmatrix(ii, jj));
     end
