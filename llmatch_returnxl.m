@@ -5,14 +5,14 @@ clearvars;
 close all;
 
 seedmax = 11;
-problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()',  'dsm1(2, 2)',  'dsm1(3, 3)'};
+problems = { 'smd1(1,1,1)','smd2(1,1,1)','smd5(1,1,1)'};
 
 
 % methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 % leg = {'EIM', 'BEL', 'GEN'};
 
-methods = {'llmatcheim', 'llmatchble', 'llmatchhyb'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
-leg = {'EIM', 'BEL', 'HYB'};
+methods = {'llmatcheim', 'llmatchble', 'llmatchhyb', 'llmatchswitch'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
+leg = {'EIM', 'BEL', 'HYB', 'SWI'};
 np  = length(problems);
 nm  = length(methods);
 
@@ -53,7 +53,7 @@ for ii = 1:np
         collectionpermethod= zeros( 6, seedmax);
         for kk = 1:seedmax
             % put the final result of search to the end
-            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
+            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' )
             fl = csvread(savename);
             fl_collection{jj}(ii, kk) = fl(end, 1);
         end

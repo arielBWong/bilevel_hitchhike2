@@ -26,9 +26,10 @@ solver_folder = strcat(pwd,'\globalsolver');
 addpath(solver_folder);
 
          
-problems = { 'dsm3(3, 3)', 'dsm3d(3, 3)', 'dsm3(2, 2)', 'dsm3d(2, 2)',...
-             'dsm2(3, 3)', 'dsm2d(3, 3)', 'dsm2(2, 2)', 'dsm2d(2, 2)', ...
-             'dsm1dc1(3, 3)', 'dsm1dc1(3, 3)', 'dsm1dc1(2, 2)', 'dsm1dc1(2, 2)'};
+problems = { 'dsm1(2,2)', 'dsm2(2,2)', 'dsm3(2, 2)', ...
+             'dsm1d(2, 2)', 'dsm2d(2, 2)', 'dsm3d(2, 2)',...
+             'dsm1dc1(2, 2)', 'dsm2dc1(2, 2)', 'dsm3dc1(2, 2)'};
+        
 
 seeds = linspace(1, 11, 11);
 

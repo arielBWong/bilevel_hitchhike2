@@ -34,7 +34,7 @@ prob = eval(prob);
 % end
 
 % algo parameter
-numiter_l               = 20; % 60 in total
+numiter_l               = 40; % 100 in total
 initsize_l              = 20;
 numiter_u               = 30; % 80 in total
 inisize_u               = 20;
@@ -148,7 +148,7 @@ for i = 1:numiter_u
 end
 nxu = size(xu, 1);
 nxl = n_feval;
-perfrecord_umoc(xu, fu, fc, prob, seed, 'hyb',nxu, nxl);
+perfrecord_umoc(xu, xl, fu, fc, prob, seed, 'hyb', nxu, nxl);
 
 end
 

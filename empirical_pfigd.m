@@ -10,14 +10,19 @@ close all;
 
 
 seedmax = 11;
-% read a seed and
-problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)',...
-             'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)', ...
-             'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)'};
 
 met = {'EIM', 'BEL', 'GEN'};
 met = {'HYB', 'EIM', 'BEL'};
-problems ={ 'dsm1(2, 2)',  'dsm1(3, 3)'};
+problems ={ 'dsm1(2, 2)','dsm1d(2, 2)',...
+            'dsm2(2, 2)','dsm2d(2, 2)',...
+            'dsm3(2, 2)','dsm3d(2, 2)',...
+            'dsm1dc1(2, 2)', 'dsm2dc1(2, 2)', 'dsm3dc1(2, 2)'};
+        
+problems ={ 'dsm1(4, 4)','dsm1d(4, 4)',...
+            'dsm2(4, 4)','dsm2d(4, 4)',...
+            'dsm3(4, 4)','dsm3d(4, 4)',...
+            'dsm1dc1(4, 4)', 'dsm2dc1(4, 4)', 'dsm3dc1(4, 4)'};
+
 % methods = {'Ehv_eval', 'EIM_eval', 'ea_ea'};
 methods = { 'hyb', 'EIM_eval', 'sao_archiveinsert'}; %, 'ea_ea','sao_onerand', 'sao_popinsert'
 
@@ -201,7 +206,8 @@ fprintf(fp, '\n');
 
 for ii = 1:np
     prob = eval(problems{ii});
-     fprintf(fp, '%s,', prob.name);
+    name = strcat(prob.name, '_', num2str(prob.n_lvar));
+     fprintf(fp, '%s,', name);
      for jj = 1:length(methods)
         fprintf(fp, '%f,',  statistic_matrix(3, (ii-1) * length(methods)+jj));
      end

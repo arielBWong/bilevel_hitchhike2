@@ -23,6 +23,10 @@ if ~contains(match_method, '_')
 elseif contains(match_method, 'hyb')
     match_method =  str2func( match_method);
     match_method(xu, prob, 20, 20, 'EIMnext', 20, 'EIM_eval', seed);
+    
+elseif contains(match_method, 'switch')
+    match_method =  str2func( match_method);
+    match_method(xu, prob, 20, 20, 'EIMnext', 20, 'EIM_eval', seed);
 else    
     num_pop = 20;
     if contains(match_method, 'archive')

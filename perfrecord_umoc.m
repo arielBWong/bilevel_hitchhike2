@@ -1,4 +1,4 @@
-function  perfrecord_umoc(xu, fu, fc, prob, seed, method, nxu, nxl)
+function  perfrecord_umoc(xu, xl, fu, fc, prob, seed, method, nxu, nxl)
 % save nd front
 %
 
@@ -18,6 +18,17 @@ if strcmp(method(1:2), 'll') % for paper deceptive analysis
     lowersave(xu, fu, fc, prob, seed, method);
     return 
 end
+
+% save original results
+savename_xu = strcat(savepath, '\xu_raw_', num2str(seed),'.csv');
+csvwrite(savename_xu, xu);
+savename_xl = strcat(savepath, '\xl_raw_', num2str(seed),'.csv');
+csvwrite(savename_xl, xl);
+savename_fu = strcat(savepath, '\fu_raw_', num2str(seed),'.csv');
+csvwrite(savename_fu, fu);
+savename_fc = strcat(savepath, '\fc_raw_', num2str(seed),'.csv');
+csvwrite(savename_fc, fc);
+
 
 % extract nd front
 num_con = size(fc, 2);

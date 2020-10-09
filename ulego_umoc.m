@@ -34,7 +34,7 @@ prob = eval(prob);
 % end
 
 % algo parameter
-numiter_l               = 40;
+numiter_l               = 80; %  100 intotal
 initsize_l              = 20;
 numiter_u               = 60;
 inisize_u               = 20;
@@ -94,6 +94,7 @@ for i = 1:numiter_u
     [newfu, newfc] = prob.evaluate_u(newxu, newxl);
     %--assemble xu fu fc
     xu = [xu; newxu];
+    xl = [xl; newxl];
     fu = [fu; newfu];
     fc = [fc; newfc];
     llfeasi_flag = [llfeasi_flag, flag];
@@ -141,7 +142,7 @@ for i = 1:numiter_u
 end
 nxu = size(xu, 1);
 nxl = n_feval;
-perfrecord_umoc(xu, fu, fc, prob, seed, fitnesshandle,nxu, nxl);
+perfrecord_umoc(xu, xl, fu, fc, prob, seed, fitnesshandle,nxu, nxl);
 
 end
 

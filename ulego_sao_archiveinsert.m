@@ -37,8 +37,8 @@ num_popu    = 20;   % 80 in total
 num_genu    = 1200;
 iter_frequ  = 20;
 
-num_popl    = 20;   % 60 in total
-num_genl    = 800;
+num_popl    = 20;   % 100 in total
+num_genl    = 1600;
 iter_freql  = 20;
 
 
@@ -191,7 +191,7 @@ nxl = n_feval;
 disp(nxu);
 disp(nxl);
 method = 'sao_archiveinsert';
-perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl);
+perfrecord_sao(xu, xl, fu, fc, prob, seed, method, nxu, nxl);
 end
 
 function nd_frontnorm = get_ndfront(fu, fc, normhn)

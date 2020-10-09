@@ -75,5 +75,18 @@ classdef smd1
             c=[];
             
         end
+        
+        function xl_prime = get_xlprime(obj, xu)
+            for i = 1:obj.q
+                xl_prime(i) = 0;
+            end
+            
+            j = 1;
+            for i = obj.q + 1 : obj.q + obj.r
+      
+                xl_prime(i) = xu(obj.p+ j);
+                j = j + 1;
+            end
+        end
     end
 end

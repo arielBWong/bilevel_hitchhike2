@@ -19,10 +19,11 @@ addpath(problem_folder);
  % problems = { 'dsm1(3,3)',  'dsm1d(3,3)', 'dsm1dc1(3,3)','dsm1dc2(3,3)' };   
  % problems = { 'dsm1(2,2)',  'dsm1d(2,2)', 'dsm1dc1(2,2)','dsm1dc2(2,2)' }; 
  
-problems = {'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()'};
+problems = {'smd1()', 'smd2()','smd5()'};
+% problems = {'dsm1(2,2)'};
 seeds = linspace(1, 11, 11);
 
-match_methods = {'llmatch_hyb', 'llmatch_sao_archiveinsert', 'llmatch'}; % 'llmatch_sao_archiveinsert', 'llmatch', 'llmatch_sao_pop', ,  'llmatch_sao_archiveinsert'
+match_methods = {'llmatch_switch'}; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_hyb'
 
 % llmatch_globalmin_cmp(problems{1}, match_methods{1}, 1);
 

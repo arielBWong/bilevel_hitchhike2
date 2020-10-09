@@ -87,11 +87,12 @@ classdef smd5
             
         end
         
-        function xl = matchingxl(obj, xu)
+        function xl_prime = get_xlprime(obj, xu)
             xl1 = ones(1, obj.q);
             xu2 = xu(1, obj.p + 1:end);
             xl2 = sqrt(abs(xu2));
             xl = [xl1, xl2];
+            xl_prime = xl;
         end
     end
 end

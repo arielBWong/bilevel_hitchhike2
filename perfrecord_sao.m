@@ -1,4 +1,4 @@
-function  perfrecord_sao(xu, fu, fc, prob, seed, method, nxu, nxl)
+function  perfrecord_sao(xu, xl, fu, fc, prob, seed, method, nxu, nxl)
 % save nd front
 %
 % nxu number of function evaluation upper
@@ -17,6 +17,19 @@ n = exist(savepath);
 if n ~= 7
     mkdir(savepath)
 end
+
+
+% save original results
+savename_xu = strcat(savepath, '\xu_raw_', num2str(seed),'.csv');
+csvwrite(savename_xu, xu);
+savename_xl = strcat(savepath, '\xl_raw_', num2str(seed),'.csv');
+csvwrite(savename_xl, xl);
+savename_fu = strcat(savepath, '\fu_raw_', num2str(seed),'.csv');
+csvwrite(savename_fu, fu);
+savename_fc = strcat(savepath, '\fc_raw_', num2str(seed),'.csv');
+csvwrite(savename_fc, fc);
+
+
 
 % extract nd front
 num_con = size(fc, 2);
