@@ -8,6 +8,7 @@ seedmax = 11;
 problems = { 'dsm1(2, 2)','dsm1d(2, 2)','dsm1dc1(2, 2)', ...
              'dsm2(2, 2)', 'dsm2d(2, 2)','dsm2dc1(2, 2)', ...
              'dsm3(2, 2)', 'dsm3d(2, 2)', 'dsm3dc1(2, 2)'};
+% problems = {'dsm1(3,3)', 'dsm1d(3,3)'};
 
 methods = { 'EIM_eval', 'sao_archiveinsert', 'hyb'};
 np = length(problems);
@@ -46,7 +47,7 @@ for ii = 1: np
     %----for ii -- problem routine
 end
 %---process ndmatrix_problems----
-statistic_matrix = zeros(6, nm * np); %(mean, std, median, median_id, nn)
+statistic_matrix = zeros(7, nm * np); %(mean, std, median, median_id, nn)
 for ii = 1 : np
     % plot across problems
     % (1) read in empf
@@ -77,8 +78,9 @@ for ii = 1 : np
         % median function evaluation
         prob = eval(problems{ii});
         method = methods{jj};
-        lower_median = lower_performance(ids(middle), prob, method);
-        statistic_matrix(6, (ii-1) * nm + jj)  = lower_median;
+        [lower_median, lower_mean, lower_std] = lower_performance(ids(middle), prob, method);
+        statistic_matrix(6, (ii-1) * nm + jj)  = lower_mean;
+        statistic_matrix(7, (ii-1) * nm + jj)  = lower_std;
         
         savepath = strcat(pwd, '\result_folder\', prob.name, '_',  num2str(prob.n_lvar), '_',method);
         % savepath = strcat(pwd, '\result_folder\', prob.name, '_', method);
@@ -108,13 +110,14 @@ for ii = 1:np
      fprintf(fp, '%s,', name);
      for jj = 1:length(methods)
         fprintf(fp, '%f,',  statistic_matrix(3, (ii-1) * length(methods)+jj));
-        fprintf(fp, '%f,',  statistic_matrix(6, (ii-1) * length(methods)+jj));
+        second = strcat(num2str(statistic_matrix(6, (ii-1) * length(methods)+jj)),   char(177), num2str(statistic_matrix(7, (ii-1) * length(methods)+jj)) );
+        fprintf(fp, '%s,', second);
      end
      fprintf(fp, '\n');
 end
 fclose(fp);
 
-function median_accuracy = lower_performance(seed, prob, method)
+function [ median_accuracy, mean_fl, std_fl]= lower_performance(seed, prob, method)
 
 savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(prob.n_lvar), '_', method);
 % savepath = strcat(pwd, '\result_folder\', prob.name,  '_', method);
@@ -126,6 +129,8 @@ xl = csvread(savename_xl);
 
 fl = prob.evaluate_l(xu, xl);
 median_accuracy = median(fl);
+mean_fl = mean(fl);
+std_fl = std(fl)
 
 
 end

@@ -160,9 +160,16 @@ for g=1:n
         nd_index = Paretoset(fu);
         nd_front = fu(nd_index, :);
         clf('reset');
-        % f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
-        % f2 =scatter(newfu(:, 1), newfu(:,2), 'go', 'filled');drawnow;
+        f1 = scatter(nd_front(:,1), nd_front(:,2),'ro', 'filled'); hold on ;
+        f2 =scatter(newfu(:, 1), newfu(:,2), 'go', 'filled');drawnow;
         % f3 = scatter(expfu(1), expfu(2), 'bo', 'filled'); drawnow;
+        fprintf('new xu and xl, fl are  \n');
+        disp(new_xu(1,:));
+        disp(new_xl);
+        newfl = prob.evaluate_l(new_xu, new_xl);
+        disp(newfl);
+        
+        
         num_nd = size(nd_front, 1);
         if num_nd >1
             nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
