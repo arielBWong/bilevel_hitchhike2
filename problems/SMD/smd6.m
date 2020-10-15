@@ -91,5 +91,18 @@ classdef smd6
             %-cie
             c=[];
         end
+        
+        function xl_prime = get_xlprime(obj, xu)
+            for i = 1:obj.q+obj.s
+                xl_prime(i) = 0;
+            end
+            
+            j = 1;
+            for i = obj.q+obj.s + 1 : obj.q+obj.s + obj.r
+      
+                xl_prime(i) = xu(obj.p+ j);
+                j = j + 1;
+            end
+        end
     end
 end

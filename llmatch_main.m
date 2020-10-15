@@ -3,29 +3,19 @@ clearvars;
 close all;
 problem_folder = strcat(pwd,'\ND_Sort');
 addpath(problem_folder);
+problem_folder = strcat(pwd,'\problems\Shekel');
+addpath(problem_folder);
+ 
+problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
+    'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 
-% problems = { 'dsm1(3, 3)', 'dsm1d(3, 3)','dsm1dc1(3, 3)','dsm1dc2(3, 3)',...
-%          'dsm2(3, 3)', 'dsm2d(3, 3)','dsm2dc1(3, 3)','dsm2dc2(3, 3)',...
-%               'dsm3(3, 3)', 'dsm3d(3, 3)','dsm3dc1(3, 3)','dsm3dc2(3, 3)' };
-%           
- 
-%           problems = { 'dsm1(2,2)', 'dsm1d(2,2)','dsm1dc1(2,2)','dsm1dc2(2,2)',...
-%          'dsm2(2,2)', 'dsm2d(2,2)','dsm2dc1(2,2)','dsm2dc2(2,2)',...
-%               'dsm3(2,2)', 'dsm3d(2,2)','dsm3dc1(2,2)','dsm3dc2(2,2)' }; % change p3 term back to scale 10
-%           
-          
- % problems = { 'dsm1(4,4)',  'dsm1d(4,4)', 'dsm1dc1(4,4)','dsm1dc2(4,4)' }; % change p3 term back to scale 10
- % problems = { 'dsm1(5,5)',  'dsm1d(5,5)', 'dsm1dc1(5,5)','dsm1dc2(5,5)' };     
- % problems = { 'dsm1(3,3)',  'dsm1d(3,3)', 'dsm1dc1(3,3)','dsm1dc2(3,3)' };   
- % problems = { 'dsm1(2,2)',  'dsm1d(2,2)', 'dsm1dc1(2,2)','dsm1dc2(2,2)' }; 
- 
-problems = {'smd1()', 'smd2()','smd5()'};
-% problems = {'dsm1(2,2)'};
+problems ={
+    'Shekel(5)',...
+    };
 seeds = linspace(1, 11, 11);
 
-match_methods = {'llmatch_switch'}; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_hyb'
+match_methods = {'llmatch_sao_archiveinsert', 'llmatch'}; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_hyb'
 
-% llmatch_globalmin_cmp(problems{1}, match_methods{1}, 1);
 
 np = length(problems);
 ns = length(seeds);
@@ -44,5 +34,6 @@ end
 
 nrun = length(paras);
 parfor i =1:nrun
-llmatch_globalmin_cmp(paras{i}{1}, paras{i}{3},  paras{i}{2});
+% llmatch_globalmin_cmp(paras{i}{1}, paras{i}{3},  paras{i}{2});
+llmatch_behaviourstudy(paras{i}{1}, paras{i}{3},  paras{i}{2})
 end

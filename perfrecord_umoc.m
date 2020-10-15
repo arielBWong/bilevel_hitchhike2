@@ -15,7 +15,7 @@ end
 
 % compatible for saving lower level
 if strcmp(method(1:2), 'll') % for paper deceptive analysis
-    lowersave(xu, fu, fc, prob, seed, method);
+    lowersave(xl, fu, fc, prob, seed, method);
     return 
 end
 

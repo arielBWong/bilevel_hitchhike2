@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, num_gen, iter_freq, varargin)
+function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, itersize, iter_freq, varargin)
 % this lower level matching method uses population based sao to find a
 % matching xl for upper level xu
 % input:
@@ -24,10 +24,13 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, n
 l_nvar = prob.n_lvar;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
-xu_init = repmat(xu, num_pop, 1);
-train_xl = lhsdesign(num_pop,l_nvar,'criterion','maximin','iterations',1000);
-train_xl = repmat(lower_bound, num_pop, 1) ...
-    + repmat((upper_bound - lower_bound), num_pop, 1) .* train_xl;
+% init_sizel = 2 * l_nvar + 1;
+init_sizel = 11 * l_nvar - 1;
+init_sizel =7;
+xu_init = repmat(xu, init_sizel, 1);
+train_xl = lhsdesign(init_sizel,l_nvar,'criterion','maximin','iterations',1000);
+train_xl = repmat(lower_bound, init_sizel, 1) ...
+    + repmat((upper_bound - lower_bound), init_sizel, 1) .* train_xl;
 
 % evaluate/get training fl from xu_init and train_xl
 % compatible with non-constriant problem
@@ -44,8 +47,9 @@ end
 % (3) when update frequence is met, evaluate current population,
 %       expand krg training data, update gsolver objective function
 param = struct();
-initmatrix =train_xl;
-n = floor(num_gen/iter_freq);
+initmatrix = train_xl;
+initmatrix = [];
+n = itersize;
 for g = 1: n
     % fprintf('lower gen %d\n', g);
     funh_obj = @(x)llobj(x, krg_obj);
@@ -62,16 +66,16 @@ for g = 1: n
     
     if growflag % there is unseen data in evolution
         [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
-        % [~, sx, ~] = initmatrix_pick(train_xl, train_fl, train_fc);
-        % initmatrix = sx(1:num_pop, :);
-        % [initmatrix, ~] = unique(initmatrix,'rows','stable');
         initmatrix = [];
     else % there is no unseen data in evolution
             % re-introduce random individual 
-            fprintf('no unseen data in last population, introduce randomness');
-            initmatrix = [];
+        fprintf('no unseen data in last population, introduce randomness');
+        initmatrix = [];
     end
 end
+
+% n = size(train_xl, 1);
+% fprintf('ble lower evaluation size %s \n', num2str(n));
 
 % local search for best xl
 % connect a local search to sao
@@ -91,8 +95,8 @@ end
 
 %----
 % save lower level
-% llcmp = true;
-llcmp = false;
+llcmp = true;
+%llcmp = false;
 if llcmp
     method = 'llmatchble';
     seed = varargin{1};
@@ -102,7 +106,7 @@ if llcmp
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
     
-    perfrecord_umoc(train_xl, train_fl, train_fc, prob, seed, method, 0, 0);
+    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0);
 end 
 
 end
@@ -129,8 +133,6 @@ for ii =1:num_con
     [c(:, ii), ~] = dace_predict(x, krging_con{ii});
 end
 end
-
-
 
 %objective wrapper for true evaluation
 function f = llobjective(xl, xu, prob)

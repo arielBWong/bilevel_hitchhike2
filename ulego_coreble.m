@@ -32,7 +32,8 @@ numl = prob.n_lvar;
 
 % algorithm parameter
 evaln = 1;
-
+n = 80;
+initsize_u  = 10;
 num_popu    = 20;   % 80 in total
 num_genu    = 1200;
 iter_frequ  = 20;
@@ -40,6 +41,7 @@ iter_frequ  = 20;
 num_popl    = 20;   % 60 in total
 num_genl    = 800;
 iter_freql  = 20;
+iter_sizel = 60;   % 70 intotal
 
 
 max_nl = 20000;
@@ -53,14 +55,14 @@ upper_bound = prob.xu_bu;
 lower_bound = prob.xu_bl;
 
 %--xu initialization
-xu = lhsdesign(num_popu,u_nvar,'criterion','maximin','iterations',1000);
-xu = repmat(lower_bound, num_popu, 1) + repmat((upper_bound - lower_bound), num_popu, 1) .* xu;
+xu = lhsdesign(initsize_u,u_nvar,'criterion','maximin','iterations',1000);
+xu = repmat(lower_bound, initsize_u, 1) + repmat((upper_bound - lower_bound), initsize_u, 1) .* xu;
 
 xl = [];
 llfeasi_flag = [];
 % -xu match its xl and evaluate fu
-for i=1:num_popu
-    [xl_single, nl, flag] = llmatch_sao_archiveinsert(xu(i, :), prob, num_popl, num_genl, iter_freql);
+for i=1:initsize_u
+    [xl_single, nl, flag] = llmatch_sao_archiveinsert(xu(i, :), prob, num_popl, iter_sizel, iter_freql);
      xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + nl;           %record lowerlevel nfeval
@@ -71,7 +73,7 @@ end
 num_con = size(fc, 2);
 
 %--fu adjust
-for i=1:num_popu
+for i=1:initsize_u
     fu = llfeasi_modify(fu, llfeasi_flag, i);
 end
 
@@ -79,8 +81,10 @@ end
 [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, normhn);
 
 %--main population based optimization  routine
-n = round(num_genu/iter_frequ);                             % how many  evolution  subroutine
-initmatrix = xu;                                            % no normalization on x
+                            % how many  evolution  subroutine
+% initmatrix = xu; 
+initmatrix = [];
+% no normalization on x
 for g=1:n
     disp(g);
     param.gen = iter_frequ;
@@ -109,7 +113,7 @@ for g=1:n
     for i=1:evaln
         % match new_xl for new_xu
         % tic;
-        [xl_single, nl, flag]  = llmatch_sao_archiveinsert(new_xu(i, :), prob, num_popl, num_genl, iter_freql);
+        [xl_single, nl, flag]  = llmatch_sao_archiveinsert(new_xu(i, :), prob, num_popl, iter_sizel, iter_freql);
         % toc;
         new_xl = [new_xl; xl_single];
         llfeasi_flag = [llfeasi_flag, flag];
@@ -139,7 +143,8 @@ end
 if coresteps
     n_up =  size(xu, 1);
     n_low = n_feval;
-    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'ble');
+    method = strcat('ble_init', num2str(initsize_u));
+    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, method);
 else
     upper_localpostprocess(prob, xu, xl, fu, n_feval, seed, 'ble');
 end

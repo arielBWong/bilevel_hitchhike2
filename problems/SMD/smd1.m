@@ -84,7 +84,7 @@ classdef smd1
             j = 1;
             for i = obj.q + 1 : obj.q + obj.r
       
-                xl_prime(i) = xu(obj.p+ j);
+                xl_prime(i) =atan(xu(obj.p+ j));
                 j = j + 1;
             end
         end

@@ -23,7 +23,7 @@ function[match_xl, n_fev, flag] = llmatch_hyb(xu, prob, num_pop, num_gen, propos
 
 l_nvar = prob.n_lvar;
 % init_size = 11 * l_nvar -1;
-init_size = 20;
+init_size = 2 * l_nvar + 1;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
@@ -44,20 +44,6 @@ end
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
 for iter = 1:iter_size
-    %--------------------------
-    % eim propose next xl
-    % lower level is single objective so no normalization method is needed
-    [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
-        num_pop, num_gen, train_fc, fithn);
-    
-    % evaluate next xl with xu
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
-    
-    % add to training
-    train_xl = [train_xl; new_xl];
-    train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];  %compatible with nonconstraint
-    
     % -------------------------------
     % dual adding. believer search
     [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, str2func('normalization_z'));
@@ -77,12 +63,35 @@ for iter = 1:iter_size
     train_fc = [train_fc; new_fc];  %compatible with nonconstraint   
     %--------------------------------
     
+    
+    %--------------------------
+    % eim propose next xl
+    % lower level is single objective so no normalization method is needed
+    [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
+        num_pop, num_gen, train_fc, fithn);
+    
+    % evaluate next xl with xu
+    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+    
+    % add to training
+    train_xl = [train_xl; new_xl];
+    train_fl = [train_fl; new_fl];
+    train_fc = [train_fc; new_fc];  %compatible with nonconstraint   
+    
 end
 
+save('train_xl.mat', 'train_xl');
+save('train_fl.mat', 'train_fl');
+save('train_fc.mat', 'train_fc');
+
+
+% n = size(train_xl, 1);
+% fprintf('hyb lower evaluation size %s \n', num2str(n));
 % connect a local search to ego
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
 nolocalsearch = true;
+disp(best_x);
 if nolocalsearch
     match_xl = best_x;
     n_fev = size(train_xl, 1);

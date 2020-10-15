@@ -93,5 +93,19 @@ classdef smd12
             c = - c;
           
         end
+        
+         function xl_prime = get_xlprime(obj, xu)
+            for i = 1:obj.q
+                xl_prime(i) = 1/(sqrt(obj.q -1));
+            end
+            if obj.r ~=1
+                error('not suitable for smd11 config r ~= 1')
+            end
+            j = 1;
+            for i = obj.q + 1 : obj.q + obj.r     
+                xl_prime(i) = atan(xu(obj.p+ j) - 1);
+                j = j + 1;
+            end
+        end
     end
 end

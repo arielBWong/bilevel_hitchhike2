@@ -9,7 +9,7 @@ function ulego_umoc_hyb(prob, seed, str_nextxhn, fitnesshandle, normhn, llmatch_
 %               fitnesshandle: string, the function that upper level next x method uses for its evolution process
 %               normhn: string, normalization function used in EIMnext_znorm
 %               llmatch_nextx: string, lower level match next x propose method
-%             
+%
 %
 %
 %     output
@@ -29,12 +29,12 @@ prob = eval(prob);
 % save some runs
 % savepath = strcat('C:\Users\z3276872\matlab_scripts\bilevel_hitchhike2\result_folder\', prob.name, '_EIM_eval');
 % file = strcat(savepath, '\fu_', num2str(seed),'.csv');
-% if exist(file,'file') == 2  % ignore existing runs 
+% if exist(file,'file') == 2  % ignore existing runs
 %     return;
 % end
 
 % algo parameter
-numiter_l               = 40; % 100 in total
+numiter_l               = 20; % 60 in total
 initsize_l              = 20;
 numiter_u               = 30; % 80 in total
 inisize_u               = 20;
@@ -64,6 +64,7 @@ llfeasi_flag = [];
 % -xu match its xl and evaluate fu
 for i=1:inisize_u
     [xl_single, n, flag] = llmatch_hyb(xu(i, :), prob,num_pop, num_gen,llmatch_nextx, numiter_l, fitnesshandle);
+    
     xl = [xl; xl_single];
     llfeasi_flag = [llfeasi_flag, flag];
     n_feval = n_feval + n; %record lowerlevel nfeval
@@ -80,20 +81,7 @@ end
 
 %-main ulego routine
 for i = 1:numiter_u
-    %--search next xu
-    [newxu, info] = nextxhn(xu, fu, upper_bound, lower_bound, num_pop, num_gen, fc, fithn, normhn);
     
-    %---test on recreating expected fu from kriging
-    % expfu = expectedfu_fromkrg(newxu, info);
-    
-    %--get its xl
-    [newxl, n, flag] = llmatch_hyb(newxu, prob,num_pop, num_gen, llmatch_nextx, numiter_l, fitnesshandle);
-    % fprintf('xl matching feasibility is %d \n', flag);
-    n_feval = n_feval + n;
-    llfeasi_flag = [llfeasi_flag, flag];
-    [xu, xl, fu, fc] = postnew_process(prob, newxu, newxl, xu, xl, fu, fc, llfeasi_flag);
-   
-    %-----------------------------------
     %--dual process of believer
     [krg_obj, krg_con, ~] = update_surrogate(xu, fu, fc, str2func('normalization_nd'));
     funh_obj = @(x)ulobj(x, krg_obj);
@@ -112,6 +100,24 @@ for i = 1:numiter_u
     [xu, xl, fu, fc] = postnew_process(prob, newxu, newxl, xu, xl, fu, fc, llfeasi_flag);
     
     
+    
+    %--search next xu
+    [newxu, info] = nextxhn(xu, fu, upper_bound, lower_bound, num_pop, num_gen, fc, fithn, normhn);
+    
+    %---test on recreating expected fu from kriging
+    % expfu = expectedfu_fromkrg(newxu, info);
+    
+    %--get its xl
+    [newxl, n, flag] = llmatch_hyb(newxu, prob,num_pop, num_gen, llmatch_nextx, numiter_l, fitnesshandle);
+    % fprintf('xl matching feasibility is %d \n', flag);
+    n_feval = n_feval + n;
+    llfeasi_flag = [llfeasi_flag, flag];
+    [xu, xl, fu, fc] = postnew_process(prob, newxu, newxl, xu, xl, fu, fc, llfeasi_flag);
+    
+    %-----------------------------------
+    
+    
+    
     %-plot ----
     num_obj = size(fu, 2);
     ref_point = ones(1, num_obj) * 1.1;
@@ -127,7 +133,7 @@ for i = 1:numiter_u
             if num_nd > 1
                 nd_front = (nd_front - min(nd_front))./(max(nd_front) - min(nd_front));
                 h = Hypervolume(nd_front,ref_point);
-               % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
+                % fprintf(' iteration: %d, nd normalised hypervolume: %f\n',  i,  h);
             end
         end
     else  % unconstraint problems
@@ -141,7 +147,7 @@ for i = 1:numiter_u
         if num_nd >1
             nd_front = (nd_front - min(nd_front)) ./ (max(nd_front) - min(nd_front));
             h = Hypervolume(nd_front,ref_point);
-           %  fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
+            %  fprintf(' iteration: %d, hypervolume: %f\n',  i,  h);
         end
     end
     %-plot ----
@@ -183,8 +189,8 @@ function [xu, xl, fu, fc] = postnew_process(prob, newxu, newxl, xu, xl, fu, fc, 
 %--assemble xu fu fc
 xu = [xu; newxu];
 xl = [xl; newxl];
-fu = [fu; newfu];    
-fc = [fc; newfc];    
+fu = [fu; newfu];
+fc = [fc; newfc];
 
 %--adjust fu by lower feasibility
 checkindex = size(xu, 1);

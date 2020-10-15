@@ -1,148 +1,88 @@
 %% lower level investigation
-% returned matching fl
-% convert median/mean to csv
+% find matching xl
+% calculate delta fl
 clearvars;
 close all;
 
-seedmax = 11;
+seedmax = 1;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
-    'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)'};
-problems = {'Shekel()'};
+    'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
+
+problems ={
+    'dsm1(4,4)',...
+    };
 
 
 % methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 % leg = {'EIM', 'BEL', 'GEN'};
 
-methods = {'llmatcheim', 'llmatchble'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix', 'llmatchhyb'
-leg = {'EIM', 'BEL'}; % , 'HYB'
+methods = {'llmatch', 'llmatch_sao_archiveinsert'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',,  'llmatch_hyb'
+leg = { 'EIM','BEL'}; % , 'HYB'
 np  = length(problems);
 nm  = length(methods);
-% infill_size = 92; %9-100
-% init_size = 9; 
+infill_size = 40;
+init_size = 21;
+num_experiments = 100; % size xu in its file
 
-% infill_size = 58; %43-100
-% init_size = 43; 
-
-
-infill_size = 51; %5-25
-init_size = 7; 
-
-prob = Shekel(5);
-[fm, ~]= prob.evaluate_u([4,4], []);
-a = 0;
-
-% lower level has fixed number of true evaluation before local search
-% 60 (20, 30, 40, 50, 60)
-% last one saved for local search final results
-
-for jj = 1:nm
-    fl_collection{jj} = zeros(np, seedmax);
-end
-
+% ------read in file
+out = cell(1, np);
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
-    
-    nv = prob.n_lvar;
-    if contains(prob.name, 'SMD')
-        xu = [0, 0];
-    else
-        k = 2: prob.n_lvar;
-        k = (k-1)/2;
-        xu = [0, k];
-    end
-    
-    
+    out{ii} = zeros(nm, num_experiments);
     
     for jj = 1:nm
         method = methods{jj};
         num = length(prob.xl_bl);
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method)
-        collectionpermethod= zeros( 6, seedmax);
-        for kk = 1:seedmax
-            % put the final result of search to the end
-            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
-            fl = csvread(savename);
-            fl_collection{jj}(ii, kk) = fl(end, 1);
-        end
-    end
-    
-    
-    % ----
-    % problem wise plot
-    method_matrix = cell(1, nm);
-    
-    for jj = 1:nm
-        method_matrix{jj} = zeros(seedmax, infill_size);
-        method = methods{jj};
-        num = length(prob.xl_bl);
-        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method)
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_llstudy_',method);
         
-        for kk = 1:seedmax
-            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
-            fl = csvread(savename);
-            temp = fl(init_size:end-1)';
-            
-            for mm = 1:size(temp, 2)
-                method_matrix{jj}(kk, mm) = abs(min(temp(1:mm)) - fm);
+        kk = 1;
+        % read algorithm fl
+        savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
+        fl = csvread(savename);
+        
+        % create prime fl
+        fl_prime = [];
+        savename = strcat(savepath, '\xu_', num2str(kk), '.csv');
+        xu = csvread(savename);
+        
+        % xu1 = xu(1,:);
+        % [match_xl, n_fev, flag] = match_method (xu1, prob,20, num_gen, freq, seed); 
+        
+        savename = strcat(savepath, '\xl_', num2str(kk), '.csv');
+        xl_search = csvread(savename);
+        xl_prime = [];
+        for mm = 1:size(xu, 1)
+            if contains(prob.name, 'SMD')
+                xl = prob.get_xlprime(xu(mm, :));
+            else
+                xl = xu(mm, :);
             end
+            fl_p = prob.evaluate_l(xu(mm, :), xl);
+            fl_prime = [fl_prime; fl_p];
         end
+        deltaF = abs(fl - fl_prime);
+        out{ii}(jj, :) = deltaF;     
     end
-    % ---save plot for each problem
-    
-    meanfl = zeros(nm, infill_size);
-    stdfl = zeros(nm, infill_size);
-    
-    for jj = 1:nm
-        meanfl(jj, :) = mean(method_matrix{jj}, 1);
-        stdfl(jj, :) = std(method_matrix{jj}, 1);
-    end
-    x = init_size: init_size + infill_size - 1;
-    x = [x,  fliplr(x)];
-    
-    fig1 = gcf;
-    xbase = init_size: init_size + infill_size - 1;
-    plot(xbase, meanfl(1, :), 'r'); hold on; 
-    plot(xbase, meanfl(2, :), 'k'); hold on;   
-    % plot(xbase, meanfl(3, :), 'b');
-    
-    y1 = meanfl(1, :) + stdfl(1,:);
-    y2 = meanfl(1, :) - stdfl(1,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');
-    
-    y1 = meanfl(2, :) + stdfl(2,:);
-    y2 = meanfl(2, :) - stdfl(2,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
-    
-%     y1 = meanfl(3, :) + stdfl(3,:);
-%     y2 = meanfl(3, :) - stdfl(3,:);
-%     y = [y1, fliplr(y2)];
-%     fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
-    
-    legend( leg{1}, leg{2},'FontSize', 14);
-    t = strcat( prob.name , '  Convergence init ', num2str(init_size), ' O5'   );
-    title(t,  'FontSize', 16);
-    
-    numk = prob.n_lvar;
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_init_', num2str(init_size) ,'_O5Converge.fig');
-    savefig(savename);
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_init_', num2str(init_size) , '_O5Converge.png');
-    saveas(fig1, savename);
-    close(fig1);
     
     
 end
+
+belwins = out{1}(1,:) -  out{1}(2, :);
+belwins(belwins>=0) = 1;
+belwins(belwins<0) = 0;
+sum(belwins)
+
+
 
 medianmatrix = zeros(np, nm);
 stdmatrix = zeros(np, nm);
 meanmatrix = zeros(np, nm);
 for ii = 1:np
     for jj = 1:nm
-        medianmatrix(ii, jj) = median(fl_collection{jj}(ii, :));
-        meanmatrix(ii, jj) = mean(fl_collection{jj}(ii, :));
-        stdmatrix(ii, jj) = std(fl_collection{jj}(ii, :));
+        medianmatrix(ii, jj) = median(out{ii}(jj, :));
+        meanmatrix(ii, jj) = mean(out{ii}(jj, :));
+        stdmatrix(ii, jj) = std(out{ii}(jj, :));
     end
 end
 
@@ -156,7 +96,7 @@ end
 
 
 
-savename = strcat(foldername,'\matchxl_mean.csv');
+savename = strcat(foldername,'\matchxl2_mean.csv');
 fp=fopen(savename,'w');
 fprintf(fp, 'problem_method, ');
 for jj = 1:nm
@@ -178,6 +118,31 @@ for ii = 1:np
 end
 fclose(fp);
 
+
+
+savename = strcat(foldername,'\matchxl2_std.csv');
+fp=fopen(savename,'w');
+fprintf(fp, 'problem_method, ');
+for jj = 1:nm
+    fprintf(fp,'%s, ', leg{jj} );
+end
+fprintf(fp,'\n');
+
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    name = strcat( prob.name, '_', num2str(prob.n_lvar));
+    fprintf(fp, '%s,', name);
+    for jj = 1:nm
+        
+        st = num2str(stdmatrix(ii, jj));
+        fprintf(fp, '%s,', st);
+    end
+    fprintf(fp, '\n');
+end
+fclose(fp);
+
+
 % to csv
 %-----median to csv
 foldername = strcat(pwd, '\result_folder\matchxl_invest');
@@ -186,7 +151,7 @@ if n ~= 7
     mkdir(foldername)
 end
 
-savename = strcat(foldername,'\matchxl_median.csv');
+savename = strcat(foldername,'\matchxl2_median.csv');
 fp=fopen(savename,'w');
 fprintf(fp, 'problem_method, ');
 for jj = 1:nm

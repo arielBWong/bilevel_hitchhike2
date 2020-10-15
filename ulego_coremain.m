@@ -46,10 +46,10 @@ nrun = length(paras);
 
 parfor i = 1:nrun
 
-     ulego_corehyb(paras{i}{1}, paras{i}{2}, 'EIMnext', 'EIM_eval',  'normalization_z', true); % true: core algorithm
+     %ulego_corehyb(paras{i}{1}, paras{i}{2}, 'EIMnext', 'EIM_eval',  'normalization_z', true); % true: core algorithm
      % ulego_coreeim(paras{i}{1}, paras{i}{2}, 'EIMnext', 'EIM_eval',  'normalization_z', true); % true: core algorithm
 
-     % ulego_coreble(paras{i}{1}, paras{i}{2}, 'normalization_z', true);
+     ulego_coreble(paras{i}{1}, paras{i}{2}, 'normalization_z', true);
      % ulego_coregen(paras{i}{1}, paras{i}{2}, 'normalization_z', false);
 end
 % 

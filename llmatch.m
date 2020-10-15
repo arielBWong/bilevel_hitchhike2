@@ -22,8 +22,10 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
-% init_size = 11 * l_nvar -1;
-init_size = 20;
+ % init_size = 2 * l_nvar + 1;
+init_size = 11 * l_nvar - 1;
+init_size = 7;
+% init_size = 10;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
@@ -57,9 +59,10 @@ for iter = 1:iter_size
     % add to training
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];  %compatible with nonconstraint
+    train_fc = [train_fc; new_fc];  % compatible with nonconstraint
 end
-
+% n = size(train_xl, 1);
+% fprintf('eim lower evaluation size %s \n', num2str(n));
 % connect a local search to ego
 % local search starting point selection
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
@@ -78,8 +81,8 @@ end
 
 
 % save lower level
-% llcmp = true;
-llcmp = false;
+llcmp = true;
+% llcmp = false;
 if llcmp
     method = 'llmatcheim';
     seed = varargin{1};
@@ -89,7 +92,9 @@ if llcmp
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
     
-    perfrecord_umoc(train_xl, train_fl, train_fc, prob, seed, method, 0, 0)
+    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0);
+    
+
 end
 
 end

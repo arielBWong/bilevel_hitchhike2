@@ -95,5 +95,19 @@ classdef smd10
             end
             c = - c;
         end
+        
+        
+        function xl_prime = get_xlprime(obj, xu)
+            for i = 1:obj.q
+                xl_prime(i) = 1/(sqrt(obj.q - 1));
+            end
+            
+            j = 1;
+            for i = obj.q + 1 : obj.q + obj.r
+      
+                xl_prime(i) = atan(xu(obj.p+ j));
+                j = j + 1;
+            end
+        end
     end
 end

@@ -23,8 +23,11 @@ classdef dsm1
             
             % bounds
             % init bound upper level
-            obj.xu_bl = [0, ones(1, obj.p-1) * (-obj.p)];
-            obj.xu_bu = [0.5, ones(1, obj.p -1) * obj.p];
+            % .xu_bl = [0, ones(1, obj.p-1) * (-obj.p)];
+            % obj.xu_bu = [0.5, ones(1, obj.p -1) * obj.p];
+            
+            obj.xu_bl = ones(1, obj.q) * (obj.q)/2;
+            obj.xu_bu = ones(1, obj.q) *(obj.q);
             
             
             % init bound lower level

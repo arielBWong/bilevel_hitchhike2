@@ -78,5 +78,18 @@ classdef smd4
             
             
         end
+        
+        function xl_prime = get_xlprime(obj, xu)
+            for i = 1:obj.q
+                xl_prime(i) = 0;
+            end
+            
+            j = 1;
+            for i = obj.q + 1 : obj.q + obj.r
+      
+                xl_prime(i) = exp(abs(xu(obj.p+ j))) - 1;
+                j = j + 1;
+            end
+        end
     end
 end

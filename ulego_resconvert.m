@@ -16,7 +16,7 @@ problems = { 'smd1()','smd2()','smd3()','smd4()','smd5()','smd6()','smd7()',...
 
 s = 11;
 seeds = linspace(1, s, s);
-algs = {'eim', 'bel', 'gen'};
+algs = {'eim', 'ble', 'hyb'};
 
 np = length(problems);
 ns = length(seeds);
@@ -34,10 +34,10 @@ total_evals = zeros(ns, np * na);
 for i = 1:np
     prob = eval(problems{i});
     numl = prob.n_lvar;
-    % savepath = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numl));
-    savepath = strcat(pwd, '\result_folder\', prob.name);
+    savepath = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numl));
+    % savepath = strcat(pwd, '\result_folder\', prob.name);
     for k = 1:na
-        filename = strcat(savepath, '_',  algs{k});
+        filename = strcat(savepath, '_',  algs{k}, '_init10');
         for j = 1:ns
             seed = seeds(j);
             singlerun_file = strcat(filename, '\out_', num2str(seed),'.csv')

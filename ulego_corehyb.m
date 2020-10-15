@@ -28,9 +28,10 @@ n_feval = 0;
 
 
 % algo parameter
-inisize_l = 20;
-numiter_l = 20;  % lower dual iteration
-numiter_u = 30;
+inisize_l = 10;
+numiter_l = 30;  % lower dual iteration
+numiter_u = 40;
+inisize_u = 10;
 num_pop   = 20;
 num_gen   = 20;
 
@@ -54,7 +55,7 @@ normhn = str2func(normhn);
 u_nvar      = prob.n_uvar;
 upper_bound = prob.xu_bu;
 lower_bound = prob.xu_bl;
-inisize_u   = 20;
+
 
 %-xu initialization
 xu = lhsdesign(inisize_u,u_nvar,'criterion','maximin','iterations',1000);
@@ -115,7 +116,8 @@ end
 if coresteps % no local search
     n_up =  size(xu, 1);
     n_low = n_feval;
-    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, 'hyb');
+    method = strcat('hyb_init', num2str(inisize_u));
+    ulego_coreending(xu, fu, fc, xl, prob, seed, n_up, n_low, method);
 else
     upper_localpostprocess(prob, xu, xl, fu, n_feval, seed, 'hyb');
 end
