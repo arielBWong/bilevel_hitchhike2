@@ -1,8 +1,14 @@
-function  lowersave(x, f, c, prob, seed, method)
+function  lowersave(x, f, c, prob, seed, method,  varargin)
 
 num = length(prob.xl_bl);
 savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
 % savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
+if ~isempty( varargin)
+    init_size =  varargin{1};
+    savepath = strcat(savepath, '_init_', num2str(init_size));
+end
+
+
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)

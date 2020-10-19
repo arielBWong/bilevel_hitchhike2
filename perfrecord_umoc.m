@@ -1,9 +1,17 @@
-function  perfrecord_umoc(xu, xl, fu, fc, prob, seed, method, nxu, nxl)
+function  perfrecord_umoc(xu, xl, fu, fc, prob, seed, method, nxu, nxl, varargin)
 % save nd front
 %
 
 % nxu: number of function evaluation upper
 % nxl: number of function evaluation lower
+
+
+% compatible for saving lower level
+if strcmp(method(1:2), 'll') % for paper deceptive analysis
+    lowersave(xl, fu, fc, prob, seed, method,varargin{1});
+    return 
+end
+
 
 num = length(prob.xl_bl);
 savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
@@ -13,11 +21,6 @@ if n ~= 7
     mkdir(savepath)
 end
 
-% compatible for saving lower level
-if strcmp(method(1:2), 'll') % for paper deceptive analysis
-    lowersave(xl, fu, fc, prob, seed, method);
-    return 
-end
 
 % save original results
 savename_xu = strcat(savepath, '\xu_raw_', num2str(seed),'.csv');

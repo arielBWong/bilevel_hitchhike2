@@ -1,4 +1,4 @@
-classdef tp3
+classdef tp6
     properties
         p = 1;
         q = 1;
@@ -9,12 +9,12 @@ classdef tp3
         xl_bl;
         xl_bu;
         xl_prime;
-        name = 'tp_so3';
+        name = 'tpso6';
         uopt = NaN;
-        lopt = NaN; % double check needed
+        lopt = 0.0625; % double check needed
     end
     methods
-        function obj = tp3(p, q)
+        function obj = tp6(p, q)
             % level variables
              if nargin > 1
                  obj.q = q;
@@ -23,7 +23,7 @@ classdef tp3
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
             
-            obj.xl_prime = 0.1 * ones(1, obj.q);
+            obj.xl_prime = 0.5 * ones(1, obj.q);
             
             % bounds
             %init bound upper level
@@ -33,7 +33,7 @@ classdef tp3
            
             % init bound lower level
             obj.xl_bl = zeros(1, obj.q) ;
-            obj.xl_bu = ones(1, obj.q) * 1;      
+            obj.xl_bu = ones(1, obj.q) * 10;      
         end
         
         function [f, c] = evaluate_u(obj, xu, xl) 
@@ -50,19 +50,12 @@ classdef tp3
             f = 0;
             n = 1;
            for i = 1: obj. q
-               index  = xl(:, i) > 0.4 & xl(:, i) <= 0.6;
-               other = ~index;
-               
-               fb1  = exp(-2 * log(2) *( ( (xl(:, i)-0.1)/ 0.8).^2) ) .* sqrt(sin( abs(5 * pi * xl(:, i))) ); 
-               fb2  = exp(-2 * log(2) * (( (xl(:, i)-0.1)/ 0.8).^2) ) .* sin( abs(5 * pi * xl(:, i))) .^ 6; 
-               
-               fb1(other) = 0;
-               fb2(index) = 0;
-               f = f + fb1 + fb2;
+               fi = 2 * sin(10 * exp(-0.2 * xl(:, i)) .* xl(:, i)) .* exp(-0.25 * xl(:, i));
+               f = f+fi;
            end
            
            f = f ./ n;
-           f = -f;
+           
             %-con
             c = [];
          end

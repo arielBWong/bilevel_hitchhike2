@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, iter_size, llfit_hn,  varargin)
+function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_nextx, init_size, iter_size, llfit_hn, varargin)
 % method of searching for a match xl for xu.
 % Problem(Prob) definition require certain formation for bilevel problems
 % evaluation method should be of  form 'evaluation_l(xu, xl)'
@@ -22,8 +22,8 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %--------------------------------------------------------------------------
 
 l_nvar = prob.n_lvar;
- % init_size = 2 * l_nvar + 1;
-init_size = 11 * l_nvar - 1;
+% init_size = 2 * l_nvar + 1;
+% init_size = 11 * l_nvar - 1;
 % init_size = 7;
 % init_size = 10;
 upper_bound = prob.xl_bu;
@@ -92,7 +92,7 @@ if llcmp
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
     
-    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0);
+    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
     
 
 end

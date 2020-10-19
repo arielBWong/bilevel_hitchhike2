@@ -1,4 +1,4 @@
-function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, itersize, iter_freq, varargin)
+function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, init_size, itersize, num_gen, varargin)
 % this lower level matching method uses population based sao to find a
 % matching xl for upper level xu
 % input:
@@ -6,7 +6,7 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, i
 %   prob: real problem instance for true evaluation
 %   num_pop: EA evolution parameter
 %   num_gen: EA evolution parameter
-%   iter_freq: Every how many generations when true evaluation and krg update  is applied
+%   num_gen: Every how many generations when true evaluation and krg update  is applied
 % output:
 %   matching_xl : found xl for xu
 %   n_fev : total number of function evaluation on lower level
@@ -24,13 +24,13 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, i
 l_nvar = prob.n_lvar;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
-% init_sizel = 2 * l_nvar + 1;
-init_sizel = 11 * l_nvar - 1;
-% init_sizel =7;
-xu_init = repmat(xu, init_sizel, 1);
-train_xl = lhsdesign(init_sizel,l_nvar,'criterion','maximin','iterations',1000);
-train_xl = repmat(lower_bound, init_sizel, 1) ...
-    + repmat((upper_bound - lower_bound), init_sizel, 1) .* train_xl;
+% init_size = 2 * l_nvar + 1;
+% init_size = 11 * l_nvar - 1;
+% init_size =7;
+xu_init = repmat(xu, init_size, 1);
+train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
+train_xl = repmat(lower_bound, init_size, 1) ...
+    + repmat((upper_bound - lower_bound), init_size, 1) .* train_xl;
 
 % evaluate/get training fl from xu_init and train_xl
 % compatible with non-constriant problem
@@ -55,7 +55,7 @@ for g = 1: n
     funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
 
-    param.gen=iter_freq;
+    param.gen=num_gen;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
     [~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, initmatrix, funh_con, param);
@@ -106,7 +106,7 @@ if llcmp
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
     
-    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0);
+    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
 end 
 
 end

@@ -1,4 +1,4 @@
-function llmatch_behaviourstudy(prob, match_method, seed)
+function llmatch_behaviourstudy(prob, match_method, seed, lower_init)
 % this function takes xu and problem as input
 % go through different lower level match method
 % return global match accuracy
@@ -7,8 +7,7 @@ function llmatch_behaviourstudy(prob, match_method, seed)
 
 prob = eval(prob);
 xu = select_xu(prob, 1);
-
-match_check(match_method, xu, prob, seed);
+match_check(match_method, xu, lower_init, prob, seed);
 
 end
 
@@ -28,21 +27,23 @@ xu = repmat(lower_bound, samplesize, 1) ...
 
 end
 
-function match_check(method, xu, prob, seed)
+function match_check(method, xu, lower_init, prob, seed)
 samplesize = size(xu, 1);
 xl = [];
-% lower_iter = 91;
-lower_iter =50;
+
+lower_iter = 300; 
 
 if ~contains(method, '_')
     rng(seed, 'twister');
     match_method =  str2func(method);
+    tic;
     for i = 1:samplesize
         xu_i = xu(i, :);
-        [match_xl, n_fev, flag] = match_method(xu_i, prob, 20, 20, 'EIMnext',lower_iter, 'EIM_eval', seed);
+        [match_xl, n_fev, flag] = match_method(xu_i, prob, 20, 20, 'EIMnext',lower_init, lower_iter, 'EIM_eval', seed);
         
         xl = [xl; match_xl];
     end
+    toc;
 elseif contains(method, 'hyb')
     rng(seed, 'twister');
     match_method =  str2func( method);
@@ -55,11 +56,13 @@ elseif contains(method, 'archive')
     rng(seed, 'twister');
     match_method =  str2func( method);
     freq =20;
+    tic;
     for i = 1:samplesize
         xu_i = xu(i, :);
-        [match_xl, n_fev, flag] = match_method (xu_i, prob,20, lower_iter, freq, seed);      
+        [match_xl, n_fev, flag] = match_method (xu_i, prob, 20, lower_init, lower_iter, freq, seed);      
         xl = [xl; match_xl];
     end
+    toc;
 end
 
 % save_study(xu, xl, prob,method, seed);
