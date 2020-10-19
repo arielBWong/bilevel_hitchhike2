@@ -1,9 +1,11 @@
 %% problem test
-prob = tp6(2,2);
-%xl =linspace(0, 10, 101);
+prob = tp3(1,1);
+lb1 = prob.xl_bl(1);
+ub1 = prob.xl_bu(1);
+xl =linspace(lb1, ub1, 101);
 
-%f = prob.evaluate_l([], xl');
-%plot(xl, f); 
+f = prob.evaluate_l([], xl');
+plot(xl, f); 
 
 xu = [1,1 ];
 fm = prob.evaluate_l([], [0.5, 0.5])
