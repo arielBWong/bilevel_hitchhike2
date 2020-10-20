@@ -66,9 +66,6 @@ for iter = 1:iter_size
     % [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
     
     tooclose = archive_check(new_xl, train_xl, prob);
-    if iter == 59
-        a = 0;
-    end
     if tooclose
         % ---- determine whether to switch to eim
         [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...

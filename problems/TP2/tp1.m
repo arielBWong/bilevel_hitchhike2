@@ -8,7 +8,7 @@ classdef tp1
         xu_bu;
         xl_bl;
         xl_bu;
-        name = 'tp_so1';
+        name = 'tpso1';
         uopt = NaN;
         lopt = NaN; % double check needed
     end

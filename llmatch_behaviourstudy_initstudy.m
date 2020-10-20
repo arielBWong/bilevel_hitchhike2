@@ -2,8 +2,12 @@
 clearvars;
 close all;
 seedmax = 29;
+
+k = 5;
+init_size = 5 * k + 1;
+
 problems ={
-        'tp3(10, 10)','tp5(10, 10)','tp6(10, 10)','tp7(10, 10)','tp8(10, 10)','tp9(10, 10)'...
+    'tp3(5, 5)'...
     };
 % 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
 % 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
@@ -13,20 +17,22 @@ problems ={
 
 
 
-methods = {'llmatcheim',  'llmatchble'};  % 'llmatchpop',
-leg = { 'EIM','BEL'};
+methods = {'llmatcheim',  'llmatchble', 'llmatchapt'};  % 'llmatchpop',
+leg = { 'EIM','BLE', 'HYB'};
 np  = length(problems);
 nm  = length(methods);
 
 max_iter = 300;
-init_size = 11;
 
-plotmatrix = zeros(np, max_iter  + 1); % 10 ble wins, -10 eim wins, 0 no significant
+
+plotmatrix_2eim = zeros(np, max_iter  + 1); % 10 beats eim,  0 no significant
+plotmatrix_2ble = zeros(np, max_iter  + 1); % -10 beats ble, 0 no significant
 
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
     num = prob.n_lvar;
+    name  = prob.name;
     
     algs_results = cell(1, nm);
     for jj = 1:nm
@@ -48,41 +54,77 @@ for ii = 1:np
     for nn = 1:max_iter+1
         eim = algs_results{1}(:, nn);
         ble = algs_results{2}(:, nn);
+        hyb = algs_results{3}(:, nn);
         
-        % test whether equal median in median ble test
-        [p,h] = ranksum(eim, ble);
+        %         % test whether equal median in median ble test
+        %         [p,h] = ranksum(eim, ble);
+        %         if h == 0
+        %             plotmatrix(ii, pp) = 0;
+        %         else
+        %             % test increase in eim test
+        %             [p,h] = ranksum(ble, eim,'tail','left');
+        %             if h == 0
+        %                 plotmatrix(ii, pp) = -10;
+        %             else
+        %                 % test increase in ble
+        %                 [p,h] = ranksum(eim, ble,'tail','left');
+        %                 if h == 0
+        %                     plotmatrix(ii, pp) = 10;
+        %                 else
+        %                     plotmatrix(ii, pp) = 0;
+        %                 end
+        %             end
+        %         end
+        
+        % test increase in eim test
+        [p,h] = ranksum(eim, hyb);
         if h == 0
-            plotmatrix(ii, pp) = 0;
+            plotmatrix_2eim(ii, pp) = 0;
         else
             % test increase in eim test
-            [p,h] = ranksum(ble, eim,'tail','left');
+            [p,h] = ranksum(eim, hyb,'tail','left');
             if h == 0
-                plotmatrix(ii, pp) = -10;
+                plotmatrix_2eim(ii, pp) = 10;
             else
-                % test increase in ble
-                [p,h] = ranksum(eim, ble,'tail','left');
-                if h == 0
-                    plotmatrix(ii, pp) = 10;
-                else
-                    plotmatrix(ii, pp) = 0;
-                end
+                plotmatrix_2eim(ii, pp) = 0;
             end
         end
+        % test increase in ble test
+        [p,h] = ranksum(ble, hyb);
+        if h == 0
+            plotmatrix_2eim(ii, pp) = 0;
+        else
+            % test increase in eim test
+            [p,h] = ranksum(ble, hyb,'tail','left');
+            if h == 0
+                plotmatrix_2ble(ii, pp) = -10;
+            else
+                plotmatrix_2ble(ii, pp) = 0;
+            end
+        end
+        
         pp = pp + 1;
     end
 end
-
+plotmatrix = [plotmatrix_2eim; plotmatrix_2ble];
 % plot
 figure(1);
 x = init_size: max_iter;
 
 clims = [-10 10];
-imagesc(plotmatrix(:, 1:pp-1));
+imagesc(plotmatrix(:, 1:pp-1), clims);
 % Initialize a color map array of 256 colors.
 colorMap = jet();
 % Apply the colormap and show the colorbar
 colormap(colorMap);
+
 grid on;
 colorbar;
-title('k=5 problem significant test, 11 init, 300 iterations');
+yticks = 1:2;
+yticklabels = {'compare2eim', 'compare2ble'};
+set(gca, 'YTick', yticks, 'YTickLabel', yticklabels);
+t = strcat(name, ' k=',num2str(k), ' init ', num2str(init_size), ' 300 iteration', ...
+    ' red: beat eim, blue: beat ble');
+title(t);
+xlabel('iteration');
 

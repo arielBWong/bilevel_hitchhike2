@@ -9,7 +9,7 @@ classdef tp8
         xl_bl;
         xl_bu;
         xl_prime;
-        name = 'tp_so8';
+        name = 'tpso8';
         uopt = NaN;
         lopt = 0.0625; % double check needed
     end

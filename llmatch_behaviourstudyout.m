@@ -2,31 +2,28 @@
 clearvars;
 close all;
 
-seedmax = 1;
+seedmax = 29;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
-
 problems ={
-    'dsm1(4,4)',...
-    };
-problems ={
-     'tp3(2,2)'...
+     'tp3(5,5)'...
     };
 % 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
 % 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
 % 'tp3(3,3)','tp5(3,3)','tp6(3,3)','tp7(3,3)','tp8(3,3)','tp9(3,3)'
 % 'tp3(2,2)','tp5(2,2)','tp6(2,2)','tp7(2,2)','tp8(2,2)','tp9(2,2)'
 
-
-methods = {'llmatchapt'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
+k = 5;
+init_size = 11 * k - 1;
+methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
 % leg = {'EIM', 'BEL', 'GEN'};
 
 % methods = {'llmatch', 'llmatch_sao_archiveinsert'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',,  'llmatch_hyb'
-leg = { 'EIM','BEL'}; % , 'HYB'
+leg = { 'HYB','EIM', 'BLE'}; % , 'HYB'
 np  = length(problems);
 nm  = length(methods);
-infill_size = 100;
-init_size = 11;
+infill_size = 300;
+
 num_experiments = 100; % size xu in its file
 
 % ------read in file
@@ -84,13 +81,6 @@ for ii = 1:np
     
 end
 xbase = init_size : init_size + infill_size;
-plot(out{1}{1}(1,1 :300) );
-
-% belwins = out{1}(1,:) -  out{1}(2, :);
-% belwins(belwins>=0) = 1;
-% belwins(belwins<0) = 0;
-% sum(belwins)
-
 
 
 % medianmatrix = zeros(np, nm);
@@ -117,9 +107,9 @@ for ii = 1:np
     figure(ii);
     xbase = init_size : init_size + infill_size;
     x = [xbase, fliplr(xbase)];
-    plot(xbase, meanfl(1, :), 'r'); hold on;
-    plot(xbase, meanfl(2, :), 'k'); hold on;
-    % plot(xbase, meanfl(3, :), 'b');
+    plot(xbase, meanfl(1, :), 'r', 'LineWidth',2); hold on;
+    plot(xbase, meanfl(2, :), 'k', 'LineWidth',2); hold on;
+    plot(xbase, meanfl(3, :), 'b', 'LineWidth',2); hold on;
     
     y1 = meanfl(1, :) + stdfl(1,:);
     y2 = meanfl(1, :) - stdfl(1,:);
@@ -131,14 +121,14 @@ for ii = 1:np
     y = [y1, fliplr(y2)];
     fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
     
-    % y1 = meanfl(3, :) + stdfl(3,:);
-    % y2 = meanfl(3, :) - stdfl(3,:);
-    % y = [y1, fliplr(y2)];
-    % fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
+    y1 = meanfl(3, :) + stdfl(3,:);
+    y2 = meanfl(3, :) - stdfl(3,:);
+    y = [y1, fliplr(y2)];
+    fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
     
     numk = prob.n_lvar;
-    legend( leg{1}, leg{2}, 'FontSize', 14);
-    t = strcat( prob.name , '  converge k', num2str(numk)  );
+    legend( leg{1}, leg{2},leg{3}, 'FontSize', 14);
+    t = strcat( prob.name , '  converge k', num2str(numk), ' init size ', num2str(init_size));
     title(t,  'FontSize', 16);
     a = 0;
     
@@ -147,7 +137,7 @@ for ii = 1:np
     savefig(savename);
     savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.png');
     saveas(figure(ii), savename);
-    close(figure);
+    close(figure(ii));
 end
 
 
