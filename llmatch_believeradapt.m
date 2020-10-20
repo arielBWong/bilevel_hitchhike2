@@ -20,15 +20,14 @@ function[match_xl, n_fev, flag] = llmatch_believeradapt(xu, prob, num_pop, num_g
 %         n_fev : total number of function evaluation on lower level
 %         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
-
+global eps_dist 
+eps_dist = 0.01;
 l_nvar = prob.n_lvar;
 % init_size = 11 * l_nvar -1;
 % init_size = 2 * l_nvar + 1;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
-flat_num = floor( 0.1 * (iter_size));
-flat_eps = 0.001;
-enhance_num = floor( 0.1 * (iter_size));
+
 
 
 xu_init = repmat(xu, init_size, 1);
@@ -48,6 +47,7 @@ end
 % call EIM/Ehv to expand train xl one by one
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
+
 for iter = 1:iter_size
     % -------------------------------
     % dual adding. believer search
@@ -55,24 +55,37 @@ for iter = 1:iter_size
     funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
     
-    param.gen     = num_gen;
+    param.gen         = num_gen;
     param.popsize = num_pop;
     [~,~,~, archive] = gsolver(funh_obj, prob.n_lvar,  prob.xl_bl, prob.xl_bu, [], funh_con, param);
     
     [new_xlb, ~] = believer_select(archive.pop_last.X, train_xl, prob, false);
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xlb);
+    
+    %-------believer local search
+     new_xl = new_xlb;
+    % [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
+    
+    tooclose = archive_check(new_xl, train_xl, prob);
+    if iter == 59
+        a = 0;
+    end
+    if tooclose
+        % ---- determine whether to switch to eim
+        [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
+            num_pop, num_gen, train_fc, fithn);      
+       %  [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
+        disp(iter);
+        disp('adopt eim');
+    end
+    
+    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
     
     % add to training
-    train_xl = [train_xl; new_xlb];
+    train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];  %compatible with nonconstraint   
+    train_fc = [train_fc; new_fc];  %compatible with nonconstraint
     %--------------------------------
-    
-   if  check_flat(prob, fl, flat_num, flat_eps)
-        [ train_xl, train_fl, train_fc] = enhance_exploration(xu, enhance_num, train_xl, train_fl, train_fc, prob, nextx_hn, fithn);
-        i = i + enhance_num - 1;      
-   end
-    
+        
 end
 
 
@@ -98,10 +111,10 @@ end
 
 
 % save lower level
-% llcmp = true;
-llcmp = false;
+llcmp = true;
+% llcmp = false;
 if llcmp
-    method = 'llmatchhyb';
+    method = 'llmatchapt';
     seed = varargin{1};
     % add local search result
     train_xl = [train_xl; match_xl];
@@ -109,10 +122,31 @@ if llcmp
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
     
-    perfrecord_umoc(train_xl, train_fl, train_fc, prob, seed, method, 0, 0)
+
+     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
 end
 
 end
+
+function tooclose = archive_check(newx, trainx, prob)
+% ---check newx whether it is
+tooclose = false;
+global eps_dist
+
+upper_bound = prob.xl_bu;
+lower_bound = prob.xl_bl;
+
+trainx_norm = (trainx - lower_bound) ./ (upper_bound - lower_bound);
+newx_norm = (newx - lower_bound) ./ (upper_bound - lower_bound);
+
+%--- 
+mindistance = min(pdist2(newx_norm,trainx_norm));
+
+if mindistance < eps_dist
+     tooclose =  true;
+end
+end
+
 
 %objective wrapper
 function f = llobjective(xl, xu, prob)
@@ -154,7 +188,7 @@ function [ flag] = check_flat(prob, fl, num, threshold)
 % if  num f is close to a certain threshold
 % then flag switch  to exploration
 
-f_norm = normalization_y(f); % 
+f_norm = normalization_y(f); %
 check_flag = zeros(1, num-1)
 for i = 0: num-2
     f_tail =  f_norm(end-i);
@@ -190,7 +224,7 @@ for i = 1:num
     % add to training
     trainx = [trainx; new_x];
     trainf = [trainf; new_f];
-    trainc = [trainc; new_c];  %compatible with nonconstraint   
+    trainc = [trainc; new_c];  %compatible with nonconstraint
 end
 end
 

@@ -63,6 +63,16 @@ elseif contains(method, 'archive')
         xl = [xl; match_xl];
     end
     toc;
+elseif contains(method, 'adapt')
+   rng(seed, 'twister');
+   match_method =  str2func( method);
+    for i = 1:samplesize
+        xu_i = xu(i, :);
+        [match_xl, n_fev, flag] =  llmatch_believeradapt(xu, prob, 20, 20, 'EIMnext', lower_init, lower_iter, 'EIM_eval', seed);
+        xl = [xl; match_xl];
+    end
+   
+    
 end
 
 % save_study(xu, xl, prob,method, seed);

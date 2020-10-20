@@ -18,7 +18,7 @@ problems ={
 % 'tp3(2,2)','tp5(2,2)','tp6(2,2)','tp7(2,2)','tp8(2,2)','tp9(2,2)'
 
 
-methods = { 'llmatcheim'};  % 'llmatchpop', 'llmatcheim',  'llmatchble'
+methods = {'llmatchapt'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
 % leg = {'EIM', 'BEL', 'GEN'};
 
 % methods = {'llmatch', 'llmatch_sao_archiveinsert'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',,  'llmatch_hyb'
@@ -26,7 +26,7 @@ leg = { 'EIM','BEL'}; % , 'HYB'
 np  = length(problems);
 nm  = length(methods);
 infill_size = 100;
-init_size = 1;
+init_size = 11;
 num_experiments = 100; % size xu in its file
 
 % ------read in file
@@ -44,6 +44,7 @@ for ii = 1:np
         num = length(prob.xl_bl);
         %savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_llstudy_',method);
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
         
         for kk = 1:seedmax
             % read algorithm fl
@@ -83,7 +84,7 @@ for ii = 1:np
     
 end
 xbase = init_size : init_size + infill_size;
-plot(out{1}{1}(1, :) );
+plot(out{1}{1}(1,1 :300) );
 
 % belwins = out{1}(1,:) -  out{1}(2, :);
 % belwins(belwins>=0) = 1;
