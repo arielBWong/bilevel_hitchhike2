@@ -1,6 +1,7 @@
 %% problem test
 prob = Shekel_curve(4);
-xl =linspace(-10, 10, 1001);
+prob = Shekel();
+xl =linspace(0, 10, 101);
 size(xl, 2);
 f = prob.evaluate_l([], xl');
 plot(xl, f); 

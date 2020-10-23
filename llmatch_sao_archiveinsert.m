@@ -11,22 +11,13 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, i
 %   matching_xl : found xl for xu
 %   n_fev : total number of function evaluation on lower level
 %   flag : whether xl is a feasible solution(true/false)
-%----
-% steps:
-%    (1) initialize xl population, evaluate and train kriging
-%    (2) use kriging as objective function, evolve xl population
-%    (3) when update frequence is met, evaluate current population,
-%       expand krg training data with UNSEEN data, update gsolver objective function
-%    (4) continue to evolve xl population, until num_gen is met
 %-----------------------------------------------------------------
 
 % (1) initialize xl population, evaluate and train kriging
+distancecontrol = true;
 l_nvar = prob.n_lvar;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
-% init_size = 2 * l_nvar + 1;
-% init_size = 11 * l_nvar - 1;
-% init_size =7;
 xu_init = repmat(xu, init_size, 1);
 train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
 train_xl = repmat(lower_bound, init_size, 1) ...
@@ -62,14 +53,15 @@ for g = 1: n
        
     % last population is re-evaluated with real evaluation, only those
     % unseen in archive (training data)
-    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, true);    
+    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, true, distancecontrol);    
     
+ 
     if growflag % there is unseen data in evolution
         [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
         initmatrix = [];
     else % there is no unseen data in evolution
-            % re-introduce random individual 
-        fprintf('no unseen data in last population, introduce randomness');
+         % re-introduce random individual 
+        fprintf('no unseen data in last population, introduce randomness \n');
         initmatrix = [];
     end
 end

@@ -20,7 +20,7 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %         n_fev : total number of function evaluation on lower level
 %         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
-
+distancecontrol = true;
 l_nvar = prob.n_lvar;
 % init_size = 2 * l_nvar + 1;
 % init_size = 11 * l_nvar - 1;
@@ -48,17 +48,37 @@ nextx_hn = str2func(propose_nextx);
 for iter = 1:iter_size
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
-
+    
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
-   
-    % evaluate next xl with xu
-    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
     
-    % add to training
-    train_xl = [train_xl; new_xl];
-    train_fl = [train_fl; new_fl];
-    train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+    if distancecontrol
+        tooclose = archive_check(new_xl, train_xl, prob);
+        if ~tooclose
+            % evaluate next xl with xu
+            [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+            
+            % add to training
+            train_xl = [train_xl; new_xl];
+            train_fl = [train_fl; new_fl];
+            train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+        else
+            iter
+            fprintf('eim found point to close to archive, continue\n')
+            continue
+        end
+    else
+        
+        % evaluate next xl with xu
+        [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+        
+        % add to training
+        train_xl = [train_xl; new_xl];
+        train_fl = [train_fl; new_fl];
+        train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+    end
+    
+    
 end
 % n = size(train_xl, 1);
 % fprintf('eim lower evaluation size %s \n', num2str(n));
@@ -97,9 +117,8 @@ if llcmp
     
     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
     
-
+    
 end
-
 end
 
 %objective wrapper
@@ -115,4 +134,22 @@ end
 
 
 
+function tooclose = archive_check(newx, trainx, prob)
+% ---check newx whether it is
+tooclose = false;
+eps_dist = sqrt(prob.n_lvar) * 0.01;
+
+upper_bound = prob.xl_bu;
+lower_bound = prob.xl_bl;
+
+trainx_norm = (trainx - lower_bound) ./ (upper_bound - lower_bound);
+newx_norm = (newx - lower_bound) ./ (upper_bound - lower_bound);
+
+%---
+mindistance = min(pdist2(newx_norm,trainx_norm));
+
+if mindistance < eps_dist
+    tooclose =  true;
+end
+end
 

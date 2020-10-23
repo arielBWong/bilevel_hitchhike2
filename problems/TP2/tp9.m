@@ -30,8 +30,8 @@ classdef tp9
            
            
             % init bound lower level
-            obj.xl_bl = zeros(1, obj.q) ;
-            obj.xl_bu = ones(1, obj.q) * 10;      
+            obj.xl_bl = ones(1, obj.q) * -5;
+            obj.xl_bu = ones(1, obj.q) * 5;      
         end
         
         function [f, c] = evaluate_u(obj, xu, xl) 
@@ -48,7 +48,7 @@ classdef tp9
             f = 0;
             n = 1;
            for i = 1: obj. q
-               fb = 2 * sin(3 * exp(-0.08 .* xl(:, i)) .* xl(:, i)) .* exp(-0.25 * xl(:, i));
+               fb = 1 * sin(1 * exp(-0.08 .* abs(xl(:, i))) .* abs(xl(:, i))) .* exp(-0.25 * abs(xl(:, i)));
                f = f+ fb ;
            end
            

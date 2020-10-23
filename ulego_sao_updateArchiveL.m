@@ -1,6 +1,6 @@
-function [trainx, trainf, trainc, growflag] = ulego_sao_updateArchiveL(xu, popx, prob,  trainx, trainf, trainc, evalOne)
+function [trainx, trainf, trainc, growflag] = ulego_sao_updateArchiveL(xu, popx, prob,  trainx, trainf, trainc, evalOne, distancecontrol)
 % this method add new member(s) to achive picking
-% from current population, new member has to be unseen data 
+% from current population, new member has to be unseen data
 % w.r.t. archive
 % input
 % xu: matching xu
@@ -15,13 +15,41 @@ function [trainx, trainf, trainc, growflag] = ulego_sao_updateArchiveL(xu, popx,
 repeatindex = ismember(popx, trainx, 'row');
 n_new = sum(~repeatindex);
 if n_new == 0
-    fprintf('Evolutional process unable to find new  matching xl');
+    fprintf('Evolutional process converge to seen  xl\n');
     growflag = false;
     return;
 end
 newindex = ~repeatindex;
 new_xl = popx(newindex, :);
 xu_expand =  repmat(xu, n_new, 1);
+
+% ---------------
+% use distance control
+if distancecontrol
+    count = 0;
+    for i =1:sum(newindex)
+        newx = new_xl(i, :);
+        tooclose = archive_check(newx, trainx, prob);
+        if ~tooclose
+            [new_fl, new_fc] = prob.evaluate_l(xu, newx);
+            trainx = [trainx; newx];
+            trainf = [trainf; new_fl];
+            trainc = [trainc; new_fc];
+            growflag = true;
+            return;
+        else
+            count = count + 1;
+        end
+        
+    end
+    
+    if count == sum(newindex)
+        fprintf('Evolutional process unable to find new  matching xl\n');
+        growflag = false;
+        return;
+    end
+end
+
 
 if evalOne  % acommodate one by one add
     [new_fl, new_fc] = prob.evaluate_l(xu_expand(1, :), new_xl(1,:));
@@ -44,7 +72,7 @@ else
             fprintf('added lower level to evaluation is seen one');
         end
     end
-    %-------------------------------------------------------   
+    %-------------------------------------------------------
     % --add new_xl to xu
     num_new = size(new_xl, 1);
     xu_expand =  repmat(xu, num_new, 1);
@@ -61,4 +89,24 @@ trainc = [trainc; new_fc];
 growflag = true;
 
 
+end
+
+
+function tooclose = archive_check(newx, trainx, prob)
+% ---check newx whether it is
+tooclose = false;
+eps_dist = sqrt(prob.n_lvar) * 0.01;
+
+upper_bound = prob.xl_bu;
+lower_bound = prob.xl_bl;
+
+trainx_norm = (trainx - lower_bound) ./ (upper_bound - lower_bound);
+newx_norm = (newx - lower_bound) ./ (upper_bound - lower_bound);
+
+%---
+mindistance = min(pdist2(newx_norm,trainx_norm));
+
+if mindistance < eps_dist
+    tooclose =  true;
+end
 end

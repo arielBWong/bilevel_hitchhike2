@@ -6,7 +6,8 @@ function llmatch_behaviourstudy(prob, match_method, seed, lower_init)
 % input
 
 prob = eval(prob);
-xu = select_xu(prob, 1);
+% xu = select_xu(prob, 1);
+xu = [1, 1];
 match_check(match_method, xu, lower_init, prob, seed);
 
 end
@@ -31,7 +32,7 @@ function match_check(method, xu, lower_init, prob, seed)
 samplesize = size(xu, 1);
 xl = [];
 
-lower_iter = 300; 
+lower_iter = 60; 
 
 if ~contains(method, '_')
     rng(seed, 'twister');

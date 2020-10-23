@@ -6,7 +6,7 @@ seedmax = 29;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 problems ={
-      'Shekel(3,3)'...
+      'smd1()'...
     };
 % 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
 % 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
@@ -22,7 +22,7 @@ methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatch
 leg = { 'HYB','EIM', 'BLE'}; % , 'HYB'
 np  = length(problems);
 nm  = length(methods);
-infill_size = 500;
+infill_size = 300;
 
 num_experiments = 100; % size xu in its file
 
@@ -94,41 +94,26 @@ xbase = init_size : init_size + infill_size;
 %     end
 % end
 
-meanfl = zeros(nm, infill_size + 1);
-stdfl = zeros(nm, infill_size + 1);
+medianfl = zeros(nm, infill_size + 1);
+
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
     for jj = 1:nm
-        meanfl(jj, :) = mean(out{ii}{jj}, 1);
-        stdfl(jj, :) = std(out{ii}{jj}, 1);
+        medianfl(jj, :) = mean(out{ii}{jj}, 1);
+       
     end
     
-    % meanfl = meanfl(:, 1:101);
-    % stdfl = stdfl(:, 101);
-    % xbase = init_size : init_size + 100;
+    medianfl = medianfl(:, 1:101);
+    xbase = init_size : init_size + 100;
     
     figure(ii);
     % xbase = init_size : init_size + infill_size;
     x = [xbase, fliplr(xbase)];
-    plot(xbase, meanfl(1, :), 'r', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(2, :), 'k', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(3, :), 'b', 'LineWidth',2); hold on;
+    plot(xbase, medianfl(1, :), 'r', 'LineWidth',2); hold on;
+    plot(xbase, medianfl(2, :), 'k', 'LineWidth',2); hold on;
+    plot(xbase, medianfl(3, :), 'b', 'LineWidth',2); hold on;
     
-    y1 = meanfl(1, :) + stdfl(1,:);
-    y2 = meanfl(1, :) - stdfl(1,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');
-    
-    y1 = meanfl(2, :) + stdfl(2,:);
-    y2 = meanfl(2, :) - stdfl(2,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
-    
-    y1 = meanfl(3, :) + stdfl(3,:);
-    y2 = meanfl(3, :) - stdfl(3,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
     
     numk = prob.n_lvar;
     legend( leg{1}, leg{2},leg{3}, 'FontSize', 14);
@@ -137,9 +122,9 @@ for ii = 1:np
     a = 0;
     
 
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.fig');
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge_median.fig');
     savefig(savename);
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.png');
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge_median.png');
     saveas(figure(ii), savename);
     close(figure(ii));
 end

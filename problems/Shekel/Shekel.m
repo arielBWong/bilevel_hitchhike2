@@ -3,38 +3,39 @@ classdef Shekel
     properties
         p = 1;
         q = 1;
-        r = 1;
+        
         n_lvar;
         n_uvar;
         xu_bl;
         xu_bu;
         xl_bl;
         xl_bu;
-        m = 10;
+        m = 5;
         name;
         uopt = [];
         lopt = [];
     end
     methods
-        function obj = Shekel(m)
-            if nargin == 1
-                obj.m = m;
+        function obj = Shekel(p, q)
+            if nargin > 1
+                obj.p = p;
+                obj.q = q;
             end
             obj.name = 'Shekel';
             
             % level variables
-            obj.n_lvar = obj.q + obj.r;
-            obj.n_uvar = obj.p + obj.r;
+            obj.n_lvar = obj.q;
+            obj.n_uvar = obj.p;
             
             % bounds
             %init bound upper level
             
-            obj.xu_bl = zeros(1, obj.p+obj.r);
-            obj.xu_bu = ones(1, obj.p+obj.r) * 10.0;
+            obj.xu_bl = zeros(1, obj.p);
+            obj.xu_bu = ones(1, obj.p) * 10.0;
             
             % init bound lower level
-            obj.xl_bl = zeros(1, obj.q + obj.r);
-            obj.xl_bu = ones(1, obj.q + obj.r) * 10.0;
+            obj.xl_bl = zeros(1, obj.q);
+            obj.xl_bu = ones(1, obj.q) * 10.0;
             
         end
         
@@ -74,7 +75,7 @@ classdef Shekel
                 4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6];
             
             outer = 0;
-            nv = 2;
+            nv = obj.q;
             for ii = 1:obj.m
                 bi = b(ii);
                 inner = 0;

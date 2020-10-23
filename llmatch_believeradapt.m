@@ -21,8 +21,9 @@ function[match_xl, n_fev, flag] = llmatch_believeradapt(xu, prob, num_pop, num_g
 %         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
 global eps_dist 
-eps_dist = 0.01;
 l_nvar = prob.n_lvar;
+eps_dist = sqrt(l_nvar) * 0.01;  %  1% of max normalizated distance
+
 % init_size = 11 * l_nvar -1;
 % init_size = 2 * l_nvar + 1;
 upper_bound = prob.xl_bu;
@@ -56,14 +57,14 @@ for iter = 1:iter_size
     funh_con = @(x)llcon(x, krg_con);
     
     param.gen         = num_gen;
-    param.popsize = num_pop;
+    param.popsize     = num_pop;
     [~,~,~, archive] = gsolver(funh_obj, prob.n_lvar,  prob.xl_bl, prob.xl_bu, [], funh_con, param);
     
     [new_xlb, ~] = believer_select(archive.pop_last.X, train_xl, prob, false);
     
     %-------believer local search
-     new_xl = new_xlb;
-    % [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
+     % new_xl = new_xlb;
+    [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
     
     tooclose = archive_check(new_xl, train_xl, prob);
     if tooclose
@@ -73,6 +74,21 @@ for iter = 1:iter_size
        %  [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
         disp(iter);
         disp('adopt eim');
+        % ----eim's closeness control
+        tooclose = archive_check(new_xl, train_xl, prob);
+        if ~tooclose
+            % evaluate next xl with xu
+            [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+            
+            % add to training
+            train_xl = [train_xl; new_xl];
+            train_fl = [train_fl; new_fl];
+            train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+            continue
+        else
+            fprintf('eim found point to close to archive, continue\n')
+            continue
+        end
     end
     
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -118,9 +134,7 @@ if llcmp
     [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
     train_fl = [train_fl; local_fl];
     train_fc = [train_fc; local_fc];
-    
-
-     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
+    perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
 end
 
 end
@@ -206,7 +220,6 @@ end
 end
 
 % --- enhance exploration
-
 function [ trainx, trainf, trainc] = enhance_exploration(xu, num, trainx, trainf, trainc, prob, nextx_hn, fithn)
 %--------------------------
 for i = 1:num

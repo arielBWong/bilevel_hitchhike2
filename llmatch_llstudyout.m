@@ -7,13 +7,13 @@ close all;
 seedmax = 11;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)'};
-% problems = {'dsm1(2,2)'};
+problems = {'dsm1(5,5)'};
 
 
 % methods = {'llmatcheim',  'llmatchble',  'llmatchpop'};  % 'llmatchpop',
 % leg = {'EIM', 'BEL', 'GEN'};
 
-methods = {'llmatcheim', 'llmatchble', 'llmatchhyb'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
+methods = {'llmatcheim', 'llmatchble'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',
 leg = {'EIM', 'BEL', 'HYB'};
 np  = length(problems);
 nm  = length(methods);
