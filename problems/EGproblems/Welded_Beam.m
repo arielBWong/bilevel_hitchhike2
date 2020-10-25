@@ -6,7 +6,16 @@ classdef Welded_Beam
         n_con;
         n_obj;
         ref;
-        name;
+        name = 'Welded_Beam';
+        %----
+        p = 1;
+        q = 4;
+        n_lvar;
+        n_uvar;
+        xu_bl;
+        xu_bu;
+        xl_bl;
+        xl_bu;
     end
     
     methods
@@ -14,6 +23,13 @@ classdef Welded_Beam
             obj.n_var = 4;
             obj.xl = [0.125, 0.1, 0.1, 0.125];
             obj.xu = [5, 10, 10, 5];
+            
+            %---bl adapt
+            obj.n_lvar = q;
+            obj.xl_bl =  [0.125, 0.1, 0.1, 0.125];
+            obj.xl_bu =  [5, 10, 10, 5];
+            %-----
+            
             obj.n_con = 4;
             obj.n_obj = 2;
             obj.ref = [100, 0.08];
