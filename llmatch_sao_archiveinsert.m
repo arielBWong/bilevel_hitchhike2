@@ -41,26 +41,31 @@ param = struct();
 initmatrix = train_xl;
 initmatrix = [];
 n = itersize;
+process_upper = false;
+process_believer = true;
+
 for g = 1: n
     % fprintf('lower gen %d\n', g);
     funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
-
+    
     param.gen=num_gen;
     param.popsize = num_pop;
     % (4) continue to evolve xl population, until num_gen is met
     [~,~,~, archive] = gsolver(funh_obj, l_nvar,  prob.xl_bl, prob.xl_bu, initmatrix, funh_con, param);
-       
-    % last population is re-evaluated with real evaluation, only those
-    % unseen in archive (training data)
-    [train_xl, train_fl, train_fc, growflag] = ulego_sao_updateArchiveL(xu,archive.pop_last.X, prob, train_xl, train_fl, train_fc, true, distancecontrol);    
     
- 
+    [newx, growflag] = believer_select(archive.pop_last.X, train_xl, prob, process_upper, process_believer);
+    
     if growflag % there is unseen data in evolution
+        [new_xl] = surrogate_localsearch(xu, newx, prob, train_xl, train_fl, train_fc, 'normalization_z');
+        [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+        train_xl = [train_xl; new_xl];
+        train_fl = [train_fl; new_fl];
+        train_fc = [train_fc; new_fc];
         [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
         initmatrix = [];
     else % there is no unseen data in evolution
-         % re-introduce random individual 
+        % re-introduce random individual
         fprintf('no unseen data in last population, introduce randomness \n');
         initmatrix = [];
     end
@@ -72,6 +77,7 @@ end
 % local search for best xl
 % connect a local search to sao
 % local search starting point selection
+% MO problem no process
 [best_x, best_f, best_c, s] =  localsolver_startselection(train_xl, train_fl, train_fc);
 nolocalsearch = true;
 if nolocalsearch
@@ -79,6 +85,9 @@ if nolocalsearch
     n_fev = size(train_xl, 1);
     flag = s;
 else
+    if size(train_fl, 2)> 1
+        error('local search does not apply to MO');
+    end
     [match_xl, flag, num_eval] = ll_localsearch(best_x, best_f, best_c, s, xu, prob);
     n_global = size(train_xl, 1);
     n_fev = n_global +num_eval;       % one in a population is evaluated
@@ -93,19 +102,22 @@ if llcmp
     method = 'llmatchble';
     seed = varargin{1};
     % add local search result
-    train_xl = [train_xl; match_xl];
-    [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
-    train_fl = [train_fl; local_fl];
-    train_fc = [train_fc; local_fc];
+    % only for SO
+    if size(train_fl, 2) ==  1
+        train_xl = [train_xl; match_xl];
+        [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
+        train_fl = [train_fl; local_fl];
+        train_fc = [train_fc; local_fc];
+    end
     
     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
-end 
+end
 
 end
 
 
 function [sf, sx, sc] = initmatrix_pick(x, f, c)
-    [sf, sx, sc] = pop_sort(f, x, c);
+[sf, sx, sc] = pop_sort(f, x, c);
 end
 
 function  f = llobj(x, kriging_obj)
@@ -121,7 +133,7 @@ function c = llcon(x, krging_con)
 num_con = length(krging_con);
 num_x = size(x, 1);
 c = zeros(num_x, num_con);
-for ii =1:num_con 
+for ii =1:num_con
     [c(:, ii), ~] = dace_predict(x, krging_con{ii});
 end
 end

@@ -2,18 +2,19 @@
 clearvars;
 close all;
 
-seedmax = 29;
+seedmax = 1;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 problems ={
-      'Shekel(3,3)'...
+    'SHCBc()',...
     };
+% 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()'
 % 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
 % 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
 % 'tp3(3,3)','tp5(3,3)','tp6(3,3)','tp7(3,3)','tp8(3,3)','tp9(3,3)'
 % 'tp3(2,2)','tp5(2,2)','tp6(2,2)','tp7(2,2)','tp8(2,2)','tp9(2,2)'
 
-k = 3;
+k = 2;
 init_size = 11 * k - 1;
 methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
 % leg = {'EIM', 'BEL', 'GEN'};
@@ -22,7 +23,7 @@ methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatch
 leg = { 'HYB','EIM', 'BLE'}; % , 'HYB'
 np  = length(problems);
 nm  = length(methods);
-infill_size = 500;
+infill_size = 300;
 
 num_experiments = 100; % size xu in its file
 
@@ -50,36 +51,73 @@ for ii = 1:np
             
             % create prime fl
             fl_prime = [];
-            % savename = strcat(savepath, '\xu_', num2str(kk), '.csv');
-            % xu = csvread(savename);
-            
-            % xu1 = xu(1,:);
-            % [match_xl, n_fev, flag] = match_method (xu1, prob,20, num_gen, freq, seed);
             
             savename = strcat(savepath, '\xl_', num2str(kk), '.csv');
             xl_search = csvread(savename);
             xl_prime = [];
-            %         for mm = 1:size(xu, 1)
-            %             if contains(prob.name, 'SMD')
-            %                 xl = prob.get_xlprime(xu(mm, :));
-            %             else
-            %                 % xl = xu(mm, :);
-            %                 xl = prob.xl_prime;
-            %             end
-            %             fl_p = prob.evaluate_l(xu(mm, :), xl);
-            %             fl_prime = [fl_prime; fl_p];
-            %         end
-            % deltaF = abs(fl - fl_prime);
-            temp =  fl(init_size:end-1)';
-            for mm = 1:size(temp, 2)
-                out{ii}{jj}(kk, mm) = min(temp(1:mm));
+            
+            savename = strcat(savepath, '\cl_', num2str(kk), '.csv');
+            cl_search = csvread(savename);
+            
+            if ~isempty(cl_search) && size(fl, 2) ==1
+                % constraint single objective
+                out{ii}{jj}(kk) = abs(fl(end) - prob.fprime);
+                
+            else
+                % single objective
+                temp =  fl(init_size:end-1)';
+                for mm = 1:size(temp, 2)
+                    out{ii}{jj}(kk, mm) = min(temp(1:mm));
+                end
             end
         end
-        % out{ii}(jj, :) = deltaF;
+        
     end
     
     
 end
+% use existing variable
+if ~isempty(cl_search) && size(fl, 2) ==1
+    % results mean max to csv
+    
+    % to csv
+    %-----mean to csv
+    foldername = strcat(pwd, '\result_folder\matchxl_invest');
+    n = exist(foldername);
+    if n ~= 7
+        mkdir(foldername)
+    end
+    
+    
+    
+    savename = strcat(foldername,'\singleObjCon_mean.csv');
+    fp=fopen(savename,'w');
+    fprintf(fp, 'problem_method, ');
+    for jj = 1:nm
+        fprintf(fp,'%s, ', leg{jj} );
+    end
+    fprintf(fp,'\n');
+    
+    for ii = 1:np
+        prob = problems{ii};
+        prob = eval(prob);
+        name = strcat( prob.name, '_', num2str(prob.n_lvar));
+        fprintf(fp, '%s,', name);
+        for jj = 1:nm
+            var = mean(out{ii}{jj});
+            st = num2str(var);
+            fprintf(fp, '%s,', st);
+        end
+        fprintf(fp, '\n');
+    end
+    fclose(fp);
+    
+    return;
+    
+end
+
+
+
 xbase = init_size : init_size + infill_size;
 
 
@@ -136,7 +174,7 @@ for ii = 1:np
     title(t,  'FontSize', 16);
     a = 0;
     
-
+    
     savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.fig');
     savefig(savename);
     savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.png');

@@ -32,7 +32,7 @@ function match_check(method, xu, lower_init, prob, seed)
 samplesize = size(xu, 1);
 xl = [];
 
-lower_iter = 60; 
+lower_iter = 300; 
 
 if ~contains(method, '_')
     rng(seed, 'twister');

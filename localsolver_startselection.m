@@ -50,14 +50,13 @@ if size(ff, 2) == 1 % single objective
         end
     end
 else % multiple objective
-    % input ff is all ffs ulego have got, new starting point should be
-    % the solution that contriubte most to hv compared to the rest of the ffs
-    % it means this ff locates on an nd area where there are not many points
-    % reference point should be just 1.1 in normalized space
-    [i, s] = hvcontribution_selectf(ff, fc);
-    best_x = x(i, :);
-    best_f = ff(i, :);
-    best_c = fc(i, :);
+    % multiple objective, no process
+    % return input    
+    % [i, s] = hvcontribution_selectf(ff, fc);
+    best_x = x;
+    best_f = ff;
+    best_c = fc;
+    s = true;
 end
 end
 

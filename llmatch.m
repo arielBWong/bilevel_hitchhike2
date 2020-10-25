@@ -52,39 +52,19 @@ for iter = 1:iter_size
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn);
     
-    if distancecontrol
-        tooclose = archive_check(new_xl, train_xl, prob);
-        if ~tooclose
-            % evaluate next xl with xu
-            [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
-            
-            % add to training
-            train_xl = [train_xl; new_xl];
-            train_fl = [train_fl; new_fl];
-            train_fc = [train_fc; new_fc];  % compatible with nonconstraint
-        else
-            iter
-            fprintf('eim found point to close to archive, continue\n')
-            continue
-        end
-    else
-        
-        % evaluate next xl with xu
-        [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
-        
-        % add to training
-        train_xl = [train_xl; new_xl];
-        train_fl = [train_fl; new_fl];
-        train_fc = [train_fc; new_fc];  % compatible with nonconstraint
-    end
+    % local search on surrogate
+    [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
+    % evaluate next xl with xu
+    [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+    
+    % add to training
+    train_xl = [train_xl; new_xl];
+    train_fl = [train_fl; new_fl];
+    train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+    
     
     
 end
-% n = size(train_xl, 1);
-% fprintf('eim lower evaluation size %s \n', num2str(n));
-% connect a local search to ego
-% local search starting point selection
-
 
 
 
@@ -95,6 +75,9 @@ if nolocalsearch
     n_fev = size(train_xl, 1);
     flag = s;
 else
+     if size(train_fl, 2)> 1
+        error('local search does not apply to MO');
+    end
     [match_xl, flag, num_eval] = ll_localsearch(best_x, best_f, best_c, s, xu, prob);
     n_global = size(train_xl, 1);
     n_fev = n_global +num_eval;       % one in a population is evaluated

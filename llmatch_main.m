@@ -9,19 +9,21 @@ addpath(problem_folder);
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 
-k = 3; 
+
+problems = {};
+k = 2; 
 init = 11 * k - 1;
 problems ={
-      'smd1()'  ...
+      'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()'...
     };
 
-seeds = linspace(3, 3, 3);
-seeds = 3;
-
-match_methods = {'llmatch_sao_archiveinsert'}; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_hyb', 'llmatch_believeradapt'
+seeds = linspace(1, 29, 29);
 
 
-np = length(problems);
+match_methods = {'llmatch_sao_archiveinsert', 'llmatch', 'llmatch_believeradapt'}; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_hyb', 'llmatch_believeradapt'
+
+
+np = length(problems);  
 ns = length(seeds);
 na = length(match_methods);
 

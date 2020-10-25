@@ -1,7 +1,7 @@
 %%
 % test
 workdir = pwd;
-problem_folder = strcat(workdir,'\problems\SMD');
+problem_folder = strcat(workdir,'\problems');
 addpath(problem_folder);
 
 problem_folder = strcat(workdir,'\problems\TP2');

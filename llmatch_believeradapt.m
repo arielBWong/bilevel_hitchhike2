@@ -63,7 +63,7 @@ for iter = 1:iter_size
     [new_xlb, ~] = believer_select(archive.pop_last.X, train_xl, prob, false);
     
     %-------believer local search
-     % new_xl = new_xlb;
+    % new_xl = new_xlb;
     [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
     
     tooclose = archive_check(new_xl, train_xl, prob);
@@ -71,24 +71,8 @@ for iter = 1:iter_size
         % ---- determine whether to switch to eim
         [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
             num_pop, num_gen, train_fc, fithn);      
-       %  [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
-        disp(iter);
-        disp('adopt eim');
-        % ----eim's closeness control
-        tooclose = archive_check(new_xl, train_xl, prob);
-        if ~tooclose
-            % evaluate next xl with xu
-            [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
-            
-            % add to training
-            train_xl = [train_xl; new_xl];
-            train_fl = [train_fl; new_fl];
-            train_fc = [train_fc; new_fc];  % compatible with nonconstraint
-            continue
-        else
-            fprintf('eim found point to close to archive, continue\n')
-            continue
-        end
+       [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
+       fprintf('adopt eim at iter: %d\n', iter);      
     end
     
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -115,6 +99,9 @@ if nolocalsearch
     n_fev = size(train_xl, 1);
     flag = s;
 else
+    if size(train_fl, 2)> 1
+        error('local search does not apply to MO');
+    end
     [match_xl, flag, num_eval] = ll_localsearch(best_x, best_f, best_c, s, xu, prob);
     n_global = size(train_xl, 1);
     n_fev = n_global +num_eval;       % one in a population is evaluated

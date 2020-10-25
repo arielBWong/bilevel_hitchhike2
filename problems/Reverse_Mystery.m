@@ -1,4 +1,4 @@
-classdef Mystery
+classdef Reverse_Mystery
     properties       
         p = 1;
         q = 2;
@@ -11,12 +11,12 @@ classdef Mystery
         xl_bl;
         xl_bu;
         ref;
-        fprime = -1.1743;
-        name = 'Mystery';
+        fprime = -0.5504;
+        name = 'Reverse_Mystery';
 
     end
     methods
-        function obj = Mystery()
+        function obj = Reverse_Mystery()
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
             % bounds
@@ -30,16 +30,8 @@ classdef Mystery
             obj.xl_bu = [5, 5];
         end
         function [f, con] = evaluate(obj, x)
-            x1 = x(:,1); x2 = x(:, 2);
-            
-            part1 = 0.01 * (x2 - x1.^2).^2;
-            part2 = (1 - x1).^2;
-            part3 = 2 * (2 - x2).^2;
-            part4 = 7 * sin(0.5 * x1) * sin(0.7 .* x1 .* x2);
-
-            f = 2 + part1 + part2 + part3 + part4;
-
-            con = -sin(x1 - x2 - pi/8);
+            f = [];
+            con = [];
      
         end
         
@@ -51,9 +43,9 @@ classdef Mystery
             part3 = 2 * (2 - x2).^2;
             part4 = 7 * sin(0.5 * x1) .* sin(0.7 .* x1 .* x2);
 
-            f = 2 + part1 + part2 + part3 + part4;
+            f = -sin(x1 - x2 - pi/8);
 
-            con = -sin(x1 - x2 - pi/8);
+            con = -1 + part1 + part2 + part3 + part4;
      
         end
     end
