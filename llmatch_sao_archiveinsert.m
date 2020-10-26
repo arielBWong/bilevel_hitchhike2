@@ -14,7 +14,8 @@ function[match_xl, n_fev, flag] = llmatch_sao_archiveinsert(xu, prob, num_pop, i
 %-----------------------------------------------------------------
 
 % (1) initialize xl population, evaluate and train kriging
-distancecontrol = true;
+norm_str = varargin{2};
+norm_hn = str2func(norm_str);
 l_nvar = prob.n_lvar;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
@@ -27,13 +28,9 @@ train_xl = repmat(lower_bound, init_size, 1) ...
 % compatible with non-constriant problem
 [train_fl, train_fc] = prob.evaluate_l(xu_init, train_xl);
 
-% lower level is considered as single objective
-if size(train_fl, 2)>1
-    error('lower level problem is multiple objective, algorithm is not compatible');
-end
 
 % (2) use kriging as objective function, evolve xl population
-[krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
+[krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, norm_hn);
 
 % (3) when update frequence is met, evaluate current population,
 %       expand krg training data, update gsolver objective function
@@ -43,6 +40,9 @@ initmatrix = [];
 n = itersize;
 process_upper = false;
 process_believer = true;
+
+fighn = figure(1);
+cons_hn = @prob.cons;
 
 for g = 1: n
     % fprintf('lower gen %d\n', g);
@@ -57,12 +57,15 @@ for g = 1: n
     [newx, growflag] = believer_select(archive.pop_last.X, train_xl, prob, process_upper, process_believer);
     
     if growflag % there is unseen data in evolution
-        [new_xl] = surrogate_localsearch(xu, newx, prob, train_xl, train_fl, train_fc, 'normalization_z');
+        [new_xl] = surrogate_localsearch(xu, newx, prob, train_xl, train_fl, train_fc, norm_str);
         [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+        
+        %inprocess_plotsearch(fighn, prob, cons_hn, new_xl, train_xl);
+        
         train_xl = [train_xl; new_xl];
         train_fl = [train_fl; new_fl];
         train_fc = [train_fc; new_fc];
-        [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc);
+        [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, norm_hn);
         initmatrix = [];
     else % there is no unseen data in evolution
         % re-introduce random individual
@@ -151,44 +154,44 @@ end
 
 
 
-%-----auxiliary function ---
-function [krg_obj, krg_con, info] = update_surrogate(trainx, trainy, trainc)
-% this function updates train kriging model from train x and train y
-%
-%
-if size(trainy,2)>1
-    error(' following zscore norm only applies to single objective problems');
-end
-[train_y_norm, y_mean, y_std] = zscore(trainy, 1, 1);
-num_obj = size(trainy, 2);
-krg_obj = cell(1, num_obj);
-num_vari = size(trainx, 2);
-for ii = 1:num_obj
-    % kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
-    krg_obj{ii} = dacefit(trainx,train_y_norm(:,ii),...
-        'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
-end
-
-info = struct();
-info.ymean = y_mean;
-info.ystd = y_std;
-
-% deal with constraints
-if ~isempty(trainc)
-    num_con = size(trainc, 2);
-    krg_con = cell(1, num_con);
-    [train_c_norm, c_mean, c_std] = zscore(trainc, 1, 1);
-    
-    for ii = 1:num_con
-        krg_con{ii} = dacefit(trainx, train_c_norm(:,ii),...
-            'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
-    end
-    info.cmean = c_mean;
-    info.cstd = c_std;
-else
-    krg_con = [];
-    info.cmean = [];
-    info.cstd = [];
-end
-
-end
+% %-----auxiliary function ---
+% function [krg_obj, krg_con, info] = update_surrogate(trainx, trainy, trainc)
+% % this function updates train kriging model from train x and train y
+% %
+% %
+% if size(trainy,2)>1
+%     error(' following zscore norm only applies to single objective problems');
+% end
+% [train_y_norm, y_mean, y_std] = zscore(trainy, 1, 1);
+% num_obj = size(trainy, 2);
+% krg_obj = cell(1, num_obj);
+% num_vari = size(trainx, 2);
+% for ii = 1:num_obj
+%     % kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
+%     krg_obj{ii} = dacefit(trainx,train_y_norm(:,ii),...
+%         'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
+% end
+% 
+% info = struct();
+% info.ymean = y_mean;
+% info.ystd = y_std;
+% 
+% % deal with constraints
+% if ~isempty(trainc)
+%     num_con = size(trainc, 2);
+%     krg_con = cell(1, num_con);
+%     [train_c_norm, c_mean, c_std] = zscore(trainc, 1, 1);
+%     
+%     for ii = 1:num_con
+%         krg_con{ii} = dacefit(trainx, train_c_norm(:,ii),...
+%             'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
+%     end
+%     info.cmean = c_mean;
+%     info.cstd = c_std;
+% else
+%     krg_con = [];
+%     info.cmean = [];
+%     info.cstd = [];
+% end
+% 
+% end

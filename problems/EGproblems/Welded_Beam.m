@@ -25,7 +25,7 @@ classdef Welded_Beam
             obj.xu = [5, 10, 10, 5];
             
             %---bl adapt
-            obj.n_lvar = q;
+            obj.n_lvar = obj.q;
             obj.xl_bl =  [0.125, 0.1, 0.1, 0.125];
             obj.xl_bu =  [5, 10, 10, 5];
             %-----

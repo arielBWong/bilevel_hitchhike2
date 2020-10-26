@@ -8,7 +8,7 @@ classdef TNK
         ref;
         name = 'TNK';
         %---
-         p = 1;
+        p = 1;
         q = 2;
         n_lvar;
         n_uvar;
@@ -29,7 +29,7 @@ classdef TNK
             obj.name = 'TNK';
             
              %---bl adapt
-            obj.n_lvar = q;
+            obj.n_lvar = obj.q;
             obj.xl_bl =  [0, 1e-30];
             obj.xl_bu =  [pi, pi];
             %-----

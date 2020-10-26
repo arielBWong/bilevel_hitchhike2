@@ -11,7 +11,8 @@ classdef newBranin5
         xl_bl;
         xl_bu;
         ref;
-         fprime =-268.7879;
+         fprime = -268.7879;
+         xprime = [3.2730,0.0489];
         name = 'newBranin5';
     end
     methods
@@ -55,6 +56,22 @@ classdef newBranin5
             % constraint
             c = part1 + part2 + part3 - 5;
             
+        end
+        
+        function c = cons(obj, x1, x2)
+            a = 1.0;
+            b = 5.1 / (4 * pi ^ 2);
+            c = 5.0 / pi;
+            r = 6.0;
+            s = 10.0;
+            t = 1.0 / (8.0 * pi);
+            
+            part1 = a .* (x2 - b .* x1 .^ 2 + c .* x1 - 6.0) .^ 2.0;
+            part2 = s .* (1 - t) .* cos(x1);
+            part3 = s;
+            
+            % constraint
+            c = part1 + part2 + part3 - 5;
         end
     end
 end

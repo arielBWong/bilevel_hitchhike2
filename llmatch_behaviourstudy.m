@@ -32,7 +32,9 @@ function match_check(method, xu, lower_init, prob, seed)
 samplesize = size(xu, 1);
 xl = [];
 
-lower_iter = 300; 
+lower_iter =300; 
+normalization = 'normalization_nd';
+% normalization = 'normalization_z';
 
 if ~contains(method, '_')
     rng(seed, 'twister');
@@ -40,7 +42,7 @@ if ~contains(method, '_')
     tic;
     for i = 1:samplesize
         xu_i = xu(i, :);
-        [match_xl, n_fev, flag] = match_method(xu_i, prob, 20, 20, 'EIMnext',lower_init, lower_iter, 'EIM_eval', seed);
+        [match_xl, n_fev, flag] = match_method(xu_i, prob, 20, 20, 'EIMnext',lower_init, lower_iter, 'EIM_eval', seed, normalization);
         
         xl = [xl; match_xl];
     end
@@ -60,7 +62,7 @@ elseif contains(method, 'archive')
     tic;
     for i = 1:samplesize
         xu_i = xu(i, :);
-        [match_xl, n_fev, flag] = match_method (xu_i, prob, 20, lower_init, lower_iter, freq, seed);      
+        [match_xl, n_fev, flag] = match_method (xu_i, prob, 20, lower_init, lower_iter, freq, seed, normalization);      
         xl = [xl; match_xl];
     end
     toc;
@@ -69,7 +71,7 @@ elseif contains(method, 'adapt')
    match_method =  str2func( method);
     for i = 1:samplesize
         xu_i = xu(i, :);
-        [match_xl, n_fev, flag] =  llmatch_believeradapt(xu, prob, 20, 20, 'EIMnext', lower_init, lower_iter, 'EIM_eval', seed);
+        [match_xl, n_fev, flag] =  llmatch_believeradapt(xu, prob, 20, 20, 'EIMnext', lower_init, lower_iter, 'EIM_eval', seed, normalization);
         xl = [xl; match_xl];
     end
    

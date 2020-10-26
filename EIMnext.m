@@ -57,7 +57,7 @@ if num_obj > 1
     %     train_y_norm = (train_y -repmat(min(train_y),num_x,1))./...
      %     repmat(max(train_y)-min(train_y),num_x,1);
 
-   train_y_norm = normhn(train_y);
+    train_y_norm = normhn(train_y);
     y_mean = NaN;
     y_std = NaN;
     % [train_y_norm, y_mean, y_std] = zscore(train_y, 0, 1); 

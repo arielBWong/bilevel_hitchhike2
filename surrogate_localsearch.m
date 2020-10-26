@@ -5,7 +5,8 @@ function[newx] = surrogate_localsearch(xu, newx, prob, trainx, trainf, trainc, n
 %-------------------------
 
 if size(trainf, 2) > 1
-    error('not compatible with MO problem');
+    % no local search for MO
+     return
 end
 
 

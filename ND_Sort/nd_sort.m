@@ -3,6 +3,7 @@ function [fronts,idx,cdist] = nd_sort(f_all, id)
 idx = [];
 if isempty(f_all) 
 	fronts = [];
+    cdist = [];
 	return
 end
 

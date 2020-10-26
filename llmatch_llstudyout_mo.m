@@ -2,17 +2,13 @@
 clearvars;
 close all;
 
-seedmax = 1;
+seedmax = 11;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 problems ={
-    'Welded_Beam',...
+    'TNK()', 'BNH()', 'SRN()',...
     };
-% 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()'
-% 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
-% 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
-% 'tp3(3,3)','tp5(3,3)','tp6(3,3)','tp7(3,3)','tp8(3,3)','tp9(3,3)'
-% 'tp3(2,2)','tp5(2,2)','tp6(2,2)','tp7(2,2)','tp8(2,2)','tp9(2,2)'
+
 
 k = 2;
 init_size = 11 * k - 1;
@@ -21,9 +17,10 @@ methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatch
 
 % methods = {'llmatch', 'llmatch_sao_archiveinsert'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',,  'llmatch_hyb'
 leg = { 'HYB','EIM', 'BLE'}; % , 'HYB'
+markers = {'ro', 'ko', 'bo'};
 np  = length(problems);
 nm  = length(methods);
-infill_size = 300;
+infill_size =50;
 
 ref_point = [1.1, 1.1];
 % ------read in file
@@ -52,7 +49,8 @@ for ii = 1:np
     
     % nd across methods and across seed
     % for setting up normalization boundary
-    norm_standard_nd = Paretoset(nd_across_method);
+    norm_standard_nd_index = Paretoset(nd_across_method);
+    norm_standard_nd = nd_across_method(norm_standard_nd_index, :);
     up_ndstand = max(norm_standard_nd, [], 1);
     low_ndstand = min(norm_standard_nd, [], 1);
     
@@ -111,192 +109,41 @@ fclose(fp);
 
 
 % median to plot
-if seedmax == 29
+if seedmax == 11
     for ii = 1:np
         prob = problems{ii};
         prob = eval(prob);
+        figure(ii);
         for jj = 1:nm
             method = methods{jj};
             oneseed = (out{ii}{jj});
             [sorted, index] = sort(oneseed);
-            median_id = index(15);
+            median_id = index(5);
             
             % plot nd front
             num = length(prob.xl_bl);
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
             savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
             fl = csvread(savename);
-            figure(ii);
-            scatter(fl (:,1), fl (:,2),'ro', 'filled'); hold on ;
-            t = strcat( prob.name, ' median ND front seed ' , num2str(median_id) );
-            title(t,  'FontSize', 16);
-            a = 0;
             
-            
-            savename = strcat(foldername, '\',  prob.name,'_', num2str(num), '_nd.fig');
-            savefig(savename);
-            savename = strcat(foldername, '\', prob.name,'_', num2str(num), '_nd.png');
-            saveas(figure(ii), savename);
-            close(figure(ii));
-            
+            scatter(fl (:,1), fl (:,2),markers{jj}, 'filled'); hold on ;
+           
         end
+        
+        t = strcat( prob.name, ' median ND front seed ' , num2str(median_id) );
+        title(t,  'FontSize', 16);
+         legend( leg{1}, leg{2}, leg{3},'FontSize', 14);
+        
+        a = 0;
+        
+        
+        savename = strcat(foldername, '\',  prob.name,'_', num2str(num), '_nd.fig');
+        savefig(savename);
+        savename = strcat(foldername, '\', prob.name,'_', num2str(num), '_nd.png');
+        saveas(figure(ii), savename);
+        close(figure(ii));
     end
 end
-
-xbase = init_size : init_size + infill_size;
-
-
-% medianmatrix = zeros(np, nm);
-% stdmatrix = zeros(np, nm);
-% meanmatrix = zeros(np, nm);
-% for ii = 1:np
-%     for jj = 1:nm
-%         medianmatrix(ii, jj) = median(out{ii}(jj, :));
-%         meanmatrix(ii, jj) = mean(out{ii}(jj, :));
-%         stdmatrix(ii, jj) = std(out{ii}(jj, :));
-%     end
-% end
-
-meanfl = zeros(nm, infill_size + 1);
-stdfl = zeros(nm, infill_size + 1);
-for ii = 1:np
-    prob = problems{ii};
-    prob = eval(prob);
-    for jj = 1:nm
-        meanfl(jj, :) = mean(out{ii}{jj}, 1);
-        stdfl(jj, :) = std(out{ii}{jj}, 1);
-    end
-    
-    % meanfl = meanfl(:, 1:101);
-    % stdfl = stdfl(:, 101);
-    % xbase = init_size : init_size + 100;
-    
-    figure(ii);
-    % xbase = init_size : init_size + infill_size;
-    x = [xbase, fliplr(xbase)];
-    plot(xbase, meanfl(1, :), 'r', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(2, :), 'k', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(3, :), 'b', 'LineWidth',2); hold on;
-    
-    y1 = meanfl(1, :) + stdfl(1,:);
-    y2 = meanfl(1, :) - stdfl(1,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');
-    
-    y1 = meanfl(2, :) + stdfl(2,:);
-    y2 = meanfl(2, :) - stdfl(2,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
-    
-    y1 = meanfl(3, :) + stdfl(3,:);
-    y2 = meanfl(3, :) - stdfl(3,:);
-    y = [y1, fliplr(y2)];
-    fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
-    
-    numk = prob.n_lvar;
-    legend( leg{1}, leg{2},leg{3}, 'FontSize', 14);
-    t = strcat( prob.name , '  converge k', num2str(numk), ' init size ', num2str(init_size));
-    title(t,  'FontSize', 16);
-    a = 0;
-    
-    
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.fig');
-    savefig(savename);
-    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(numk), '_converge.png');
-    saveas(figure(ii), savename);
-    close(figure(ii));
-end
-
-
-%
-% % to csv
-% %-----mean to csv
-% foldername = strcat(pwd, '\result_folder\matchxl_invest');
-% n = exist(foldername);
-% if n ~= 7
-%     mkdir(foldername)
-% end
-%
-%
-%
-% savename = strcat(foldername,'\matchxl2_mean.csv');
-% fp=fopen(savename,'w');
-% fprintf(fp, 'problem_method, ');
-% for jj = 1:nm
-%     fprintf(fp,'%s, ', leg{jj} );
-% end
-% fprintf(fp,'\n');
-%
-% for ii = 1:np
-%     prob = problems{ii};
-%     prob = eval(prob);
-%     name = strcat( prob.name, '_', num2str(prob.n_lvar));
-%     fprintf(fp, '%s,', name);
-%     for jj = 1:nm
-%
-%         st = strcat(num2str(meanmatrix(ii, jj)), char(177) , num2str(stdmatrix(ii, jj)));
-%         fprintf(fp, '%s,', st);
-%     end
-%     fprintf(fp, '\n');
-% end
-% fclose(fp);
-%
-%
-%
-% savename = strcat(foldername,'\matchxl2_std.csv');
-% fp=fopen(savename,'w');
-% fprintf(fp, 'problem_method, ');
-% for jj = 1:nm
-%     fprintf(fp,'%s, ', leg{jj} );
-% end
-% fprintf(fp,'\n');
-%
-% for ii = 1:np
-%     prob = problems{ii};
-%     prob = eval(prob);
-%     name = strcat( prob.name, '_', num2str(prob.n_lvar));
-%     fprintf(fp, '%s,', name);
-%     for jj = 1:nm
-%
-%         st = num2str(stdmatrix(ii, jj));
-%         fprintf(fp, '%s,', st);
-%     end
-%     fprintf(fp, '\n');
-% end
-% fclose(fp);
-%
-%
-% % to csv
-% %-----median to csv
-% foldername = strcat(pwd, '\result_folder\matchxl_invest');
-% n = exist(foldername);
-% if n ~= 7
-%     mkdir(foldername)
-% end
-%
-% savename = strcat(foldername,'\matchxl2_median.csv');
-% fp=fopen(savename,'w');
-% fprintf(fp, 'problem_method, ');
-% for jj = 1:nm
-%     fprintf(fp,'%s, ', leg{jj} );
-% end
-% fprintf(fp,'\n');
-%
-% for ii = 1:np
-%     prob = problems{ii};
-%     prob = eval(prob);
-%     name = strcat( prob.name, '_', num2str(prob.n_lvar));
-%     fprintf(fp, '%s,', name);
-%     for jj = 1:nm
-%         fprintf(fp, '%f,', medianmatrix(ii, jj));
-%     end
-%     fprintf(fp, '\n');
-% end
-% fclose(fp);
-%
-
-
-
 
 
 

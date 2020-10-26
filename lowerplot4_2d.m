@@ -22,6 +22,13 @@ x1 = linspace(lb1, ub1, num_points);
 x2 = linspace(lb2, ub2, num_points);
 [x1, x2] = meshgrid(x1, x2);
 f = zeros(num_points, num_points);
+
+
+
+
+
+
+
 % 
 % 
 % for i = 1:num_points
@@ -49,14 +56,18 @@ for i = 1:num_points
         f(i, j) = prob.evaluate_l([], [x1(i, j), x2(i, j)]);
     end
 end
-min(f(:))
-surfc(x1, x2, f); hold on;
+% 
+% surfc(x1, x2, f); hold on;
+% 
+% xlabel('x1', 'FontSize', 16);
+% ylabel('x2', 'FontSize', 16);
+% zlabel('f',  'FontSize', 16);
+% colormap jet
+% shading interp
+% title(prob.name,'FontSize', 18 );
 
-xlabel('x1', 'FontSize', 16);
-ylabel('x2', 'FontSize', 16);
-zlabel('f',  'FontSize', 16);
+contour(x1, x2, f); hold on;
 colormap jet
-shading interp
 title(prob.name,'FontSize', 18 );
 
 

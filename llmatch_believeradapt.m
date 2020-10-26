@@ -24,6 +24,9 @@ global eps_dist
 l_nvar = prob.n_lvar;
 eps_dist = sqrt(l_nvar) * 0.01;  %  1% of max normalizated distance
 
+
+norm_str = varargin{2};
+
 % init_size = 11 * l_nvar -1;
 % init_size = 2 * l_nvar + 1;
 upper_bound = prob.xl_bu;
@@ -40,19 +43,15 @@ train_xl = repmat(lower_bound, init_size, 1) ...
 % compatible with non-constriant problem
 [train_fl, train_fc] = prob.evaluate_l(xu_init, train_xl);
 
-% lower level is considered as single objective
-if size(train_fl, 2)>1
-    error('lower level problem is multiple objective, algorithm is not compatible');
-end
-
-% call EIM/Ehv to expand train xl one by one
+% call EIM to expand train xl one by one
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
+normhn = str2func(norm_str);
 
 for iter = 1:iter_size
     % -------------------------------
     % dual adding. believer search
-    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, str2func('normalization_z'));
+    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, str2func(norm_str));
     funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
     
@@ -64,14 +63,14 @@ for iter = 1:iter_size
     
     %-------believer local search
     % new_xl = new_xlb;
-    [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, 'normalization_z');
+    [new_xl] = surrogate_localsearch(xu, new_xlb, prob, train_xl, train_fl, train_fc, norm_str);
     
     tooclose = archive_check(new_xl, train_xl, prob);
     if tooclose
         % ---- determine whether to switch to eim
         [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
-            num_pop, num_gen, train_fc, fithn);      
-       [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
+            num_pop, num_gen, train_fc, fithn, normhn);      
+       [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, norm_str);
        fprintf('adopt eim at iter: %d\n', iter);      
     end
     

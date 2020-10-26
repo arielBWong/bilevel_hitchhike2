@@ -12,6 +12,7 @@ classdef Gpc
         xl_bu;
         ref;
         fprime = 5.6692;
+        xprime = [0.5955,-0.4045];
         name = 'Gpc';
     end
     methods
@@ -36,6 +37,7 @@ classdef Gpc
             B = 18 - 32 * x1 + 12 * x1.^2 + 48 * x2 - 36 * x1 .* x2 + 27 * x2 .^ 2;
             
             f = (1 + A .* (x1 + x2 + 1).^2) * (30 + B .* (2 * x1 - 3 * x2).^2);
+            f = log(f);
             
             g1 = -3 * x1 + (-3 * x2).^3;
             g2 = x1 - x2 - 1;
@@ -52,11 +54,22 @@ classdef Gpc
             
             f = (1 + A .* (x1 + x2 + 1).^2) .* (30 + B .* (2 * x1 - 3 * x2).^2);
             
+            f = log(f);
+            
             g1 = -3 * x1 + (-3 * x2).^3;
             g2 = x1 - x2 - 1;
             
             con = [g1, g2];
             
         end
+        
+         function c = cons1(obj, x1, x2)
+            c = -3 * x1 + (-3 * x2).^3;
+         end
+         
+          function c = cons2(obj, x1, x2)         
+             c = x1 - x2 - 1;
+         end
+
     end
 end

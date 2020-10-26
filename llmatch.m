@@ -20,7 +20,8 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 %         n_fev : total number of function evaluation on lower level
 %         flag : whether xl is a feasible solution(true/false)
 %--------------------------------------------------------------------------
-distancecontrol = true;
+norm_str = varargin{2};
+
 l_nvar = prob.n_lvar;
 % init_size = 2 * l_nvar + 1;
 % init_size = 11 * l_nvar - 1;
@@ -37,26 +38,27 @@ train_xl = repmat(lower_bound, init_size, 1) ...
 % compatible with non-constriant problem
 [train_fl, train_fc] = prob.evaluate_l(xu_init, train_xl);
 
-% lower level is considered as single objective
-if size(train_fl, 2)>1
-    error('lower level problem is multiple objective, algorithm is not compatible');
-end
+
+fighn = figure(1);
+cons_hn = @prob.cons;
 
 % call EIM/Ehv to expand train xl one by one
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
+normhn = str2func(norm_str);
 for iter = 1:iter_size
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
     
     [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
-        num_pop, num_gen, train_fc, fithn);
+        num_pop, num_gen, train_fc, fithn, normhn);
     
     % local search on surrogate
-    [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, 'normalization_z');
+    [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, norm_str);
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
     
+    % inprocess_plotsearch(fighn, prob, cons_hn, new_xl, train_xl);
     % add to training
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
@@ -92,12 +94,14 @@ llcmp = true;
 if llcmp
     method = 'llmatcheim';
     seed = varargin{1};
-    % add local search result
-    train_xl = [train_xl; match_xl];
-    [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
-    train_fl = [train_fl; local_fl];
-    train_fc = [train_fc; local_fc];
-    
+       % add local search result
+    % only for SO
+    if size(train_fl, 2) ==  1
+        train_xl = [train_xl; match_xl];
+        [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
+        train_fl = [train_fl; local_fl];
+        train_fc = [train_fc; local_fc];
+    end
     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
     
     

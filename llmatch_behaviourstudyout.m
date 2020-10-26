@@ -2,11 +2,12 @@
 clearvars;
 close all;
 
-seedmax = 1;
+seedmax = 11;
+median_num = 5;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 problems ={
-    'SHCBc()',...
+    'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()',...
     };
 % 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()'
 % 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
@@ -106,6 +107,34 @@ if ~isempty(cl_search) && size(fl, 2) ==1
         for jj = 1:nm
             var = mean(out{ii}{jj});
             st = num2str(var);
+            fprintf(fp, '%s,', st);
+        end
+        fprintf(fp, '\n');
+    end
+    fclose(fp);
+    
+    
+     savename = strcat(foldername,'\singleObjCon_median.csv');
+    fp=fopen(savename,'w');
+    fprintf(fp, 'problem_method, ');
+    for jj = 1:nm
+        fprintf(fp,'%s, ', leg{jj} );
+        fprintf(fp,'seed, ');
+    end
+    fprintf(fp,'\n');
+    
+    for ii = 1:np
+        prob = problems{ii};
+        prob = eval(prob);
+        name = strcat( prob.name, '_', num2str(prob.n_lvar));
+        fprintf(fp, '%s,', name);
+        for jj = 1:nm
+            var = out{ii}{jj};
+            [~, id] = sort(var);
+            
+            st = num2str(median(var));
+            fprintf(fp, '%s,', st);
+            st = num2str(id(median_num));
             fprintf(fp, '%s,', st);
         end
         fprintf(fp, '\n');

@@ -30,13 +30,13 @@ function Main_Constrained_Multiobjective_EGO(fun_name)
 % 2018.12.13 initial creation
 % -----------------------------------------------------------------------------------------
 % clearvars;close all;
-num_seeds = 29 ;
+num_seeds = 1 ;
 hvs = zeros(num_seeds, 1);
 for seed = 1:num_seeds
     rng(seed, 'twister');
     % settings of the problem
     %  'SRN', 'TNK', 'BNH', 'Welded_Beam'
-    % fun_name ='Welded_Beam';
+    fun_name ='SRN';
     % infill criterion: 'CEIM_Euclidean','CEIM_Maximin','CEIM_Hypervolume'
     infill_name= 'CEIM_Hypervolume';
     % number of initial design points

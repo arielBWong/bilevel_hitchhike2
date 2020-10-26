@@ -28,7 +28,7 @@ classdef SRN
             obj.name = 'SRN';
             
              %---bl adapt
-            obj.n_lvar = q;
+            obj.n_lvar = obj.q;
             obj.xl_bl = [-20,-20];
             obj.xl_bu =  [20, 20];
             %-----

@@ -1,6 +1,6 @@
 
 %%
-prob = Haupt_schewefel();
+prob = newBranin2();
 train_xl = lhsdesign(20, 2,'criterion','maximin','iterations',1000);
 train_xl = repmat(prob.xl_bl, 20, 1) ...
     + repmat((prob.xl_bu - prob.xl_bl),20, 1) .* train_xl;

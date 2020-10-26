@@ -27,7 +27,7 @@ classdef BNH
             obj.ref = [140, 50];
             obj.name = 'BNH';
              %---bl adapt
-            obj.n_lvar = q;
+            obj.n_lvar = obj.q;
             obj.xl_bl = [0, 0];
             obj.xl_bu =   [5, 3];
             %-----
