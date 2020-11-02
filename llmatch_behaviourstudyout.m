@@ -2,22 +2,19 @@
 clearvars;
 close all;
 
-seedmax = 11;
-median_num = 5;
+seedmax = 29;
+median_num = 15;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
-problems ={
-    'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()',...
-    };
-% 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()'
-% 'tp3(5,5)','tp5(5,5)','tp6(5,5)','tp7(5,5)','tp8(5,5)','tp9(5,5)'
-% 'tp3(4,4)','tp5(4,4)','tp6(4,4)','tp7(4,4)','tp8(4,4)','tp9(4,4)'
-% 'tp3(3,3)','tp5(3,3)','tp6(3,3)','tp7(3,3)','tp8(3,3)','tp9(3,3)'
-% 'tp3(2,2)','tp5(2,2)','tp6(2,2)','tp7(2,2)','tp8(2,2)','tp9(2,2)'
 
-k = 2;
-init_size = 11 * k - 1;
-methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
+problems ={'tp3(2, 2)', 'tp5(2,2)', 'tp7(2,2)','Shekel(2,2)','rastrigin(2,2)', 'cec2010(1,2)' ... 
+     'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()',
+    };
+
+%  
+% k = 2;
+% init_size = 11 * k - 1;
+methods = { 'llmatchapt', 'llmatcheim', 'llmatchble',  };  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
 % leg = {'EIM', 'BEL', 'GEN'};
 
 % methods = {'llmatch', 'llmatch_sao_archiveinsert'};  % 'llmatchpop','llmatcheim', 'llmatcheimfix',,  'llmatch_hyb'
@@ -26,28 +23,196 @@ np  = length(problems);
 nm  = length(methods);
 infill_size = 300;
 
-num_experiments = 100; % size xu in its file
-
 % ------read in file
 out = cell(1, np);
-
 
 
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
     out{ii} = cell(1, nm);
+    % [fprime, ~] = prob.evaluate_l([], prob.xprime);
     
     for jj = 1:nm
         method = methods{jj};
         num = length(prob.xl_bl);
+        init_size = 11 * num - 1;
         %savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_llstudy_',method);
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
         
         for kk = 1:seedmax
+        % for kk = 7:7
             % read algorithm fl
             savename = strcat(savepath, '\fl_', num2str(kk), '.csv' )
+            fl = csvread(savename);
+            
+            % create prime fl
+            % fl_prime = [];
+            
+            
+            % savename = strcat(savepath, '\xl_', num2str(kk), '.csv')
+            % xl_search = csvread(savename);
+            % xl_prime = [];
+            
+            
+            % out{ii}{jj}(kk) = abs(fl(end) - fprime);
+            out{ii}{jj}(kk) = fl(end);
+         
+        end
+    end
+    
+end
+
+% to csv
+%-----mean to csv
+foldername = strcat(pwd, '\result_folder\matchxl_invest');
+n = exist(foldername);
+if n ~= 7
+    mkdir(foldername)
+end
+
+savename = strcat(foldername,'\singleObjCon_meanWithlocalsearch.csv');
+fp=fopen(savename,'w');
+fprintf(fp, 'problem_method, ');
+for jj = 1:nm
+    fprintf(fp,'%s, ', leg{jj} );
+end
+fprintf(fp,'\n');
+
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    name = strcat( prob.name, '_', num2str(prob.n_lvar));
+    fprintf(fp, '%s,', name);
+    for jj = 1:nm
+        var = mean(out{ii}{jj});
+        st = num2str(var);
+        fprintf(fp, '%s,', st);
+    end
+    fprintf(fp, '\n');
+end
+fclose(fp);
+
+
+savename = strcat(foldername,'\singleObjCon_medianWithlocalsearch.csv');
+fp=fopen(savename,'w');
+fprintf(fp, 'problem_method, ');
+for jj = 1:nm
+    fprintf(fp,'%s, ', leg{jj} );
+    fprintf(fp,'seed, ');
+end
+fprintf(fp,'\n');
+
+seeds_median = zeros(np, nm);
+
+
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    name = strcat( prob.name, '_', num2str(prob.n_lvar));
+    fprintf(fp, '%s,', name);
+    for jj = 1:nm
+        var = out{ii}{jj};
+        [~, id] = sort(var);
+        
+        st = num2str(median(var));
+        fprintf(fp, '%s,', st);
+        st = num2str(id(median_num));
+        fprintf(fp, '%s,', st);
+        
+        seeds_median(ii, jj) = id(median_num);
+    end
+    fprintf(fp, '\n');
+end
+fclose(fp);
+
+return;
+
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    
+    median_plot = zeros(nm, infill_size);
+    
+    for jj = 1:nm
+         savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
+         seed = seeds_median(ii, jj);
+         savename = strcat(savepath, '\fl_', num2str(seed), '.csv' );
+         fl = csvread(savename);
+         
+         savename = strcat(savepath, '\xl_', num2str(seed), '.csv');
+         xl = csvread(savename);
+         
+         savename = strcat(savepath, '\cl_', num2str(seed), '.csv' );
+         cl = csvread(savename);
+         
+         for kk = init_size+1 :init_size + infill_size
+             x =  xl(1:kk, :);
+             ff = fl(1:kk, :);
+             fc = cl(1:kk, :);   
+             [best_x, best_f, best_c, s, index] = localsolver_startselection(x,  ff, fc);
+             %----
+             best_c(best_c<=0) = 0;
+             if sum(best_c)>0
+                 median_plot(jj, kk-init_size) = 0;
+             else
+                 median_plot(jj, kk-init_size) = log(best_f);
+             end
+         end
+         a = 0;
+
+    end
+    
+    
+    
+    figure(ii);
+    plot(median_plot(1, :), 'LineWidth', 2); hold on;
+    plot(median_plot(2, :), 'LineWidth', 2);hold on;
+    plot(median_plot(3, :), 'LineWidth', 2);hold on;
+    legend( leg{1}, leg{2},leg{3}, 'FontSize', 14);
+    t = strcat( prob.name , '  f value k ', num2str(prob.n_lvar), ' init size ', num2str(init_size), ' median');
+    title(t,  'FontSize', 16);
+    
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(prob.n_lvar), '_fvalue.fig');
+    savefig(savename);
+    savename = strcat(pwd, '\result_folder\', prob.name,'_', num2str(prob.n_lvar), '_fvalue.png');
+    saveas(figure(ii), savename);
+    close(figure(ii));
+    
+    a=0;
+end
+
+
+
+
+
+
+
+
+initsize = 11 * 2-1;
+out = cell(1, np);
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    init_size = 11 * prob.n_lvar  -1;
+    xbase = init_size+1 : init_size + infill_size;
+    out{ii} = cell(1, nm);
+    fprime = prob.evaluate_l([], prob.xprime);
+    
+    for jj = 1:nm
+        method = methods{jj};
+        num = length(prob.xl_bl);
+        init_size = 11 * num - 1;
+        %savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_llstudy_',method);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
+        savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
+        
+        out{ii}{jj} = zeros(seedmax, init_size + infill_size);
+        for kk = 1:seedmax
+       %  for kk = 7:7
+            % read algorithm fl
+            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
             fl = csvread(savename);
             
             % create prime fl
@@ -57,97 +222,32 @@ for ii = 1:np
             xl_search = csvread(savename);
             xl_prime = [];
             
-            savename = strcat(savepath, '\cl_', num2str(kk), '.csv');
-            cl_search = csvread(savename);
-            
-            if ~isempty(cl_search) && size(fl, 2) ==1
-                % constraint single objective
-                out{ii}{jj}(kk) = abs(fl(end) - prob.fprime);
+            for i = 1:init_size + infill_size
+                % out{ii}{jj}(kk, i) = min(fl(1:i));
                 
-            else
-                % single objective
-                temp =  fl(init_size:end-1)';
-                for mm = 1:size(temp, 2)
-                    out{ii}{jj}(kk, mm) = min(temp(1:mm));
-                end
-            end
-        end
-        
-    end
-    
-    
-end
-% use existing variable
-if ~isempty(cl_search) && size(fl, 2) ==1
-    % results mean max to csv
-    
-    % to csv
-    %-----mean to csv
-    foldername = strcat(pwd, '\result_folder\matchxl_invest');
-    n = exist(foldername);
-    if n ~= 7
-        mkdir(foldername)
-    end
-    
-    
-    
-    savename = strcat(foldername,'\singleObjCon_mean.csv');
-    fp=fopen(savename,'w');
-    fprintf(fp, 'problem_method, ');
-    for jj = 1:nm
-        fprintf(fp,'%s, ', leg{jj} );
-    end
-    fprintf(fp,'\n');
-    
-    for ii = 1:np
-        prob = problems{ii};
-        prob = eval(prob);
-        name = strcat( prob.name, '_', num2str(prob.n_lvar));
-        fprintf(fp, '%s,', name);
-        for jj = 1:nm
-            var = mean(out{ii}{jj});
-            st = num2str(var);
-            fprintf(fp, '%s,', st);
-        end
-        fprintf(fp, '\n');
-    end
-    fclose(fp);
-    
-    
-     savename = strcat(foldername,'\singleObjCon_median.csv');
-    fp=fopen(savename,'w');
-    fprintf(fp, 'problem_method, ');
-    for jj = 1:nm
-        fprintf(fp,'%s, ', leg{jj} );
-        fprintf(fp,'seed, ');
-    end
-    fprintf(fp,'\n');
-    
-    for ii = 1:np
-        prob = problems{ii};
-        prob = eval(prob);
-        name = strcat( prob.name, '_', num2str(prob.n_lvar));
-        fprintf(fp, '%s,', name);
-        for jj = 1:nm
-            var = out{ii}{jj};
-            [~, id] = sort(var);
+                % constraint problems
+                savename = strcat(savepath, '\cl_', num2str(kk), '.csv' );
+                cl = csvread(savename);
+                
+                x =  xl_search(1:i, :);
+                ff = fl(1:i, :);
+                fc = cl(1:i, :);
+                
+                [best_x, best_f, best_c, s, index] = localsolver_startselection(x,  ff, fc);
+                % best_c(best_c<=0) = 0;
+                % fprintf( '%f, %f \n', best_f, sum(best_c));
+                
+                out{ii}{jj}(kk, i) = best_f;
+                
+            end 
             
-            st = num2str(median(var));
-            fprintf(fp, '%s,', st);
-            st = num2str(id(median_num));
-            fprintf(fp, '%s,', st);
+          
+         
+         
         end
-        fprintf(fp, '\n');
     end
-    fclose(fp);
-    
-    return;
     
 end
-
-
-
-xbase = init_size : init_size + infill_size;
 
 
 % medianmatrix = zeros(np, nm);
@@ -161,39 +261,42 @@ xbase = init_size : init_size + infill_size;
 %     end
 % end
 
-meanfl = zeros(nm, infill_size + 1);
-stdfl = zeros(nm, infill_size + 1);
+meanfl = zeros(nm, initsize + infill_size);
+stdfl = zeros(nm, initsize + infill_size);
+
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
     for jj = 1:nm
         meanfl(jj, :) = mean(out{ii}{jj}, 1);
-        stdfl(jj, :) = std(out{ii}{jj}, 1);
+        stdfl(jj, :)  = std(out{ii}{jj}, 1);
     end
-    
-    % meanfl = meanfl(:, 1:101);
-    % stdfl = stdfl(:, 101);
-    % xbase = init_size : init_size + 100;
     
     figure(ii);
     % xbase = init_size : init_size + infill_size;
     x = [xbase, fliplr(xbase)];
-    plot(xbase, meanfl(1, :), 'r', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(2, :), 'k', 'LineWidth',2); hold on;
-    plot(xbase, meanfl(3, :), 'b', 'LineWidth',2); hold on;
+    plot(xbase, meanfl(1, init_size+ 1 :initsize + infill_size), 'r', 'LineWidth',2); hold on;
+    plot(xbase, meanfl(2, init_size+ 1 :initsize + infill_size), 'k', 'LineWidth',2); hold on;
+    plot(xbase, meanfl(3, init_size+ 1 :initsize + infill_size), 'b', 'LineWidth',2); hold on;
     
     y1 = meanfl(1, :) + stdfl(1,:);
     y2 = meanfl(1, :) - stdfl(1,:);
+    y1 = y1(1, init_size+ 1 :initsize + infill_size);
+    y2 = y2(1, init_size+ 1 :initsize + infill_size);
     y = [y1, fliplr(y2)];
     fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');
     
     y1 = meanfl(2, :) + stdfl(2,:);
     y2 = meanfl(2, :) - stdfl(2,:);
+    y1 = y1(1, init_size+ 1 :initsize + infill_size);
+    y2 = y2(1, init_size+ 1 :initsize + infill_size);
     y = [y1, fliplr(y2)];
     fill(x, y, 'k', 'FaceAlpha', 0.4, 'EdgeColor','none');
     
     y1 = meanfl(3, :) + stdfl(3,:);
     y2 = meanfl(3, :) - stdfl(3,:);
+    y1 = y1(1, init_size+ 1 :initsize + infill_size);
+    y2 = y2(1, init_size+ 1 :initsize + infill_size);
     y = [y1, fliplr(y2)];
     fill(x, y, 'b', 'FaceAlpha', 0.3, 'EdgeColor','none');
     

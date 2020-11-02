@@ -11,6 +11,7 @@ classdef Reverse_Mystery
         xl_bl;
         xl_bu;
         ref;
+        xprime = [3.0716,2.0961];
         fprime = -0.5504;
         name = 'Reverse_Mystery';
 

@@ -11,6 +11,7 @@ classdef Gomez3
         xl_bl;
         xl_bu;
         ref;
+        xprime = [0.1093,-0.6234];
         fprime = -0.9711;
         name = 'Gomez3';
     end

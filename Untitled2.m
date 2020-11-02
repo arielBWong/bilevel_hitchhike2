@@ -1,17 +1,17 @@
 
 %%
-prob = newBranin2();
+% prob = cec2010(1,2);
+prob = cec17(20,2);
 train_xl = lhsdesign(20, 2,'criterion','maximin','iterations',1000);
 train_xl = repmat(prob.xl_bl, 20, 1) ...
     + repmat((prob.xl_bu - prob.xl_bl),20, 1) .* train_xl;
 
 a = 0;
 
-train_fl = prob.evaluate_l([], train_xl);
+[train_fl, c] = prob.evaluate_l([], train_xl);
+lowerplot4_2d(prob, train_xl, train_fl, []);
 
- lowerplot4_2d(prob, train_xl, train_fl, []);
-
-% 
+ 
 % figure(1);
 % 
 % lb1 = prob.xl_bl(1);

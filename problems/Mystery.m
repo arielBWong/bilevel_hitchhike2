@@ -11,6 +11,7 @@ classdef Mystery
         xl_bl;
         xl_bu;
         ref;
+        xprime = [2.7450,2.3523];
         fprime = -1.1743;
         name = 'Mystery';
 

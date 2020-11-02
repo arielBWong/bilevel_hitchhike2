@@ -4,7 +4,7 @@ workdir = pwd;
 problem_folder = strcat(workdir,'\problems\EGproblems');
 addpath(problem_folder);
 
-problem_folder = strcat(workdir,'\problems');
+problem_folder = strcat(workdir,'\problems\CEC2017');
 addpath(problem_folder);
 
 

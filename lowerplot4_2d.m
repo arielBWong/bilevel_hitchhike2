@@ -25,10 +25,6 @@ f = zeros(num_points, num_points);
 
 
 
-
-
-
-
 % 
 % 
 % for i = 1:num_points
@@ -49,14 +45,19 @@ f = zeros(num_points, num_points);
 num_points = 101;
 figure(2);
 f = zeros(num_points, num_points);
+c = zeros(num_points, num_points);
 
 
 for i = 1:num_points
     for j = 1:num_points
-        f(i, j) = prob.evaluate_l([], [x1(i, j), x2(i, j)]);
+        [f(i, j), t] = prob.evaluate_l([], [x1(i, j), x2(i, j)]);
+        c(i, j) = t(1);
+%         if c(i, j) > 0 
+%             c(i, j) = 0;
+%         end
     end
 end
-% 
+% figure(1)
 % surfc(x1, x2, f); hold on;
 % 
 % xlabel('x1', 'FontSize', 16);
@@ -66,10 +67,18 @@ end
 % shading interp
 % title(prob.name,'FontSize', 18 );
 
-contour(x1, x2, f); hold on;
+figure(2)
+surfc(x1, x2, c); hold on;
+
+xlabel('x1', 'FontSize', 16);
+ylabel('x2', 'FontSize', 16);
+zlabel('f',  'FontSize', 16);
 colormap jet
+shading interp
 title(prob.name,'FontSize', 18 );
 
-
+% contour(x1, x2, f); hold on;
+% colormap jet
+% title(prob.name,'FontSize', 18 );
 
 end

@@ -10,6 +10,7 @@ classdef SHCBc
         xu_bu;
         xl_bl;
         xl_bu;
+        xprime = [1.8150,-0.8750];
         fprime = -2.9501;
         ref;
         name = 'SHCBc';

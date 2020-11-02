@@ -33,8 +33,8 @@ samplesize = size(xu, 1);
 xl = [];
 
 lower_iter =300; 
-normalization = 'normalization_nd';
-% normalization = 'normalization_z';
+% normalization = 'normalization_nd';
+normalization = 'normalization_z';
 
 if ~contains(method, '_')
     rng(seed, 'twister');

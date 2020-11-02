@@ -10,7 +10,8 @@ classdef Shekel
         xu_bu;
         xl_bl;
         xl_bu;
-        m = 5;
+        m = 10;
+        xprime;
         name;
         uopt = [];
         lopt = [];
@@ -26,6 +27,8 @@ classdef Shekel
             % level variables
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
+            
+            obj.xprime = ones(1, obj.q) * 4;
             
             % bounds
             %init bound upper level

@@ -8,7 +8,7 @@ classdef tp5
         xu_bu;
         xl_bl;
         xl_bu;
-        xl_prime;
+        xprime;
         name = 'tpso5';
         uopt = NaN;
         lopt = NaN; % double check needed
@@ -23,7 +23,7 @@ classdef tp5
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
             
-            obj.xl_prime = 0.5 * ones(1, obj.q);
+            obj.xprime = 0.5 * ones(1, obj.q);
             % bounds
             %init bound upper level
             obj.xu_bl = zeros(1, obj.p);

@@ -14,8 +14,7 @@ end
 
 
 num = length(prob.xl_bl);
-savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method);
-% savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
+savepath = strcat(pwd, '\result_folder\', prob.name, '_',method);
 n = exist(savepath);
 if n ~= 7
     mkdir(savepath)

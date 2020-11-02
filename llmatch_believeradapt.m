@@ -22,12 +22,12 @@ function[match_xl, n_fev, flag] = llmatch_believeradapt(xu, prob, num_pop, num_g
 %--------------------------------------------------------------------------
 global eps_dist 
 l_nvar = prob.n_lvar;
-eps_dist = sqrt(l_nvar) * 0.01;  %  1% of max normalizated distance
+eps_dist = sqrt(l_nvar) * 0.001;  %  1% of max normalizated distance
 
 
 norm_str = varargin{2};
 
-% init_size = 11 * l_nvar -1;
+init_size = 11 * l_nvar -1;
 % init_size = 2 * l_nvar + 1;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;

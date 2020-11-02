@@ -8,7 +8,7 @@ classdef tp7
         xu_bu;
         xl_bl;
         xl_bu;
-        xl_prime;
+        xprime;
         name = 'tpso7';
         uopt = NaN;
         lopt = 0.0625; % double check needed
@@ -22,7 +22,7 @@ classdef tp7
              end
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
-            obj.xl_prime = 8;
+            obj.xprime = ones(1,  obj.q)  * 8;
             % bounds
             %init bound upper level
             obj.xu_bl = zeros(1, obj.p);

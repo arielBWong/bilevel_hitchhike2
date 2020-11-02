@@ -3,14 +3,16 @@ clearvars;
 close all;
 
 seedmax = 11;
+meidan_id = 5;
 problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
     'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
 problems ={
-    'TNK()', 'BNH()', 'SRN()',...
+     'BNH()', 'SRN()','Welded_Beam()',...
     };
 
-
-k = 2;
+% 'Welded_Beam()'
+% 'TNK()', 'BNH()', 'SRN()',
+k = 4;
 init_size = 11 * k - 1;
 methods = {'llmatchapt', 'llmatcheim',  'llmatchble'};  % 'llmatchpop', 'llmatcheim',  'llmatchble',  'llmatchapt'
 % leg = {'EIM', 'BEL', 'GEN'};
@@ -29,9 +31,10 @@ out = cell(1, np);
 for ii = 1:np
     prob = problems{ii};
     prob = eval(prob);
+    k = prob.n_lvar;
     
     nd_across_method = [];
-    
+    init_size =  11 * k - 1;
     
     for jj = 1:nm
         method = methods{jj};
@@ -42,6 +45,7 @@ for ii = 1:np
             % read algorithm fl
             savename = strcat(savepath, '\fl_', num2str(kk), '.csv' )
             fl = csvread(savename);
+            disp(size(fl, 1));
             nd_across_method = [nd_across_method; fl];
         end
         
@@ -108,11 +112,40 @@ end
 fclose(fp);
 
 
+
+savename = strcat(foldername,'\multipleObjCon_median.csv');
+fp=fopen(savename,'w');
+fprintf(fp, 'problem_method, ');
+for jj = 1:nm
+    fprintf(fp,'%s, ', leg{jj} );
+    fprintf(fp,'seed, ' );
+end
+fprintf(fp,'\n');
+
+for ii = 1:np
+    prob = problems{ii};
+    prob = eval(prob);
+    name = strcat( prob.name, '_', num2str(prob.n_lvar));
+    fprintf(fp, '%s,', name);
+    for jj = 1:nm
+        
+        [~,id ] = sort(out{ii}{jj});
+        var = median(out{ii}{jj});
+        st = num2str(1/var);
+        fprintf(fp, '%s,', st);
+        fprintf(fp, '%d, ',id(meidan_id));
+    end
+    fprintf(fp, '\n');
+end
+fclose(fp);
+
+
 % median to plot
 if seedmax == 11
     for ii = 1:np
         prob = problems{ii};
         prob = eval(prob);
+        init_size = 11 * prob.n_lvar  -1;
         figure(ii);
         for jj = 1:nm
             method = methods{jj};
@@ -123,7 +156,7 @@ if seedmax == 11
             % plot nd front
             num = length(prob.xl_bl);
             savepath = strcat(pwd, '\result_folder\', prob.name, '_', num2str(num) ,'_',method, '_init_', num2str(init_size));
-            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' );
+            savename = strcat(savepath, '\fl_', num2str(kk), '.csv' )
             fl = csvread(savename);
             
             scatter(fl (:,1), fl (:,2),markers{jj}, 'filled'); hold on ;

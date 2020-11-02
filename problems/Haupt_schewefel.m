@@ -11,6 +11,7 @@ classdef Haupt_schewefel
         xl_bl;
         xl_bu;
         ref;
+        xprime = [6.0860,6.0860];
         fprime = -13.6478;
         name = 'Haupt_schewefel';
     end

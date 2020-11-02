@@ -8,21 +8,22 @@ addpath(problem_folder);
 problem_folder = strcat(pwd,'\problems\TP2');
 addpath(problem_folder);
  
-problems = {'smd1()', 'smd2()','smd3()', 'smd4()',  'smd5()',   'smd6()', 'smd7()', 'smd8()',  'smd9()',   'smd10()', 'smd11()', 'smd12()',...
-    'dsm1(2,2)','dsm1(3,3)', 'dsm1(4,4)','dsm1(5,5)','dsm1dc1(2,2)','dsm1dc1(3,3)', 'dsm1dc1(4,4)',  'dsm1dc1(5,5)'};
+% unimodal 'cec2010(18,2)', 'cec2010(17,2)', cec2010(14,2), cec2010(9,2),
+% 'cec2010(7,2)', 'cec2010(5,2)', 'cec2010(4,2)', 'cec2010(3,2)', 'cec2010(2,2)';
 
-problems = {};
-
+% multimodal 'cec2010(16,2)', 'cec2010(13,2)', 'cec2010(12,2)',
+% 'cec2010(1,2)';
 k = 4; 
 init = 11 * k - 1;
-problems ={'Welded_Beam()',...
-   ...
-    };
-% 'TNK()', 'BNH()', 'SRN()'
-%  'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()'
-seeds = linspace(1, 11, 11);
+problems ={ 'cec2010(1,2)', 'tp3(2, 2)', 'tp5(2, 2)', 'tp7(2, 2)','Shekel(2, 2)','rastrigin(2, 2)', ... 
+     'SHCBc()', 'newBranin5()','newBranin2()', 'Reverse_Mystery()' , 'Mystery()', 'Haupt_schewefel()', 'Gpc()', 'Gomez3()',...
+      'cec2010(1,3)', 'tp3(3, 3)', 'tp5(3, 3)', 'tp7(3, 3)','Shekel(3, 3)','rastrigin(3, 3)', ... 
+};
 
-match_methods = {  'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_believeradapt' }; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_believeradapt'
+% 
+seeds = linspace(1, 29, 29);
+
+match_methods = {'llmatch_believeradapt' }; % , 'llmatch_sao_archiveinsert', 'llmatch',  'llmatch_believeradapt'
 
 
 np = length(problems);  

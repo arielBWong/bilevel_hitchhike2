@@ -8,10 +8,9 @@ classdef rastrigin
         xu_bu;
         xl_bl;
         xl_bu;
-        xl_prime;
+        xprime;
         name = 'rastrigin';
-        uopt = NaN;
-        lopt = 0.0625; % double check needed
+
     end
     methods
         function obj = rastrigin(p, q)
@@ -23,7 +22,7 @@ classdef rastrigin
             obj.n_lvar = obj.q;
             obj.n_uvar = obj.p;
             
-            xl_prime = zeros(1, obj.q);
+            obj.xprime = zeros(1, obj.q);
             
             % bounds
             %init bound upper level

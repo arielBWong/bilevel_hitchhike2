@@ -19,6 +19,8 @@ norm_hn = str2func(norm_str);
 l_nvar = prob.n_lvar;
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
+
+init_size = 11 * l_nvar - 1;
 xu_init = repmat(xu, init_size, 1);
 train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
 train_xl = repmat(lower_bound, init_size, 1) ...
@@ -58,9 +60,10 @@ for g = 1: n
     
     if growflag % there is unseen data in evolution
         [new_xl] = surrogate_localsearch(xu, newx, prob, train_xl, train_fl, train_fc, norm_str);
+        % new_xl = newx;
         [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
         
-        %inprocess_plotsearch(fighn, prob, cons_hn, new_xl, train_xl);
+        % inprocess_plotsearch(fighn, prob, cons_hn, new_xl, train_xl);
         
         train_xl = [train_xl; new_xl];
         train_fl = [train_fl; new_fl];
@@ -111,8 +114,7 @@ if llcmp
         [local_fl, local_fc]  = prob.evaluate_l(xu, match_xl);
         train_fl = [train_fl; local_fl];
         train_fc = [train_fc; local_fc];
-    end
-    
+    end    
     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
 end
 

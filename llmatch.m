@@ -24,7 +24,7 @@ norm_str = varargin{2};
 
 l_nvar = prob.n_lvar;
 % init_size = 2 * l_nvar + 1;
-% init_size = 11 * l_nvar - 1;
+init_size = 11 * l_nvar - 1;
 % init_size = 7;
 % init_size = 10;
 upper_bound = prob.xl_bu;
