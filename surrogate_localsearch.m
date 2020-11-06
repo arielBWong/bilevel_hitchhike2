@@ -11,7 +11,7 @@ end
 
 
 normhn = str2func(normalization);
-[krg_obj, krg_con, info] = update_surrogate(trainx, trainf, trainc, normhn);
+[krg_obj, krg_con, info] = update_surrogatedace(trainx, trainf, trainc, normhn);
 
 %  [f_predict, ~]= predictor(newx, krg_obj{1})
  funh_obj = @(x)llobj(x, krg_obj);
@@ -23,14 +23,6 @@ opts.Display = 'off';
 opts.MaxFunctionEvaluations = 100;
 [newx, newf, ~, output] = fmincon(funh_obj, newx, [], [],[], [],  ...
     prob.xl_bl, prob.xl_bu, [],opts);
-
-% [f_predict, ~] = predictor(newx, krg_obj{1})
-
-
- %prob.evaluate_l(xu, newx)
-% newx
-% a = 0
-
 
 end
 

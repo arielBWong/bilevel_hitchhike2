@@ -26,6 +26,10 @@ bestx = NaN;
 bestf = NaN;
 bestc = NaN;
 
+% fighn = varargin{1};
+% trainy = varargin{2};
+% krg = varargin{3}; 
+
 % Initialization
 [pop,archive] = initialize_pop(funh_obj, funh_con, num_xvar, lb, ub, initmatrix, param);
 
@@ -40,6 +44,7 @@ while gen<= param.gen
     % Reduce 2N to N
     [pop]=reduce_pop(pop,param.popsize);
     
+    % processplot_ea(fighn, pop, funh_obj, trainy, krg);
     gen = gen+1;
     % disp(gen);
 end

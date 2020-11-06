@@ -66,9 +66,9 @@ else
 end
 
 for ii = 1:num_obj
-    % kriging_obj{ii} = dace_train(train_x_norm,train_y_norm(:,ii));
+
     kriging_obj{ii} = dacefit(train_x_norm,train_y_norm(:,ii),...
-        'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
+         'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  % for test
 end
 
 % prepare f_best for EIM, first only consider non-constraint situation
@@ -80,19 +80,18 @@ else
 end
 
 % compatibility with constraint problems
-% if nargin>6
 if ~isempty(train_c)
     num_con = size(train_c, 2);
     kriging_con = cell(1,num_con);
-    % [train_c_norm, c_mean, c_std] = zscore(train_c, 0, 1);
     train_c_norm = train_c;
     c_mean = NaN;
     c_std = NaN;
     
     for ii = 1:num_con
-        % kriging_con{ii} = dace_train(train_x_norm,train_c_norm(:,ii));
         kriging_con{ii} = dacefit(train_x_norm,train_c_norm(:,ii),...
-             'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  %test
+            'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));  
+        % kriging_con{ii} = fitrgp(train_x_norm, train_c_norm(:,ii), 'Standardize',1,'BasisFunction','none','KernelFunction','ardsquaredexponential','FitMethod','exact','Sigma',1e-30,'PredictMethod','exact');
+            
     end
     % adjust f_best according to feasibility
     % feasibility needs to be valued in original range
@@ -105,21 +104,27 @@ if ~isempty(train_c)
         index_p = Paretoset(feasible_trainy_norm);
         f_best = feasible_trainy_norm(index_p, :);
     end   
-    fitness_val = @(x)fitnesshn(x,f_best, kriging_obj, kriging_con); % paper version
+    fitness_val = @(x)fitnesshn(x, f_best, kriging_obj, kriging_con); % paper version
 else
     fitness_val = @(x)fitnesshn(x, f_best, kriging_obj);
 end
 
-% call DE evolution
-%  [best_x, eim_f] = DE(fitness_val, num_vari,lb, ub, num_pop, num_gen);
+
 funh_con = @(x) con(x);
 param.gen=num_gen;
 param.popsize = num_pop;
 [best_x, eim_f, bestc, archive] = gsolver(fitness_val, num_vari,  lb,ub, [], funh_con, param);
 
-% convert best_x to denormalized value
-% best_x = best_x .* x_std + x_mean;  % commit for test
+% ---add local search on EI
+if isempty(train_c)
+    best_x = EI_localsearch(best_x, f_best, lb, ub, kriging_obj);
+else
+    best_x = EI_localsearch(best_x, f_best, lb, ub, kriging_obj, kriging_con);
+end
 
+
+
+%-----
 info = struct();
 info.eim_normf = eim_f;
 info.krg = kriging_obj;
@@ -127,6 +132,12 @@ info.train_xmean = x_mean;
 info.train_xstd = x_std;
 info.train_ymean = y_mean;
 info.train_ystd = y_std;
+% --- stability check---
+if isempty(train_c)
+    kriging_con = [];
+end
+info.stable = stability_check(train_x, train_y, train_c, kriging_obj, kriging_con);
+
 
 if  ~isempty(train_c)
     info.krgc = kriging_con;
@@ -139,95 +150,26 @@ c=[];
 end
 
 
-
-
-
-function [fit] = EIM_evalor(x, f, kriging_obj, kriging_con)
-% function of using EIM as fitness evaluation
-% usage:
-%
-% input:
-%        x                                 : pop to evaluate
-%        f                                 : best f so far/feasible pareto front
-%                                               in multi-objective probs
-%        kriging_obj             : kriging model for objectives
-%        kriging_con            : kriging model for constraints
-% output: 
-%        fit                              : pop fitness
-%--------------------------------------------------------------------------
-
-
-% number of input designs
-num_x = size(x,1);
-num_obj = size(f, 2);
-
-% the kriging prediction and varince
-u = zeros(num_x,num_obj);
-mse = zeros(num_x,num_obj);
-
-% pof init
-pof = 1;
-
-if isempty(f) && nargin > 3   % refer no feasible solution
-    % the number of constraints
-    num_con = length(kriging_con);
-    % the kriging prediction and varince
-    mu_g = zeros(size(x,1), num_con);
-    mse_g = zeros(size(x,1), num_con);
-    for ii = 1: num_con
-        % [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
-        [mu_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii}); %test
-    end
-    mse_g = sqrt(max(0,mse_g));
-    pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
-    fit = -pof;
-    return
-end
-
-for ii = 1:num_obj
-    % [u(:, ii), mse(:, ii)] = dace_predict(x, kriging_obj{ii});
-    [u(:, ii), mse(:, ii)] = predictor(x, kriging_obj{ii});
-end
-mse = sqrt(max(0,mse));
-
-% calcualate eim for objective
-if num_obj == 1
-    f = repmat(f, num_x, 1);
-    imp = f - u;
-    z = imp./mse;
-    ei1 = imp .* Gaussian_CDF(z);
-    ei1(mse==0)=0;
-    ei2 = mse .* Gaussian_PDF(z);
-    EIM = (ei1 + ei2);
+function [newx] = EI_localsearch(newx, fbest, bl, bu, kriging_obj, kriging_con)
+% local search on EI function
+%--------------
+num_vari = size(newx, 2);
+if  nargin > 5
+    funh_obj = @(x)EIM_evaldace(x, fbest, kriging_obj, kriging_con);
 else
-    % for multiple objective problems
-    % f - refers to pareto front
-    r = 1.1*ones(1, num_obj);  % reference point
-    num_pareto = size(f, 1);
-    r_matrix = repmat(r,num_pareto,1);
-    EIM = zeros(num_x,1);
-    for ii = 1 : num_x
-        u_matrix = repmat(u(ii,:),num_pareto,1);
-        s_matrix = repmat(mse(ii,:),num_pareto,1);
-        eim_single = (f - u_matrix).*Gaussian_CDF((f - u_matrix)./s_matrix) + s_matrix.*Gaussian_PDF((f - u_matrix)./s_matrix);
-        EIM(ii) =  min(prod(r_matrix - f + eim_single,2) - prod(r_matrix - f,2));
-    end
+    funh_obj = @(x)EIM_evaldace(x, fbest, kriging_obj);
 end
 
-% calculate probability of feasibility for constraints
-if nargin>3
-    % the number of constraints
-    num_con = length(kriging_con);
-    % the kriging prediction and varince
-    mu_g = zeros(size(x,1), num_con);
-    mse_g = zeros(size(x,1), num_con);
-    for ii = 1: num_con
-        % [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
-        [mu_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii}); %test
-    end
-    mse_g = sqrt(max(0,mse_g));
-    pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
+opts = optimset('fmincon');
+opts.Algorithm = 'sqp';
+opts.Display = 'off';
+opts.MaxFunctionEvaluations = 100;
+[newx, newf, ~, output] = fmincon(funh_obj, newx, [], [], [], [],  ...
+    bl, bu, [], opts);
+
 end
-fit = -EIM .* pof;
-end
+
+
+
+
 

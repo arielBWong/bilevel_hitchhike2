@@ -51,7 +51,10 @@ normhn = str2func(norm_str);
 for iter = 1:iter_size
     % -------------------------------
     % dual adding. believer search
-    [krg_obj, krg_con, ~] = update_surrogate(train_xl, train_fl, train_fc, str2func(norm_str));
+    [krg_obj, krg_con, ~] = update_surrogatedace(train_xl, train_fl, train_fc, str2func(norm_str));
+    
+    
+    
     funh_obj = @(x)llobj(x, krg_obj);
     funh_con = @(x)llcon(x, krg_con);
     
@@ -70,8 +73,8 @@ for iter = 1:iter_size
         % ---- determine whether to switch to eim
         [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
             num_pop, num_gen, train_fc, fithn, normhn);      
-       [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, norm_str);
-       fprintf('adopt eim at iter: %d\n', iter);      
+       
+        fprintf('adopt eim at iter: %d\n', iter);      
     end
     
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
@@ -236,3 +239,80 @@ for ii =1:num_obj
     [f(:, ii), mse(:, ii)] = dace_predict(x, kriging_obj{ii});
 end
 end
+
+
+% ---demo test: forrestor
+function[] = processplot(fighn, trainx, trainy, krg, prob, initx, before, after)
+
+crosscheck(krg{1}, trainx, trainy);
+
+% (1) create test
+testdata = linspace(prob.xl_bl, prob.xl_bu, 100);
+testdata = testdata';
+
+% (2) predict
+[fpred, sig] = llobj(testdata, krg);
+clf(fighn);
+histogram(sig);
+
+pause(1);
+clf(fighn);
+yyaxis left;
+fpred = denormzscore(trainy, fpred);
+plot(testdata, fpred, 'r--', 'LineWidth', 1); hold on;
+y1 = fpred + sig * 10;
+y2 = fpred - sig * 10;
+y = [y1', fliplr(y2')];
+x = [testdata', fliplr(testdata')];
+fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none'); hold on;
+
+% (3) real
+[freal, sig]= prob.evaluate_l([], testdata);
+plot(testdata, freal, 'b', 'LineWidth', 2);hold on;
+
+% (4) scatter train
+scatter(trainx, trainy, 80, 'ko', 'LineWidth', 2);
+
+inity = prob.evaluate_l([], initx);
+scatter(initx, inity, 40, 'ro', 'filled');
+%---
+newy = prob.evaluate_l([], before);
+scatter(before, newy, 80, 'ko', 'filled');
+
+% (5) calculate EI and plot
+yyaxis right;
+[train_ynorm, ~, ~] = zscore(trainy);
+ynorm_min = min(train_ynorm);
+fit = EIM_evaldace(testdata, ynorm_min,  krg, []);
+fit = -fit;
+plot(testdata, fit, 'g--');
+
+onepointtest = -3.4;
+fitone = EIM_evaldace(onepointtest, ynorm_min,  krg, []);
+best   = EIM_evaldace(before, ynorm_min,  krg, []);
+one    = 0.02;
+middle = EIM_evaldace(one, ynorm_min,  krg, []);
+
+% newy = prob.evaluate_l([], after);
+% scatter(after, newy, 80, 'yo', 'filled');
+pause(1);
+% data = [trainx, trainy];
+% save('data', 'data');
+
+end
+
+function crosscheck(krg, trainx, trainy)
+[y, sig] = dace_predict(trainx, krg);
+
+y =  denormzscore(trainy, y);
+deltaf = trainy - y
+sig
+a = unique(round(trainx, 3));
+size(a)
+size(trainx)
+end
+
+ function f = denormzscore(trainy, fnorm)
+[train_y_norm, y_mean, y_std] = zscore(trainy);
+f = fnorm * y_std + y_mean;
+ end

@@ -94,7 +94,7 @@ for ii = 1:np
     plot(xbase, meanfl(2, :), 'k'); hold on;   
     plot(xbase, meanfl(3, :), 'b');
     
-     y1 = meanfl(1, :) + stdfl(1,:);
+    y1 = meanfl(1, :) + stdfl(1,:);
     y2 = meanfl(1, :) - stdfl(1,:);
     y = [y1, fliplr(y2)];
     fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none');

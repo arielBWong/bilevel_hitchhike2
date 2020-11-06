@@ -23,10 +23,9 @@ function[match_xl, n_fev, flag] = llmatch(xu, prob, num_pop, num_gen, propose_ne
 norm_str = varargin{2};
 
 l_nvar = prob.n_lvar;
-% init_size = 2 * l_nvar + 1;
-init_size = 11 * l_nvar - 1;
+% init_size = 11 * l_nvar - 1;
 % init_size = 7;
-% init_size = 10;
+
 upper_bound = prob.xl_bu;
 lower_bound = prob.xl_bl;
 xu_init = repmat(xu, init_size, 1);
@@ -34,35 +33,63 @@ train_xl = lhsdesign(init_size,l_nvar,'criterion','maximin','iterations',1000);
 train_xl = repmat(lower_bound, init_size, 1) ...
     + repmat((upper_bound - lower_bound), init_size, 1) .* train_xl;
 
+
+% ---demo test
+initx = train_xl;
+% initx = [0, 0.5, 1]';
+% ---demo test
+
 % evaluate/get training fl from xu_init and train_xl
 % compatible with non-constriant problem
 [train_fl, train_fc] = prob.evaluate_l(xu_init, train_xl);
 
 
 fighn = figure(1);
-cons_hn = @prob.cons;
+
 
 % call EIM/Ehv to expand train xl one by one
 fithn = str2func(llfit_hn);
 nextx_hn = str2func(propose_nextx);
 normhn = str2func(norm_str);
+daceflag = true;
 for iter = 1:iter_size
     % eim propose next xl
     % lower level is single objective so no normalization method is needed
     
-    [new_xl, ~] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
+    tic;
+    [new_xl, infor] = nextx_hn(train_xl, train_fl, upper_bound, lower_bound, ...
         num_pop, num_gen, train_fc, fithn, normhn);
+    toc;
+    
+    if ~infor.stable
+        fprintf('not stable at iteration %d\n', iter);
+        
+        nextx_hn = str2func('EIMnext_gpr'); 
+        fithn = str2func('EIM_eval');
+        daceflag = false;
+        continue;       
+    end
+    
+    before = new_xl;
     
     % local search on surrogate
-    [new_xl] = surrogate_localsearch(xu, new_xl, prob, train_xl, train_fl, train_fc, norm_str);
     % evaluate next xl with xu
     [new_fl, new_fc] = prob.evaluate_l(xu, new_xl);
+    
+    %--forrest demo
+    after = new_xl;
+    % [krg_obj, krg_con, ~] = update_surrogatedace(train_xl, train_fl, train_fc, normhn);
+    krg_obj = infor.krg;
+    processplot(fighn, train_xl, train_fl, krg_obj, prob, initx, before, daceflag);
+    %--forrest demo
     
     % inprocess_plotsearch(fighn, prob, cons_hn, new_xl, train_xl);
     % add to training
     train_xl = [train_xl; new_xl];
     train_fl = [train_fl; new_fl];
     train_fc = [train_fc; new_fc];  % compatible with nonconstraint
+    
+    
     
     
     
@@ -103,8 +130,7 @@ if llcmp
         train_fc = [train_fc; local_fc];
     end
     perfrecord_umoc(xu, train_xl, train_fl, train_fc, prob, seed, method, 0, 0, init_size);
-    
-    
+        
 end
 end
 
@@ -140,3 +166,98 @@ if mindistance < eps_dist
 end
 end
 
+
+
+function  [f, sig] = llobj(x, kriging_obj, daceflag)
+num_obj = length(kriging_obj);   % krg cell array?
+num_x = size(x, 1);
+f = zeros(num_x, num_obj);
+for ii =1:num_obj
+    if daceflag
+        [f(:, ii), sig] = dace_predict(x, kriging_obj{ii});
+        
+    else
+        [f(:, ii), sig] = predict(kriging_obj{ii}, x);
+    end
+end
+end
+
+% ---demo test: forrestor
+function[] = processplot(fighn, trainx, trainy, krg, prob, initx, before, daceflag)
+
+% crosscheck(krg{1}, trainx, trainy);
+
+% (1) create test
+testdata = linspace(prob.xl_bl, prob.xl_bu, 100);
+testdata = testdata';
+
+% (2) predict
+[fpred, sig] = llobj(testdata, krg, daceflag);
+% clf(fighn);
+% histogram(sig);
+
+pause(1);
+clf(fighn);
+yyaxis left;
+fpred = denormzscore(trainy, fpred);
+plot(testdata, fpred, 'r--', 'LineWidth', 1); hold on;
+y1 = fpred + sig * 10;
+y2 = fpred - sig * 10;
+y = [y1', fliplr(y2')];
+x = [testdata', fliplr(testdata')];
+fill(x, y, 'r', 'FaceAlpha', 0.1, 'EdgeColor','none'); hold on;
+
+% (3) real
+[freal, sig]= prob.evaluate_l([], testdata);
+plot(testdata, freal, 'b', 'LineWidth', 2);hold on;
+
+% (4) scatter train
+scatter(trainx, trainy, 80, 'ko', 'LineWidth', 2);
+
+inity = prob.evaluate_l([], initx);
+scatter(initx, inity, 40, 'ro', 'filled');
+%---
+newy = prob.evaluate_l([], before);
+scatter(before, newy, 80, 'ko', 'filled');
+
+% (5) calculate EI and plot
+yyaxis right;
+[train_ynorm, ~, ~] = zscore(trainy);
+ynorm_min = min(train_ynorm);
+if daceflag
+fit = EIM_evaldace(testdata, ynorm_min,  krg, []);
+else
+ fit = EIM_eval(testdata, ynorm_min,  krg, []);
+end
+fit = -fit;
+plot(testdata, fit, 'g--');
+
+% onepointtest = -3.4;
+% fitone = EIM_evaldace(onepointtest, ynorm_min,  krg, []);
+% best   = EIM_evaldace(before, ynorm_min,  krg, []);
+% one    = 0.02;
+% middle = EIM_evaldace(one, ynorm_min,  krg, []);
+
+% newy = prob.evaluate_l([], after);
+% scatter(after, newy, 80, 'yo', 'filled');
+% pause(1);
+data = [trainx, trainy];
+save('data', 'data');
+
+end
+
+function crosscheck(krg, trainx, trainy)
+[y, sig_dace] = dace_predict(trainx, krg);
+
+y =  denormzscore(trainy, y);
+save('sig_dace', 'sig_dace');
+
+a = unique(round(trainx, 3));
+size(a)
+size(trainx)
+end
+
+ function f = denormzscore(trainy, fnorm)
+[train_y_norm, y_mean, y_std] = zscore(trainy);
+f = fnorm * y_std + y_mean;
+ end

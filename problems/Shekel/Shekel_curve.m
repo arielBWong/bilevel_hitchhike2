@@ -10,7 +10,7 @@ classdef Shekel_curve
         xu_bu;
         xl_bl;
         xl_bu;
-        m = 10;
+        m = 4;
         name;
         uopt = [];
         lopt = [];
@@ -20,7 +20,7 @@ classdef Shekel_curve
             if nargin == 1
                 obj.m = m;
             end
-            obj.name = 'Shekel';
+            obj.name = 'Shekel_curve';
             
             % level variables
             obj.n_lvar = obj.q + obj.r;
@@ -33,8 +33,8 @@ classdef Shekel_curve
             obj.xu_bu = ones(1, obj.p+obj.r) * 10.0;
             
             % init bound lower level
-            obj.xl_bl = ones(1, obj.q + obj.r) * -10.0;
-            obj.xl_bu = ones(1, obj.q + obj.r) * 10.0;
+            obj.xl_bl = ones(1, obj.q + obj.r) * -5;
+            obj.xl_bu = ones(1, obj.q + obj.r) * 5;
             
         end
         
@@ -73,11 +73,11 @@ classdef Shekel_curve
 %                 4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0;
 %                 4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6];
             
-           b = [0.01, 0.02, 0.03, 0.03]';
-           C = [-9, 9, -7, 7;
-                -9, 9, -7, 7;
-                -9, 9, -7, 7;
-                -9, 9, -7, 7];
+           b = [0.05, 0.2, 0.3, 0.3]';
+           C = [-4, 4, -2, 2;
+                -4, 4, -2, 2;
+                -4, 4, -2, 2;
+                -4, 4, -2, 2];
             
             outer = 0;
             nv = 1;

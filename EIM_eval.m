@@ -3,11 +3,11 @@ function [fit] = EIM_eval(x, f, kriging_obj, kriging_con)
 % usage:
 %
 % input: 
-%        x                          - pop to evaluate
-%        f                           - best f so far/feasible pareto front
+%        x                         - pop to evaluate
+%        f                         - best f so far/feasible pareto front
 %                                           in multi-objective probs
-%        kriging_obj       - kriging model for objectives
-%        kriging_con      - kriging model for constraints
+%        kriging_obj               - kriging model for objectives
+%        kriging_con               - kriging model for constraints
 % output: 
 %       fit                         - pop fitness
 %--------------------------------------------------------------------------
@@ -31,7 +31,7 @@ if isempty(f) && nargin > 3   % refer to no feasible solution
     mu_g = zeros(size(x,1), num_con);
     mse_g = zeros(size(x,1), num_con);
     for ii = 1: num_con
-        [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
+        [mu_g(:, ii), mse_g(:, ii)] = predict(kriging_con{ii}, x);
     end
     pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
     fit = -pof;
@@ -39,7 +39,7 @@ if isempty(f) && nargin > 3   % refer to no feasible solution
 end
 
 for ii = 1:num_obj
-    [u(:, ii), mse(:, ii)] = dace_predict(x, kriging_obj{ii});
+    [u(:, ii), mse(:, ii)] = predict(kriging_obj{ii}, x);
 end
 
 % calcualate eim for objective
@@ -74,7 +74,7 @@ if nargin>3
     mu_g = zeros(size(x,1), num_con);
     mse_g = zeros(size(x,1), num_con);
     for ii = 1: num_con
-        [mu_g(:, ii), mse_g(:, ii)] = dace_predict(x, kriging_con{ii});
+        [mu_g(:, ii), mse_g(:, ii)] = predict(kriging_con{ii}, x);
     end
     pof  = prod(Gaussian_CDF((0-mu_g)./mse_g), 2);
 end
